@@ -1,14 +1,14 @@
 /* ClickSync WordPress Admin JavaScript - Multi-Page Engine */
-(function($) {
+(function ($) {
     'use strict';
 
-    $(document).ready(function() {
+    $(document).ready(function () {
         var cloudUrl = typeof clicksyncData !== 'undefined' ? clicksyncData.cloudUrl : 'https://clicksync-connect.apps.loopstates.com';
         var host = typeof clicksyncData !== 'undefined' ? clicksyncData.host : window.location.hostname;
         var cachedLogs = [];
 
         // Option Pills Toggle
-        $('.clicksync-option-pill').on('click', function(e) {
+        $('.clicksync-option-pill').on('click', function (e) {
             e.preventDefault();
             var targetId = $(this).data('target');
             $(this).toggleClass('active');
@@ -16,7 +16,7 @@
         });
 
         // Add Field Mapping Row
-        $('#add-orders-field-mapping').on('click', function(e) {
+        $('#add-orders-field-mapping').on('click', function (e) {
             e.preventDefault();
             var rowHtml = '<tr>' +
                 '<td style="padding: 6px 8px;"><select class="clicksync-select" style="margin: 0;">' +
@@ -34,7 +34,7 @@
             $('#orders-field-mappings-tbody').append(rowHtml);
         });
 
-        $(document).on('click', '.clicksync-remove-row', function() {
+        $(document).on('click', '.clicksync-remove-row', function () {
             $(this).closest('tr').remove();
         });
 
@@ -46,7 +46,7 @@
                 url: cloudUrl + '/api/get-config?shop=' + encodeURIComponent(host),
                 type: 'GET',
                 dataType: 'json',
-                success: function(res) {
+                success: function (res) {
                     // Update Connection Banner dynamically
                     if (res && res.account && res.account.accessToken && res.account.accessToken !== 'pending' && res.account.accessToken !== 'pending_workspace') {
                         var statusHtml = '<div class="clicksync-card" style="background: #ffffff; border: 1px solid #e1e3e5; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">' +
@@ -104,7 +104,7 @@
                     // Populate Target Lists
                     if (res && res.lists && res.lists.length > 0) {
                         var optionsHtml = '<option value="">-- Select ClickUp List --</option>';
-                        $.each(res.lists, function(i, l) {
+                        $.each(res.lists, function (i, l) {
                             optionsHtml += '<option value="' + l.id + '">' + l.name + '</option>';
                         });
                         $('#clicksync-list-orders, #clicksync-list-drafts, #clicksync-list-customers, #clicksync-list-checkouts').html(optionsHtml);
@@ -115,7 +115,7 @@
                     // Populate Custom Fields Mapping options
                     if (res && res.customFields && res.customFields.length > 0) {
                         var fieldsHtml = '<option value="">-- Select ClickUp Custom Field --</option>';
-                        $.each(res.customFields, function(i, f) {
+                        $.each(res.customFields, function (i, f) {
                             fieldsHtml += '<option value="' + f.id + '">' + f.name + ' (' + f.type + ')</option>';
                         });
                         $('.clicksync-field-target').html(fieldsHtml);
@@ -126,7 +126,7 @@
                     // Populate Statuses dynamically
                     if (res && res.statuses && res.statuses.length > 0) {
                         var statusesHtml = '<option value="">-- Choose Status --</option>';
-                        $.each(res.statuses, function(i, s) {
+                        $.each(res.statuses, function (i, s) {
                             var statusName = s.status.charAt(0).toUpperCase() + s.status.slice(1);
                             statusesHtml += '<option value="' + s.status + '">' + statusName + '</option>';
                         });
@@ -139,9 +139,9 @@
                     if (res && res.workspaces && res.workspaces.length > 0) {
                         var assigneesHtml = '<option value="">-- Choose Assignee --</option>';
                         var selectedTeamId = res.account ? res.account.teamId : null;
-                        var activeTeam = $.grep(res.workspaces, function(t) { return t.id === selectedTeamId; })[0] || res.workspaces[0];
+                        var activeTeam = $.grep(res.workspaces, function (t) { return t.id === selectedTeamId; })[0] || res.workspaces[0];
                         if (activeTeam && activeTeam.members) {
-                            $.each(activeTeam.members, function(i, m) {
+                            $.each(activeTeam.members, function (i, m) {
                                 if (m.user) {
                                     assigneesHtml += '<option value="' + m.user.id + '">' + m.user.username + ' (' + m.user.email + ')</option>';
                                 }
@@ -158,19 +158,15 @@
                         renderErrorLogs(cachedLogs);
                     }
                 },
-                error: function(err) {
+                error: function (err) {
                     console.error("Failed to connect to ClickSync Connect Cloud Service:", err);
-                    var errorMsg = "Could not connect to ClickSync Cloud Service. Please check if your cloud server is live and running.";
-                    if (err.responseText && err.responseText.indexOf("Can't reach database server") !== -1) {
-                        errorMsg = "<strong>Database Connection Error:</strong> ClickSync Connect Cloud cannot connect to your Supabase PostgreSQL database. Please update the <code>DATABASE_URL</code> and <code>DIRECT_URL</code> environment variables in your Vercel Dashboard to use port <strong>6543</strong> instead of 5432 (e.g. <code>...supabase.co:6543/postgres?pgbouncer=true</code>).";
-                    }
                     var statusHtml = '<div class="clicksync-card" style="background: #fff5f5; border: 1px solid #fed7d7; border-radius: 8px; padding: 20px; margin-bottom: 20px;">' +
                         '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">' +
                         '<h3 style="margin: 0; font-size: 16px; font-weight: 600; color: #c53030; display: flex; align-items: center; gap: 8px;">' +
                         '⚠️ Connection Error</h3>' +
                         '<span class="clicksync-badge" style="background: #fed7d7; color: #c53030; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;">Offline</span>' +
                         '</div>' +
-                        '<p style="font-size: 13px; color: #9b2c2c; margin-bottom: 0; line-height: 1.5;">' + errorMsg + '</p>' +
+                        '<p style="font-size: 13px; color: #9b2c2c; margin-bottom: 0; line-height: 1.5;">Could not connect to ClickSync Cloud Service. Please check if your cloud server is live and running.</p>' +
                         '</div>';
                     $('#clicksync-connection-status-block').html(statusHtml);
                 }
@@ -185,7 +181,7 @@
             }
 
             var html = '';
-            $.each(logs, function(i, log) {
+            $.each(logs, function (i, log) {
                 var badgeStyle = log.status === 'Success' ? 'background: #dcfce7; color: #15803d;' : 'background: #fee2e2; color: #b91c1c;';
                 var taskLink = log.clickupTaskId ? '<a href="' + log.clickupTaskId + '" target="_blank" style="color: #7c3aed; font-weight: 600; text-decoration: underline;">View ClickUp Task →</a>' : '-';
                 html += '<tr>' +
