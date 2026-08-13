@@ -35,7 +35,8 @@ class SettingsPage {
 		$settings   = Options::get_settings();
 		$account    = Options::get_account();
 		$host       = parse_url( site_url(), PHP_URL_HOST );
-		$connect_url= CLICKSYNC_CLOUD_URL . '/auth/clickup?shop=' . urlencode( $host );
+		$is_ssl      = is_ssl() ? 'https' : 'http';
+		$connect_url= CLICKSYNC_CLOUD_URL . '/auth/clickup?shop=' . urlencode( $host ) . '&protocol=' . $is_ssl;
 
 		$plan_name  = $account['plan_name'] ?? 'Free Plan';
 		$sync_count = (int) ( $account['monthly_sync_count'] ?? 0 );
