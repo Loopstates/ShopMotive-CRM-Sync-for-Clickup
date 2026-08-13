@@ -1,12 +1,13 @@
-/* ClickSync WordPress Admin JavaScript - 1:1 Interactive Engine */
+/* ClickSync WordPress Admin JavaScript - Multi-Page Engine */
 (function($) {
     'use strict';
 
     $(document).ready(function() {
         var cloudUrl = 'https://clicksync-connect.apps.loopstates.com';
         var host = window.location.hostname;
+        var cachedLogs = [];
 
-        // Toggle Option Pill Blocks
+        // Option Pills Toggle
         $('.clicksync-pill').on('click', function(e) {
             e.preventDefault();
             var targetId = $(this).data('target');
@@ -14,7 +15,7 @@
             $('#' + targetId).slideToggle(200);
         });
 
-        // Add Orders Custom Field Mapping Row
+        // Add Field Mapping Row
         $('#add-orders-field-mapping').on('click', function(e) {
             e.preventDefault();
             var rowHtml = '<tr>' +
@@ -33,13 +34,12 @@
             $('#orders-field-mappings-tbody').append(rowHtml);
         });
 
-        // Remove Row Event Handler
         $(document).on('click', '.clicksync-remove-row', function() {
             $(this).closest('tr').remove();
         });
 
-        // Load metadata & logs from cloud
-        function loadConfig() {
+        // Load Config & Logs
+        function fetchCloudConfig() {
             $.ajax({
                 url: cloudUrl + '/api/get-config?shop=' + encodeURIComponent(host),
                 type: 'GET',
@@ -59,24 +59,59 @@
                         });
                         $('.clicksync-field-target').html(fieldsHtml);
                     }
-                    if (res && res.logs && res.logs.length > 0) {
-                        var logsHtml = '';
-                        $.each(res.logs, function(i, log) {
-                            var badgeStyle = log.status === 'Success' ? 'background: #dcfce7; color: #15803d;' : 'background: #fee2e2; color: #b91c1c;';
-                            var taskLink = log.clickupTaskId ? '<a href="' + log.clickupTaskId + '" target="_blank" style="color: #7c3aed; font-weight: 600; text-decoration: underline;">View ClickUp Task →</a>' : '-';
-                            logsHtml += '<tr>' +
-                                '<td style="padding: 10px; border-bottom: 1px solid #f1f5f9;"><strong>' + (log.event || 'Sync Event') + '</strong></td>' +
-                                '<td style="padding: 10px; border-bottom: 1px solid #f1f5f9;"><span class="clicksync-badge" style="' + badgeStyle + ' padding: 3px 8px; border-radius: 10px; font-size: 11px; font-weight: 600;">' + log.status + '</span></td>' +
-                                '<td style="padding: 10px; border-bottom: 1px solid #f1f5f9;">' + taskLink + '</td>' +
-                                '<td style="padding: 10px; border-bottom: 1px solid #f1f5f9; text-align: right; font-size: 12px; color: #64748b;">' + (log.createdAt || '') + '</td>' +
-                                '</tr>';
-                        });
-                        $('#clicksync-logs-body').html(logsHtml);
+                    if (res && res.logs) {
+                        cachedLogs = res.logs;
+                        renderFullLogs(cachedLogs);
+                        renderErrorLogs(cachedLogs);
                     }
                 }
             });
         }
 
-        loadConfig();
+        function renderFullLogs(logs) {
+            if ($('#full-sync-logs-tbody').length === 0) return;
+            if (!logs || logs.length === 0) {
+                $('#full-sync-logs-tbody').html('<tr><td colSpan="4" style="padding: 30px; text-align: center; color: #64748b;">No recent sync logs recorded yet.</td></tr>');
+                return;
+            }
+
+            var html = '';
+            $.each(logs, function(i, log) {
+                var badgeStyle = log.status === 'Success' ? 'background: #dcfce7; color: #15803d;' : 'background: #fee2e2; color: #b91c1c;';
+                var taskLink = log.clickupTaskId ? '<a href="' + log.clickupTaskId + '" target="_blank" style="color: #7c3aed; font-weight: 600; text-decoration: underline;">View ClickUp Task →</a>' : '-';
+                html += '<tr>' +
+                    '<td style="padding: 12px; border-bottom: 1px solid #e2e8f0;"><strong>' + (log.event || 'Sync Event') + '</strong></td>' +
+                    '<td style="padding: 12px; border-bottom: 1px solid #e2e8f0;"><span class="clicksync-badge" style="' + badgeStyle + ' padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600;">' + log.status + '</span></td>' +
+                    '<td style="padding: 12px; border-bottom: 1px solid #e2e8f0;">' + taskLink + '</td>' +
+                    '<td style="padding: 12px; border-bottom: 1px solid #e2e8f0; text-align: right; font-size: 12px; color: #64748b;">' + (log.createdAt || '') + '</td>' +
+                    '</tr>';
+            });
+            $('#full-sync-logs-tbody').html(html);
+        }
+
+        function renderErrorLogs(logs) {
+            if ($('#sync-errors-tbody').length === 0) return;
+            var errorLogs = $.grep(logs, function(l) { return l.status === 'Failure'; });
+            if (errorLogs.length === 0) {
+                $('#sync-errors-tbody').html('<tr><td colSpan="3" style="padding: 30px; text-align: center; color: #64748b;">No error traces recorded. All events are running 100% clean!</td></tr>');
+                return;
+            }
+
+            var html = '';
+            $.each(errorLogs, function(i, log) {
+                html += '<tr>' +
+                    '<td style="padding: 12px; border-bottom: 1px solid #e2e8f0;"><strong>' + log.event + '</strong></td>' +
+                    '<td style="padding: 12px; border-bottom: 1px solid #e2e8f0; color: #b91c1c; font-family: monospace; font-size: 12px;">' + (log.error || 'Rate Limit Timeout') + '</td>' +
+                    '<td style="padding: 12px; border-bottom: 1px solid #e2e8f0; text-align: right;"><button type="button" class="button button-small button-primary" style="background: #7c3aed;">Retry Sync</button></td>' +
+                    '</tr>';
+            });
+            $('#sync-errors-tbody').html(html);
+        }
+
+        $('#clicksync-refresh-logs').on('click', function() {
+            fetchCloudConfig();
+        });
+
+        fetchCloudConfig();
     });
 })(jQuery);
