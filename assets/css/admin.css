@@ -1,118 +1,72 @@
-/* ClickSync WordPress Admin Styling - Polaris Design Language Port */
+/* ClickSync WordPress Admin Styling Framework - 100% 1:1 Polaris Parity */
 
 .clicksync-wrap {
-    font-family: -apple-system, BlinkMacSystemFont, 'San Francisco', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    max-width: 1000px;
-    margin: 20px 0;
-    color: #202223;
+    font-family: -apple-system, BlinkMacSystemFont, "San Francisco", "Segoe UI", Roboto, sans-serif;
+    color: #0f172a;
 }
 
 .clicksync-card {
     background: #ffffff;
-    border: 1px solid #e1e3e5;
-    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
     padding: 20px;
     margin-bottom: 20px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
 }
 
-.clicksync-header h3 {
-    margin: 0;
-    font-size: 16px;
-    font-weight: 600;
-    color: #202223;
-}
-
-.clicksync-desc {
+.clicksync-select {
+    width: 100%;
+    height: 36px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
     font-size: 13px;
-    color: #6d7175;
-    line-height: 1.5;
-    margin-bottom: 16px;
+    color: #0f172a;
+    box-sizing: border-box;
 }
 
-/* Badges */
-.clicksync-badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 4px 10px;
-    border-radius: 12px;
+.clicksync-select:focus {
+    outline: none;
+    border-color: #7c3aed;
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+}
+
+/* Option Pill Buttons */
+.clicksync-pill {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #334155;
+    padding: 6px 14px;
+    border-radius: 16px;
     font-size: 12px;
     font-weight: 600;
-    line-height: 1;
-}
-
-.badge-success {
-    background: #e4f8f0;
-    color: #007a5c;
-    border: 1px solid #b7ebd5;
-}
-
-.badge-brand {
-    background: #f3e8ff;
-    color: #4c1d95;
-    border: 1px solid #ddd6fe;
-}
-
-.badge-warning {
-    background: #fff0f7;
-    color: #c026d3;
-    border: 1px solid #fbcfe8;
-}
-
-.badge-info {
-    background: #e0f2fe;
-    color: #0369a1;
-    border: 1px solid #bae6fd;
-}
-
-/* Buttons */
-.clicksync-btn-primary {
-    background: #6a2b8f;
-    color: #ffffff !important;
-    border: none;
-    border-radius: 6px;
-    padding: 10px 18px;
-    font-size: 13px;
-    font-weight: 600;
     cursor: pointer;
-    transition: background 0.2s ease, transform 0.1s ease;
-    display: inline-block;
-    line-height: 1.4;
-    text-align: center;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 30px;
 }
 
-.clicksync-btn-primary:hover {
-    background: #531c73;
-    color: #ffffff !important;
+.clicksync-pill:hover {
+    background: #f1f5f9;
+    border-color: #94a3b8;
 }
 
-.clicksync-btn-secondary {
-    background: #ffffff;
-    color: #202223 !important;
-    border: 1px solid #c9cccf;
-    border-radius: 6px;
-    padding: 9px 16px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s ease;
-    display: inline-block;
-    line-height: 1.4;
-    text-align: center;
+.clicksync-pill.active {
+    background: #ede9fe;
+    color: #6d28d9;
+    border-color: #c4b5fd;
 }
 
-.clicksync-btn-secondary:hover {
-    background: #f6f6f7;
-    color: #202223 !important;
-}
-
-/* Toggle Switches */
+/* Toggle Switch Styling */
 .clicksync-switch {
     position: relative;
     display: inline-block;
-    width: 44px;
+    width: 46px;
     height: 24px;
-    flex-shrink: 0;
+    margin: 0;
 }
 
 .clicksync-switch input {
@@ -129,7 +83,7 @@
     right: 0;
     bottom: 0;
     background-color: #cbd5e1;
-    transition: .3s;
+    transition: .2s;
     border-radius: 24px;
 }
 
@@ -141,14 +95,30 @@
     left: 3px;
     bottom: 3px;
     background-color: white;
-    transition: .3s;
+    transition: .2s;
     border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
-input:checked + .clicksync-slider {
-    background-color: #6a2b8f;
+.clicksync-switch input:checked + .clicksync-slider {
+    background-color: #10b981;
 }
 
-input:checked + .clicksync-slider:before {
-    transform: translateX(20px);
+.clicksync-switch input:checked + .clicksync-slider:before {
+    transform: translateX(22px);
 }
+
+/* Badges */
+.clicksync-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 12px;
+}
+
+.badge-success { background: #dcfce7; color: #15803d; }
+.badge-info { background: #e0f2fe; color: #0369a1; }
+.badge-warning { background: #fef3c7; color: #b45309; }
+.badge-danger { background: #fee2e2; color: #b91c1c; }
+.badge-brand { background: #ede9fe; color: #6d28d9; }
