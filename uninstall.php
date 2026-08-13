@@ -1,0 +1,14 @@
+<?php
+/**
+ * ClickSync Uninstallation File
+ * 
+ * Called when plugin is uninstalled via WordPress Admin.
+ */
+
+if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
+	exit;
+}
+
+// Clear plugin options from wp_options table
+delete_option( 'clicksync_settings' );
+delete_option( 'clicksync_account' );

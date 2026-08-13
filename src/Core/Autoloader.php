@@ -1,0 +1,52 @@
+<?php
+
+namespace ClickSync\Core;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+/**
+ * Class Autoloader
+ * 
+ * PSR-4 Autoloader for the ClickSync plugin namespace.
+ */
+class Autoloader {
+
+	/**
+	 * Register the autoloader callback with SPL.
+	 */
+	public static function register() {
+		spl_autoload_register( array( __CLASS__, 'autoload' ) );
+	}
+
+	/**
+	 * Autoload callback implementation.
+	 *
+	 * @param string $class Fully qualified class name.
+	 */
+	public static function autoload( $class ) {
+		// Project-specific namespace prefix
+		$prefix = 'ClickSync\\';
+
+		// Base directory for the namespace prefix
+		$base_dir = untrailingslashit( CLICKSYNC_PATH ) . '/src/';
+
+		// Does the class use the namespace prefix?
+		$len = strlen( $prefix );
+		if ( 0 !== strncmp( $prefix, $class, $len ) ) {
+			return;
+		}
+
+		// Get the relative class name
+		$relative_class = substr( $class, $len );
+
+		// Replace namespace separators with directory separators and append .php
+		$file = $base_dir . str_replace( '\\', '/', $relative_class ) . '.php';
+
+		// If the file exists, require it
+		if ( file_exists( $file ) ) {
+			require $file;
+		}
+	}
+}

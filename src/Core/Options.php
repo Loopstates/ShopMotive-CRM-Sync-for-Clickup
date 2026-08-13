@@ -1,0 +1,97 @@
+<?php
+
+namespace ClickSync\Core;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+/**
+ * Class Options
+ * 
+ * Secure manager for WordPress options database storage.
+ */
+class Options {
+
+	const OPTION_SETTINGS = 'clicksync_settings';
+	const OPTION_ACCOUNT  = 'clicksync_account';
+
+	/**
+	 * Get default plugin settings.
+	 *
+	 * @return array
+	 */
+	public static function get_defaults() {
+		return array(
+			'connected'              => false,
+			'api_key'                => '',
+			'store_identifier'       => parse_url( site_url(), PHP_URL_HOST ),
+			'orders_enabled'         => true,
+			'customers_enabled'      => true,
+			'refunds_enabled'        => true,
+			'draft_checkouts_enabled'=> true,
+			'sync_rules'             => array(),
+			'last_sync_timestamp'    => 0,
+		);
+	}
+
+	/**
+	 * Retrieve saved plugin settings merged with defaults.
+	 *
+	 * @return array
+	 */
+	public static function get_settings() {
+		$saved = get_option( self::OPTION_SETTINGS, array() );
+		return wp_parse_args( (array) $saved, self::get_defaults() );
+	}
+
+	/**
+	 * Save updated plugin settings.
+	 *
+	 * @param array $settings Updated settings array.
+	 * @return bool
+	 */
+	public static function update_settings( $settings ) {
+		$current = self::get_settings();
+		$merged  = wp_parse_args( $settings, $current );
+		return update_option( self::OPTION_SETTINGS, $merged );
+	}
+
+	/**
+	 * Get cached ClickUp account & plan details.
+	 *
+	 * @return array
+	 */
+	public static function get_account() {
+		$defaults = array(
+			'plan_name'          => 'Free Plan',
+			'monthly_sync_count' => 0,
+			'monthly_quota'      => 100,
+			'last_sync_reset'    => current_time( 'mysql' ),
+			'team_name'          => '',
+		);
+		$saved = get_option( self::OPTION_ACCOUNT, array() );
+		return wp_parse_args( (array) $saved, $defaults );
+	}
+
+	/**
+	 * Update cached account details.
+	 *
+	 * @param array $account Account array.
+	 * @return bool
+	 */
+	public static function update_account( $account ) {
+		return update_option( self::OPTION_ACCOUNT, $account );
+	}
+
+	/**
+	 * Reset all stored plugin data.
+	 *
+	 * @return bool
+	 */
+	public static function clear_all() {
+		delete_option( self::OPTION_SETTINGS );
+		delete_option( self::OPTION_ACCOUNT );
+		return true;
+	}
+}

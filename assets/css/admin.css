@@ -1,0 +1,154 @@
+/* ClickSync WordPress Admin Styling - Polaris Design Language Port */
+
+.clicksync-wrap {
+    font-family: -apple-system, BlinkMacSystemFont, 'San Francisco', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    max-width: 1000px;
+    margin: 20px 0;
+    color: #202223;
+}
+
+.clicksync-card {
+    background: #ffffff;
+    border: 1px solid #e1e3e5;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.clicksync-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #202223;
+}
+
+.clicksync-desc {
+    font-size: 13px;
+    color: #6d7175;
+    line-height: 1.5;
+    margin-bottom: 16px;
+}
+
+/* Badges */
+.clicksync-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.badge-success {
+    background: #e4f8f0;
+    color: #007a5c;
+    border: 1px solid #b7ebd5;
+}
+
+.badge-brand {
+    background: #f3e8ff;
+    color: #4c1d95;
+    border: 1px solid #ddd6fe;
+}
+
+.badge-warning {
+    background: #fff0f7;
+    color: #c026d3;
+    border: 1px solid #fbcfe8;
+}
+
+.badge-info {
+    background: #e0f2fe;
+    color: #0369a1;
+    border: 1px solid #bae6fd;
+}
+
+/* Buttons */
+.clicksync-btn-primary {
+    background: #6a2b8f;
+    color: #ffffff !important;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
+    display: inline-block;
+    line-height: 1.4;
+    text-align: center;
+}
+
+.clicksync-btn-primary:hover {
+    background: #531c73;
+    color: #ffffff !important;
+}
+
+.clicksync-btn-secondary {
+    background: #ffffff;
+    color: #202223 !important;
+    border: 1px solid #c9cccf;
+    border-radius: 6px;
+    padding: 9px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    display: inline-block;
+    line-height: 1.4;
+    text-align: center;
+}
+
+.clicksync-btn-secondary:hover {
+    background: #f6f6f7;
+    color: #202223 !important;
+}
+
+/* Toggle Switches */
+.clicksync-switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.clicksync-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.clicksync-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #cbd5e1;
+    transition: .3s;
+    border-radius: 24px;
+}
+
+.clicksync-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .3s;
+    border-radius: 50%;
+}
+
+input:checked + .clicksync-slider {
+    background-color: #6a2b8f;
+}
+
+input:checked + .clicksync-slider:before {
+    transform: translateX(20px);
+}
