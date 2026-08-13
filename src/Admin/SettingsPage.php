@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class SettingsPage
  * 
- * Renders the Polaris-styled ClickSync admin settings interface.
+ * Renders the Polaris-styled ClickSync admin settings interface matching 100% of Shopify features.
  */
 class SettingsPage {
 
@@ -45,11 +45,16 @@ class SettingsPage {
 		$logo_url   = CLICKSYNC_URL . 'assets/images/logo.png';
 		?>
 		<div class="wrap clicksync-wrap">
-			<div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
-				<img src="<?php echo esc_url( $logo_url ); ?>" alt="ClickSync" style="width: 36px; height: 36px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);" />
-				<h1 style="font-family: -apple-system, BlinkMacSystemFont, 'San Francisco', 'Segoe UI', Roboto, sans-serif; font-weight: 700; font-size: 22px; margin: 0; color: #1e293b;">
-					<?php esc_html_e( 'ClickSync: Wordpress to ClickUp CRM Sync', 'clicksync-wordpress' ); ?>
-				</h1>
+			<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+				<div style="display: flex; align-items: center; gap: 12px;">
+					<img src="<?php echo esc_url( $logo_url ); ?>" alt="ClickSync" style="width: 36px; height: 36px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);" />
+					<h1 style="font-family: -apple-system, BlinkMacSystemFont, 'San Francisco', 'Segoe UI', Roboto, sans-serif; font-weight: 700; font-size: 22px; margin: 0; color: #1e293b;">
+						<?php esc_html_e( 'ClickSync: Wordpress to ClickUp CRM Sync', 'clicksync-wordpress' ); ?>
+					</h1>
+				</div>
+				<div>
+					<span class="clicksync-badge badge-brand" style="font-size: 13px; padding: 6px 12px;">v1.0.0 Universal</span>
+				</div>
 			</div>
 
 			<!-- CARD 1: Connection & Workspace Status -->
@@ -65,7 +70,7 @@ class SettingsPage {
 						<span class="clicksync-badge badge-warning"><?php esc_html_e( 'Not Connected', 'clicksync-wordpress' ); ?></span>
 					<?php endif; ?>
 				</div>
-				<p className="clicksync-desc" style="font-size: 13px; color: #6d7175; margin-bottom: 16px;">
+				<p class="clicksync-desc" style="font-size: 13px; color: #6d7175; margin-bottom: 16px;">
 					<?php esc_html_e( 'Link your ClickUp Workspace to enable real-time synchronization of WooCommerce orders, customer updates, refunds, and abandoned checkouts.', 'clicksync-wordpress' ); ?>
 				</p>
 				<div>
@@ -86,7 +91,7 @@ class SettingsPage {
 					</span>
 				</div>
 
-				<p className="clicksync-desc" style="font-size: 13px; color: #6d7175; margin-bottom: 16px;">
+				<p class="clicksync-desc" style="font-size: 13px; color: #6d7175; margin-bottom: 16px;">
 					<strong><?php esc_html_e( 'Monthly Sync Quota:', 'clicksync-wordpress' ); ?></strong> 
 					<?php echo esc_html( number_format( $sync_count ) ); ?> / <?php echo esc_html( number_format( $quota ) ); ?> 
 					<?php esc_html_e( 'runs processed.', 'clicksync-wordpress' ); ?>
@@ -127,7 +132,7 @@ class SettingsPage {
 								$19.99 <span style="font-size: 12px; font-weight: 400; color: #6d7175;"><?php esc_html_e( '/month', 'clicksync-wordpress' ); ?></span>
 							</div>
 						</div>
-						<a href="<?php echo esc_url( CLICKSYNC_CLOUD_URL . '/account/billing?shop=' . urlencode( $host ) ); ?>" target="_blank" class="clicksync-btn-primary" style="width: 100%; text-align: center; background: #4c1d95; text-decoration: none; box-sizing: border-box;">
+						<a href="<?php echo esc_url( CLICKSYNC_CLOUD_URL . '/account/billing?shop=' . urlencode( $host ) . '&plan=Growth%20Plan' ); ?>" target="_blank" class="clicksync-btn-primary" style="width: 100%; text-align: center; background: #4c1d95; text-decoration: none; box-sizing: border-box;">
 							<?php echo ( 'Growth Plan' === $plan_name ) ? esc_html__( 'Current Plan', 'clicksync-wordpress' ) : esc_html__( 'Get Growth ($19.99/mo)', 'clicksync-wordpress' ); ?>
 						</a>
 					</div>
@@ -145,7 +150,7 @@ class SettingsPage {
 								$49.99 <span style="font-size: 12px; font-weight: 400; color: #6d7175;"><?php esc_html_e( '/month', 'clicksync-wordpress' ); ?></span>
 							</div>
 						</div>
-						<a href="<?php echo esc_url( CLICKSYNC_CLOUD_URL . '/account/billing?shop=' . urlencode( $host ) ); ?>" target="_blank" class="clicksync-btn-primary" style="width: 100%; text-align: center; background: #ff007f; text-decoration: none; box-sizing: border-box;">
+						<a href="<?php echo esc_url( CLICKSYNC_CLOUD_URL . '/account/billing?shop=' . urlencode( $host ) . '&plan=Pro%20Plan' ); ?>" target="_blank" class="clicksync-btn-primary" style="width: 100%; text-align: center; background: #ff007f; text-decoration: none; box-sizing: border-box;">
 							<?php echo ( 'Pro Plan' === $plan_name ) ? esc_html__( 'Current Plan', 'clicksync-wordpress' ) : esc_html__( 'Get Pro ($49.99/mo)', 'clicksync-wordpress' ); ?>
 						</a>
 					</div>
@@ -153,7 +158,46 @@ class SettingsPage {
 				</div>
 			</div>
 
-			<!-- CARD 3: Event Syncing Rules -->
+			<!-- CARD 3: Destination ClickUp Lists & Task Templates -->
+			<div class="clicksync-card">
+				<div class="clicksync-header" style="margin-bottom: 12px;">
+					<h3 style="margin:0; font-size: 16px; font-weight: 600; color: #202223; display: flex; align-items: center; gap: 6px;">
+						🎯 <?php esc_html_e( 'Destination ClickUp Lists', 'clicksync-wordpress' ); ?>
+					</h3>
+				</div>
+				<p class="clicksync-desc">
+					<?php esc_html_e( 'Select the specific ClickUp lists where tasks should be created for each WooCommerce entity type.', 'clicksync-wordpress' ); ?>
+				</p>
+				
+				<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+					<div>
+						<label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px;"><?php esc_html_e( 'WooCommerce Orders List', 'clicksync-wordpress' ); ?></label>
+						<select id="clicksync-list-orders" class="clicksync-select">
+							<option value=""><?php esc_html_e( 'Loading ClickUp lists...', 'clicksync-wordpress' ); ?></option>
+						</select>
+					</div>
+					<div>
+						<label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px;"><?php esc_html_e( 'WooCommerce Customers List', 'clicksync-wordpress' ); ?></label>
+						<select id="clicksync-list-customers" class="clicksync-select">
+							<option value=""><?php esc_html_e( 'Loading ClickUp lists...', 'clicksync-wordpress' ); ?></option>
+						</select>
+					</div>
+					<div>
+						<label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px;"><?php esc_html_e( 'Abandoned Checkouts List', 'clicksync-wordpress' ); ?></label>
+						<select id="clicksync-list-checkouts" class="clicksync-select">
+							<option value=""><?php esc_html_e( 'Loading ClickUp lists...', 'clicksync-wordpress' ); ?></option>
+						</select>
+					</div>
+					<div>
+						<label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px;"><?php esc_html_e( 'Refunds & Cancellations List', 'clicksync-wordpress' ); ?></label>
+						<select id="clicksync-list-refunds" class="clicksync-select">
+							<option value=""><?php esc_html_e( 'Loading ClickUp lists...', 'clicksync-wordpress' ); ?></option>
+						</select>
+					</div>
+				</div>
+			</div>
+
+			<!-- CARD 4: Event Syncing Rules & Feature Controls -->
 			<form method="post" action="">
 				<?php wp_nonce_field( 'clicksync_save_settings_action', 'clicksync_nonce' ); ?>
 				
@@ -219,6 +263,121 @@ class SettingsPage {
 					</div>
 				</div>
 			</form>
+
+			<!-- CARD 5: Custom Field Mapping Engine -->
+			<div class="clicksync-card">
+				<div class="clicksync-header" style="margin-bottom: 12px;">
+					<h3 style="margin:0; font-size: 16px; font-weight: 600; color: #202223;">
+						🧪 <?php esc_html_e( 'Custom Field Mapping Engine (Growth & Pro)', 'clicksync-wordpress' ); ?>
+					</h3>
+				</div>
+				<p class="clicksync-desc">
+					<?php esc_html_e( 'Map WooCommerce order & customer properties directly into custom field UUIDs in your ClickUp workspace.', 'clicksync-wordpress' ); ?>
+				</p>
+
+				<table class="clicksync-mapping-table" style="width: 100%; border-collapse: collapse; margin-bottom: 16px;">
+					<thead>
+						<tr style="background: #f8fafc; text-align: left; font-size: 12px; color: #64748b;">
+							<th style="padding: 10px;"><?php esc_html_e( 'WooCommerce Property', 'clicksync-wordpress' ); ?></th>
+							<th style="padding: 10px;"><?php esc_html_e( 'Target ClickUp Custom Field', 'clicksync-wordpress' ); ?></th>
+							<th style="padding: 10px; text-align: right;"><?php esc_html_e( 'Action', 'clicksync-wordpress' ); ?></th>
+						</tr>
+					</thead>
+					<tbody id="clicksync-field-mappings-body">
+						<tr>
+							<td style="padding: 10px;"><code>customer.email</code></td>
+							<td style="padding: 10px;">
+								<select class="clicksync-select clicksync-field-target" style="margin: 0;">
+									<option value=""><?php esc_html_e( 'Select ClickUp Field', 'clicksync-wordpress' ); ?></option>
+								</select>
+							</td>
+							<td style="padding: 10px; text-align: right;">
+								<button type="button" class="clicksync-btn-secondary" style="height: 28px; padding: 4px 8px; font-size: 12px; color: #dc2626;"><?php esc_html_e( 'Remove', 'clicksync-wordpress' ); ?></button>
+							</td>
+						</tr>
+						<tr>
+							<td style="padding: 10px;"><code>total_price</code></td>
+							<td style="padding: 10px;">
+								<select class="clicksync-select clicksync-field-target" style="margin: 0;">
+									<option value=""><?php esc_html_e( 'Select ClickUp Field', 'clicksync-wordpress' ); ?></option>
+								</select>
+							</td>
+							<td style="padding: 10px; text-align: right;">
+								<button type="button" class="clicksync-btn-secondary" style="height: 28px; padding: 4px 8px; font-size: 12px; color: #dc2626;"><?php esc_html_e( 'Remove', 'clicksync-wordpress' ); ?></button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+
+				<button type="button" id="clicksync-add-field-mapping" class="clicksync-btn-secondary">
+					+ <?php esc_html_e( 'Add Custom Field Mapping', 'clicksync-wordpress' ); ?>
+				</button>
+			</div>
+
+			<!-- CARD 6: Bi-directional Status Actions -->
+			<div class="clicksync-card">
+				<div class="clicksync-header" style="margin-bottom: 12px;">
+					<h3 style="margin:0; font-size: 16px; font-weight: 600; color: #202223;">
+						🔄 <?php esc_html_e( 'Bi-directional Status Actions (Pro Plan)', 'clicksync-wordpress' ); ?>
+					</h3>
+				</div>
+				<p class="clicksync-desc">
+					<?php esc_html_e( 'Automatically trigger WooCommerce order actions (Fulfill, Complete, Cancel) when ClickUp task statuses change.', 'clicksync-wordpress' ); ?>
+				</p>
+
+				<table class="clicksync-mapping-table" style="width: 100%; border-collapse: collapse; margin-bottom: 16px;">
+					<thead>
+						<tr style="background: #f8fafc; text-align: left; font-size: 12px; color: #64748b;">
+							<th style="padding: 10px;"><?php esc_html_e( 'ClickUp Task Status', 'clicksync-wordpress' ); ?></th>
+							<th style="padding: 10px;"><?php esc_html_e( 'WooCommerce Action', 'clicksync-wordpress' ); ?></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td style="padding: 10px;"><code>Shipped / Completed</code></td>
+							<td style="padding: 10px;">
+								<span class="clicksync-badge badge-success"><?php esc_html_e( 'Mark Order Completed', 'clicksync-wordpress' ); ?></span>
+							</td>
+						</tr>
+						<tr>
+							<td style="padding: 10px;"><code>Cancelled</code></td>
+							<td style="padding: 10px;">
+								<span class="clicksync-badge badge-danger"><?php esc_html_e( 'Cancel WooCommerce Order', 'clicksync-wordpress' ); ?></span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<!-- CARD 7: Live Sync Execution Logs -->
+			<div class="clicksync-card">
+				<div class="clicksync-header" style="margin-bottom: 12px;">
+					<h3 style="margin:0; font-size: 16px; font-weight: 600; color: #202223;">
+						📊 <?php esc_html_e( 'Live Sync Execution Audit Logs', 'clicksync-wordpress' ); ?>
+					</h3>
+				</div>
+				<p class="clicksync-desc">
+					<?php esc_html_e( 'Recent automated task creations and updates dispatched from WooCommerce to ClickUp.', 'clicksync-wordpress' ); ?>
+				</p>
+
+				<table class="clicksync-mapping-table" style="width: 100%; border-collapse: collapse;">
+					<thead>
+						<tr style="background: #f8fafc; text-align: left; font-size: 12px; color: #64748b;">
+							<th style="padding: 10px;"><?php esc_html_e( 'Event & Entity', 'clicksync-wordpress' ); ?></th>
+							<th style="padding: 10px;"><?php esc_html_e( 'Status', 'clicksync-wordpress' ); ?></th>
+							<th style="padding: 10px;"><?php esc_html_e( 'ClickUp Task', 'clicksync-wordpress' ); ?></th>
+							<th style="padding: 10px; text-align: right;"><?php esc_html_e( 'Timestamp', 'clicksync-wordpress' ); ?></th>
+						</tr>
+					</thead>
+					<tbody id="clicksync-logs-body">
+						<tr>
+							<td colSpan="4" style="padding: 20px; text-align: center; color: #64748b;">
+								<?php esc_html_e( 'No recent sync logs found. Sync events will appear here automatically.', 'clicksync-wordpress' ); ?>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
 
 		</div>
 		<?php

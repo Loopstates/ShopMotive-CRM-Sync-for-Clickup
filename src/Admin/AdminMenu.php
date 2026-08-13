@@ -25,18 +25,18 @@ class AdminMenu {
 	}
 
 	/**
-	 * Register ClickSync menu item under WooCommerce (or standalone if WC not present).
+	 * Register ClickSync as a prominent top-level main sidebar menu item.
 	 */
 	public static function register_menu() {
-		$parent_slug = class_exists( 'WooCommerce' ) ? 'woocommerce' : 'options-general.php';
-
-		add_submenu_page(
-			$parent_slug,
+		// Register top-level main sidebar menu
+		add_menu_page(
 			__( 'ClickSync: Wordpress to ClickUp CRM Sync', 'clicksync-wordpress' ),
 			__( 'ClickSync', 'clicksync-wordpress' ),
 			'manage_options',
 			'clicksync',
-			array( __CLASS__, 'render_settings_page' )
+			array( __CLASS__, 'render_settings_page' ),
+			'dashicons-update',
+			56 // Position right below WooCommerce / Products
 		);
 	}
 
