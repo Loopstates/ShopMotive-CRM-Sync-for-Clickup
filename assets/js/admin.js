@@ -55,7 +55,7 @@
                         var statusHtml = '<div class="clicksync-card" style="border-left: 4px solid #7c3aed;">' +
                             '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">' +
                             '<h3 style="margin: 0; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px;">' +
-                            '🔌 ClickSync Status</h3>' +
+                            '<svg class="clicksync-title-icon" style="fill: #7c3aed;" viewBox="0 0 24 24"><path d="M16 7v3h2V7h-2zm-5 0v3h2V7h-2zM4 11v6c0 1.1.9 2 2 2h4v3h2v-3h4c1.1 0 2-.9 2-2v-6H4z"/></svg> ClickSync Status</h3>' +
                             '<span class="clicksync-badge badge-warning" style="background: #fffbeb; color: #b45309; border: 1px solid #fde68a;">Not Connected</span>' +
                             '</div>' +
                             '<p style="font-size: 13px; color: #64748b; margin-bottom: 16px; line-height: 1.5;">ClickSync is not connected to your ClickUp workspace yet. Authorize ClickSync to connect your store with ClickUp spaces.</p>' +
@@ -76,7 +76,7 @@
                         var statusHtml = '<div class="clicksync-card" style="border-left: 4px solid #7c3aed;">' +
                             '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">' +
                             '<h3 style="margin: 0; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px;">' +
-                            '⚡ ClickSync Status</h3>' +
+                            '<svg class="clicksync-title-icon" style="fill: #eab308;" viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg> ClickSync Status</h3>' +
                             '<span class="clicksync-badge badge-warning" style="background: #f3e8ff; color: #7c3aed; border-color: #d8b4fe;">Setup Pending</span>' +
                             '</div>' +
                             '<p style="font-size: 13px; color: #64748b; margin-bottom: 16px; line-height: 1.5;">Successfully authenticated with ClickUp. Please complete the workspace connection steps below.</p>' +
@@ -116,7 +116,7 @@
                         var statusHtml = '<div class="clicksync-card" style="border-left: 4px solid #7c3aed;">' +
                             '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">' +
                             '<h3 style="margin: 0; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px;">' +
-                            '⚡ ClickSync Status</h3>' +
+                            '<svg class="clicksync-title-icon" style="fill: #eab308;" viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg> ClickSync Status</h3>' +
                             '<span class="clicksync-badge badge-warning" style="background: #f3e8ff; color: #7c3aed; border-color: #d8b4fe;">Setup Pending</span>' +
                             '</div>' +
                             '<p style="font-size: 13px; color: #64748b; margin-bottom: 16px; line-height: 1.5;">Successfully authenticated. Please choose your synchronization lists to complete onboarding.</p>' +
@@ -162,7 +162,7 @@
                     var statusHtml = '<div class="clicksync-card" style="border-left: 4px solid #10b981;">' +
                         '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">' +
                         '<h3 style="margin: 0; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px;">' +
-                        '✅ ClickSync Status</h3>' +
+                        '<svg class="clicksync-title-icon" style="fill: #10b981;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg> ClickSync Status</h3>' +
                         '<div style="display: flex; align-items: center; gap: 8px;">' +
                         '<span class="clicksync-badge badge-info" style="background: #f3e8ff; color: #7c3aed; border-color: #d8b4fe;">' + (account.clickupPlan || 'Free') + ' Workspace</span>' +
                         '<span class="clicksync-badge badge-success" style="background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0;">Active Connection</span>' +
@@ -170,11 +170,11 @@
                         '</div>' +
                         '<p style="font-size: 13px; color: #64748b; margin-bottom: 16px; line-height: 1.5;">ClickSync is active. Background WooCommerce events are intercepted and synchronized into ClickUp instantly.</p>' +
                         '<div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px; font-size: 13px; color: #475569; margin-bottom: 16px; line-height: 1.5;">' +
-                        'ℹ️ Your integration is subject to <strong>ClickUp\'s plan limits (100 API calls/min)</strong>. If a synchronization fails or experiences delays under heavy load, it is due to ClickUp\'s API rate limits rejecting incoming calls, not our app. ClickSync automatically queues and retries these requests for you.' +
+                        '<svg class="clicksync-title-icon" style="width: 16px; height: 16px; fill: #64748b;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg> Your integration is subject to <strong>ClickUp\'s plan limits (100 API calls/min)</strong>. If a synchronization fails or experiences delays under heavy load, it is due to ClickUp\'s API rate limits rejecting incoming calls, not our app. ClickSync automatically queues and retries these requests for you.' +
                         '</div>' +
                         '<div style="display: flex; gap: 12px; align-items: center;">' +
                         '<button id="clicksync-process-queue-btn" class="clicksync-btn-secondary" style="height: 36px; font-size: 13px; padding: 8px 16px; display: inline-flex; align-items: center; gap: 6px;">' +
-                        '🔄 Process Queue (' + pendingCount + ' pending)' +
+                        '<svg class="clicksync-title-icon" style="width: 14px; height: 14px; fill: currentColor; margin-right: 6px;" viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg> Process Queue (' + pendingCount + ' pending)' +
                         '</button>' +
                         '<button class="clicksync-disconnect-btn clicksync-btn-secondary" style="color: #ef4444; border-color: #fecaca; height: 36px; font-size: 13px; padding: 8px 16px;">Disconnect Integration</button>' +
                         '</div>' +
@@ -266,7 +266,7 @@
                     var statusHtml = '<div class="clicksync-card" style="background: #fff5f5; border: 1px solid #fed7d7; border-radius: 8px; padding: 20px; margin-bottom: 20px;">' +
                         '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">' +
                         '<h3 style="margin: 0; font-size: 16px; font-weight: 600; color: #c53030; display: flex; align-items: center; gap: 8px;">' +
-                        '⚠️ Connection Error</h3>' +
+                        '<svg class="clicksync-title-icon" style="fill: #c53030;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg> Connection Error</h3>' +
                         '<span class="clicksync-badge" style="background: #fed7d7; color: #c53030; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;">Offline</span>' +
                         '</div>' +
                         '<p style="font-size: 13px; color: #9b2c2c; margin-bottom: 0; line-height: 1.5;">Could not connect to ClickSync Cloud Service. Please check if your cloud server is live and running.</p>' +
@@ -338,7 +338,7 @@
             e.preventDefault();
             var btn = $(this);
             var originalText = btn.html();
-            btn.html('🔄 Processing...').prop('disabled', true);
+            btn.html('<svg class="clicksync-title-icon" style="width: 14px; height: 14px; fill: currentColor; margin-right: 6px; animation: spin 1s linear infinite;" viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg> Processing...').prop('disabled', true);
 
             $.ajax({
                 url: cloudUrl + '/api/save-config',
@@ -399,7 +399,7 @@
             var html = '';
             $.each(logs, function (i, log) {
                 var badgeStyle = log.status === 'Success' ? 'background: #dcfce7; color: #15803d;' : 'background: #fee2e2; color: #b91c1c;';
-                var taskLink = log.clickupTaskId ? '<a href="' + log.clickupTaskId + '" target="_blank" style="color: #7c3aed; font-weight: 600; text-decoration: underline;">View ClickUp Task →</a>' : '-';
+                var taskLink = log.clickupTaskId ? '<a href="' + log.clickupTaskId + '" target="_blank" style="color: #7c3aed; font-weight: 600; text-decoration: underline;">View ClickUp Task</a>' : '-';
                 html += '<tr>' +
                     '<td style="padding: 12px; border-bottom: 1px solid #e2e8f0;"><strong>' + (log.event || 'Sync Event') + '</strong></td>' +
                     '<td style="padding: 12px; border-bottom: 1px solid #e2e8f0;"><span class="clicksync-badge" style="' + badgeStyle + ' padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600;">' + log.status + '</span></td>' +

@@ -29,7 +29,7 @@ class ErrorsPage {
 					<img src="<?php echo esc_url( $logo_url ); ?>" alt="ClickSync" style="width: 42px; height: 42px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.12);" />
 					<div>
 						<h1 style="font-weight: 700; font-size: 24px; margin: 0; color: #0f172a; line-height: 1.2;">
-							🚨 <?php esc_html_e( 'Sync Error Center', 'clicksync-wordpress' ); ?>
+							<svg class="clicksync-title-icon" viewBox="0 0 24 24" style="fill: #ef4444; width: 22px; height: 22px;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg> <?php esc_html_e( 'Sync Error Center', 'clicksync-wordpress' ); ?>
 						</h1>
 						<p style="margin: 4px 0 0 0; font-size: 13px; color: #64748b;">
 							<?php esc_html_e( 'Diagnostic trace logs and retry controls for any failed API requests or rate-limited ClickUp calls.', 'clicksync-wordpress' ); ?>
@@ -40,7 +40,7 @@ class ErrorsPage {
 
 			<!-- Status Banner -->
 			<div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 10px; padding: 16px; margin-bottom: 20px; color: #991b1b; display: flex; align-items: flex-start; gap: 12px;">
-				<span style="font-size: 20px; line-height: 1;">🛡️</span>
+				<svg class="clicksync-title-icon" viewBox="0 0 24 24" style="width: 24px; height: 24px; fill: #ef4444; margin-top: 2px;"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
 				<div>
 					<strong style="font-size: 14px; display: block; margin-bottom: 4px;"><?php esc_html_e( 'Automatic Fail-Safe Architecture', 'clicksync-wordpress' ); ?></strong>
 					<span style="font-size: 13px; color: #b91c1c; line-height: 1.5; display: block;">

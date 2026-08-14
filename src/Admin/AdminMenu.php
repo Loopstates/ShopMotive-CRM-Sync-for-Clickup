@@ -115,7 +115,7 @@ class AdminMenu {
 					<strong><?php esc_html_e( 'ClickSync Limit Reached:', 'clicksync-wordpress' ); ?></strong>
 					<?php printf( esc_html__( 'You have used %1$d of your %2$d monthly sync tasks. Upgrade your plan to keep syncing WooCommerce events without interruption.', 'clicksync-wordpress' ), $sync_count, $quota ); ?>
 					<a href="<?php echo esc_url( admin_url( 'admin.php?page=clicksync#billing-section' ) ); ?>" class="button button-small button-primary" style="margin-left: 10px;">
-						<?php esc_html_e( 'Upgrade Plan →', 'clicksync-wordpress' ); ?>
+						<?php esc_html_e( 'Upgrade Plan ->', 'clicksync-wordpress' ); ?>
 					</a>
 				</p>
 			</div>
