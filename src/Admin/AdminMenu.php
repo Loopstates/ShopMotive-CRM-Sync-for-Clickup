@@ -19,10 +19,25 @@ class AdminMenu {
 	 * Register admin menu and hooks.
 	 */
 	public static function init() {
+		add_action( 'admin_init', array( __CLASS__, 'check_secret_key_redirect' ) );
 		add_action( 'admin_menu', array( __CLASS__, 'register_menu' ), 20 );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_assets' ) );
 		add_action( 'admin_notices', array( __CLASS__, 'render_quota_notice' ) );
 		add_action( 'wp_ajax_clicksync_get_wc_fields', array( __CLASS__, 'ajax_get_wc_fields' ) );
+	}
+
+	/**
+	 * Save secret key and clean URL parameters.
+	 */
+	public static function check_secret_key_redirect() {
+		if ( isset( $_GET['page'] ) && $_GET['page'] === 'clicksync' && isset( $_GET['clicksync_secret_key'] ) ) {
+			$secret_key = sanitize_text_field( $_GET['clicksync_secret_key'] );
+			Options::update_secret_key( $secret_key );
+			
+			// Clean redirect URL query parameter
+			wp_safe_redirect( admin_url( 'admin.php?page=clicksync' ) );
+			exit;
+		}
 	}
 
 	/**

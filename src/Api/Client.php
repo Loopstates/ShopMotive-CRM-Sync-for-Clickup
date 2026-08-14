@@ -28,10 +28,12 @@ class Client {
 
 		$json_body = wp_json_encode( $payload );
 
-		// Sign request using store domain & timestamp for verification
-		$timestamp = time();
-		$host      = parse_url( site_url(), PHP_URL_HOST );
-		$signature = hash_hmac( 'sha256', $json_body, $host . ':' . $timestamp );
+		// Sign request using secret key for security validation
+		$timestamp   = time();
+		$host        = parse_url( site_url(), PHP_URL_HOST );
+		$secret_key  = Options::get_secret_key();
+		$signing_key = ! empty( $secret_key ) ? $secret_key : $host;
+		$signature   = hash_hmac( 'sha256', $json_body, $signing_key . ':' . $timestamp );
 
 		$args = array(
 			'method'      => 'POST',

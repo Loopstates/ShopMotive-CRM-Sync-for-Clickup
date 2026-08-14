@@ -32,6 +32,7 @@ class Options {
 			'draft_checkouts_enabled'=> true,
 			'sync_rules'             => array(),
 			'last_sync_timestamp'    => 0,
+			'secret_key'             => '',
 		);
 	}
 
@@ -82,6 +83,26 @@ class Options {
 	 */
 	public static function update_account( $account ) {
 		return update_option( self::OPTION_ACCOUNT, $account );
+	}
+
+	/**
+	 * Retrieve saved secret key.
+	 *
+	 * @return string
+	 */
+	public static function get_secret_key() {
+		$settings = self::get_settings();
+		return $settings['secret_key'] ?? '';
+	}
+
+	/**
+	 * Save secret key.
+	 *
+	 * @param string $secret_key Secret key hex.
+	 * @return bool
+	 */
+	public static function update_secret_key( $secret_key ) {
+		return self::update_settings( array( 'secret_key' => $secret_key ) );
 	}
 
 	/**

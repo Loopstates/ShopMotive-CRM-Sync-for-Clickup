@@ -91,13 +91,13 @@ class SettingsPage {
 							<div>
 								<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
 									<h4 style="margin: 0; font-size: 15px; font-weight: 600; color: #202223;"><?php esc_html_e( 'Free Plan', 'clicksync-wordpress' ); ?></h4>
-									<span class="clicksync-badge plan-active-badge" style="display: none; background: #e3f1df; color: #008060; font-size: 11px; font-weight: 600; padding: 2px 6px; border-radius: 10px;"><?php esc_html_e( 'Active', 'clicksync-wordpress' ); ?></span>
+									<span class="clicksync-badge plan-active-badge" style="display: none !important; background: #e3f1df; color: #008060; font-size: 11px; font-weight: 600; padding: 2px 6px; border-radius: 10px;"><?php esc_html_e( 'Active', 'clicksync-wordpress' ); ?></span>
 								</div>
 								<div style="font-size: 20px; font-weight: 700; color: #202223; margin-bottom: 16px;">
 									$0 <span style="font-size: 12px; font-weight: 400; color: #6d7175;"><?php esc_html_e( '/month', 'clicksync-wordpress' ); ?></span>
 								</div>
 							</div>
-							<a href="<?php echo esc_url( CLICKSYNC_CLOUD_URL . '/account/billing?shop=' . urlencode( $host ) ); ?>" target="_blank" class="clicksync-btn-secondary" style="width: 100%; text-align: center; text-decoration: none; box-sizing: border-box; height: 36px; line-height: 34px;">
+							<a href="<?php echo esc_url( CLICKSYNC_CLOUD_URL . '/account/billing?shop=' . urlencode( $host ) . '&plan=Free%20Plan' ); ?>" target="_blank" class="clicksync-btn-secondary" style="width: 100%; text-align: center; text-decoration: none; box-sizing: border-box; height: 36px; line-height: 34px;">
 								<?php esc_html_e( 'Get Free', 'clicksync-wordpress' ); ?>
 							</a>
 						</div>
@@ -107,7 +107,7 @@ class SettingsPage {
 							<div>
 								<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
 									<h4 style="margin: 0; font-size: 15px; font-weight: 600; color: #4c1d95;"><?php esc_html_e( 'Growth Plan', 'clicksync-wordpress' ); ?></h4>
-									<span class="clicksync-badge plan-active-badge" style="display: none; background: #efe6fc; color: #6d28d9; font-size: 11px; font-weight: 600; padding: 2px 6px; border-radius: 10px;"><?php esc_html_e( 'Active', 'clicksync-wordpress' ); ?></span>
+									<span class="clicksync-badge plan-active-badge" style="display: none !important; background: #efe6fc; color: #6d28d9; font-size: 11px; font-weight: 600; padding: 2px 6px; border-radius: 10px;"><?php esc_html_e( 'Active', 'clicksync-wordpress' ); ?></span>
 								</div>
 								<div style="font-size: 20px; font-weight: 700; color: #202223; margin-bottom: 16px;">
 									$19.99 <span style="font-size: 12px; font-weight: 400; color: #6d7175;"><?php esc_html_e( '/month', 'clicksync-wordpress' ); ?></span>
@@ -123,7 +123,7 @@ class SettingsPage {
 							<div>
 								<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
 									<h4 style="margin: 0; font-size: 15px; font-weight: 600; color: #c026d3;"><?php esc_html_e( 'Pro Plan', 'clicksync-wordpress' ); ?></h4>
-									<span class="clicksync-badge plan-active-badge" style="display: none; background: #fff4e5; color: #b97a00; font-size: 11px; font-weight: 600; padding: 2px 6px; border-radius: 10px;"><?php esc_html_e( 'Active', 'clicksync-wordpress' ); ?></span>
+									<span class="clicksync-badge plan-active-badge" style="display: none !important; background: #fff4e5; color: #b97a00; font-size: 11px; font-weight: 600; padding: 2px 6px; border-radius: 10px;"><?php esc_html_e( 'Active', 'clicksync-wordpress' ); ?></span>
 								</div>
 								<div style="font-size: 20px; font-weight: 700; color: #202223; margin-bottom: 16px;">
 									$49.99 <span style="font-size: 12px; font-weight: 400; color: #6d7175;"><?php esc_html_e( '/month', 'clicksync-wordpress' ); ?></span>
