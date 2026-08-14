@@ -66,6 +66,11 @@
             return found ? found.name : fieldId;
         }
 
+        function getFriendlyWooStatus(slug) {
+            var found = $.grep(woocommerceFields.orders.order_statuses || [], function (s) { return s.slug === slug; })[0];
+            return found ? found.label : slug;
+        }
+
         function renderRuleRows(rule, targetTeamId) {
             var isCustomer = rule.shopifyEvent === 'customers/create';
             var eventSuffix = isCustomer ? 'customers' : 'orders';
@@ -140,7 +145,7 @@
                 var statusHtml = '';
                 if (rule.statusMappings && rule.statusMappings.length > 0) {
                     $.each(rule.statusMappings, function (i, r) {
-                        var actionText = r.shopifyAction === 'fulfill' ? 'Fulfill WooCommerce Order (Complete Order)' : 'Cancel WooCommerce Order';
+                        var actionText = 'Update WooCommerce order status to ' + getFriendlyWooStatus(r.shopifyAction);
                         statusHtml += '<div class="clicksync-rule-row" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 13px; margin-bottom: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">' +
                             '<span>When ClickUp task status updates to <strong>' + String(r.clickupStatus).toUpperCase() + '</strong>, then execute action <strong>' + actionText + '</strong></span>' +
                             '<button type="button" class="clicksync-delete-rule-btn" data-rule-id="' + r.id + '" data-action="delete_status_mapping" style="background: none; border: none; color: #ef4444; cursor: pointer; display: flex; align-items: center; padding: 4px; transition: color 0.15s ease;">' +
@@ -634,11 +639,12 @@
                     if (res.success && res.data) {
                         woocommerceFields = res.data;
                         populateWooCommerceFieldsDropdowns();
-                        if (callback) callback();
                     }
+                    if (callback) callback();
                 },
                 error: function (err) {
                     console.error("Failed to fetch dynamic WooCommerce fields:", err);
+                    if (callback) callback();
                 }
             });
         }
@@ -679,6 +685,20 @@
                 customersHtml += '</optgroup>';
             }
             $('#clicksync-customers-rule-card .clicksync-tag-field, #clicksync-customers-rule-card .clicksync-field-field').html(customersHtml);
+
+            // Status Mappings WooCommerce Action Selector
+            var statusActionsHtml = '';
+            if (woocommerceFields.orders.order_statuses && woocommerceFields.orders.order_statuses.length > 0) {
+                $.each(woocommerceFields.orders.order_statuses, function (i, s) {
+                    statusActionsHtml += '<option value="' + s.slug + '">Update order status to: ' + s.label + '</option>';
+                });
+            } else {
+                statusActionsHtml += '<option value="processing">Update order status to: Processing</option>' +
+                                    '<option value="completed">Update order status to: Completed</option>' +
+                                    '<option value="on-hold">Update order status to: On Hold</option>' +
+                                    '<option value="cancelled">Update order status to: Cancelled</option>';
+            }
+            $('.clicksync-status-action').html(statusActionsHtml);
         }
 
         function fetchCloudConfig() {
@@ -816,7 +836,7 @@
                         '</div>' +
                         '<div style="display: flex; gap: 12px; align-items: center;">' +
                         '<button id="clicksync-process-queue-btn" class="clicksync-btn-secondary" style="height: 36px; font-size: 13px; padding: 8px 16px; display: inline-flex; align-items: center; gap: 6px;">' +
-                        '<svg class="clicksync-title-icon" style="width: 14px; height: 14px; fill: currentColor; margin-right: 6px;" viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg> Process Queue (' + pendingCount + ' pending)' +
+                        '<svg class="clicksync-title-icon" style="width: 14px; height: 14px; fill: currentColor; margin-right: 6px; margin-left: 0;" viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg> Process Queue (' + pendingCount + ' pending)' +
                         '</button>' +
                         '<button class="clicksync-disconnect-btn clicksync-btn-secondary" style="color: #ef4444; border-color: #fecaca; height: 36px; font-size: 13px; padding: 8px 16px;">Disconnect Integration</button>' +
                         '</div>' +
@@ -926,6 +946,13 @@
                                     });
                                 }
                             });
+                        } else {
+                            // If no rules are saved yet, load metadata for whatever lists are default-selected
+                            var oList = $('#clicksync-list-orders').val();
+                            if (oList) fetchListMetadata(oList, 'clicksync-orders-rule-card');
+                            
+                            var cList = $('#clicksync-list-customers').val();
+                            if (cList) fetchListMetadata(cList, 'clicksync-customers-rule-card');
                         }
                     });
 

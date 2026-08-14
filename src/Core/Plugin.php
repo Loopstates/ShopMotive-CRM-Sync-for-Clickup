@@ -56,6 +56,9 @@ class Plugin {
 
 		// Initialize WooCommerce Listener
 		WooCommerce::init();
+
+		// Initialize REST API endpoints
+		add_action( 'rest_api_init', array( \ClickSync\Api\Webhook::class, 'register_routes' ) );
 	}
 
 	/**
