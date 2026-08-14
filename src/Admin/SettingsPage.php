@@ -65,7 +65,7 @@ class SettingsPage {
 			<div id="clicksync-onboarding-container" style="display: none;"></div>
 
 			<!-- main container (disabled until ClickUp workspace connection is established) -->
-			<div id="clicksync-settings-main-container" class="clicksync-settings-disabled">
+			<div id="clicksync-settings-main-container" class="clicksync-settings-disabled" style="display: none;">
 
 				<!-- Pricing & Usage Quota Block (Slick, Slim Bar) -->
 				<div id="billing-section" class="clicksync-card" style="background: #ffffff; border: 1px solid #e1e3e5; border-radius: 8px; padding: 16px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
@@ -83,13 +83,19 @@ class SettingsPage {
 							</div>
 						</div>
 						<div style="display: flex; align-items: center; gap: 10px;">
-							<a href="<?php echo esc_url( CLICKSYNC_CLOUD_URL . '/account/billing?shop=' . urlencode( $host ) . '&plan=Free%20Plan' ); ?>" id="clicksync-activate-free-btn" class="clicksync-btn-primary" style="background: #10b981; color: white; border: none; text-decoration: none; display: inline-flex; align-items: center; height: 32px; font-size: 12px; padding: 0 12px; border-radius: 6px; font-weight: 500; line-height: 32px; box-sizing: border-box;">
+							<a href="<?php echo esc_url( CLICKSYNC_CLOUD_URL . '/account/billing?shop=' . urlencode( $host ) . '&plan=Free%20Plan' ); ?>" id="clicksync-activate-free-btn" class="clicksync-btn-primary clicksync-btn-green" style="border: none; text-decoration: none; display: inline-flex; align-items: center; height: 32px; font-size: 12px; padding: 0 12px; border-radius: 6px; font-weight: 500; line-height: 32px; box-sizing: border-box;">
 								<?php esc_html_e( 'Activate Free Plan', 'clicksync-wordpress' ); ?>
 							</a>
 							<button type="button" id="clicksync-toggle-upgrade-btn" class="clicksync-btn-secondary" style="height: 32px; font-size: 12px; padding: 0 12px; border-radius: 6px; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; cursor: pointer; border: 1px solid #dcdfe3; background: #ffffff; color: #202223; line-height: 30px; box-sizing: border-box;">
 								<?php esc_html_e( 'Upgrade Plan', 'clicksync-wordpress' ); ?>
 								<svg style="width: 10px; height: 10px; fill: currentColor; margin-left: 2px;" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
 							</button>
+							<a href="<?php echo esc_url( CLICKSYNC_CLOUD_URL . '/account/billing?shop=' . urlencode( $host ) . '&plan=Pro%20Plan' ); ?>" id="clicksync-upgrade-to-pro-btn" class="clicksync-btn-primary clicksync-btn-pro" style="display: none; border: none; text-decoration: none; align-items: center; height: 32px; font-size: 12px; padding: 0 12px; border-radius: 6px; font-weight: 500; line-height: 32px; box-sizing: border-box;">
+								<?php esc_html_e( 'Upgrade to Pro', 'clicksync-wordpress' ); ?>
+							</a>
+							<a href="mailto:support@loopstates.com" id="clicksync-custom-quota-btn" class="clicksync-btn-secondary" style="display: none; height: 32px; font-size: 12px; padding: 0 12px; border-radius: 6px; font-weight: 500; align-items: center; gap: 4px; cursor: pointer; border: 1px solid #dcdfe3; background: #ffffff; color: #202223; line-height: 30px; box-sizing: border-box; text-decoration: none;">
+								<?php esc_html_e( 'Request Custom Quota', 'clicksync-wordpress' ); ?>
+							</a>
 						</div>
 					</div>
 

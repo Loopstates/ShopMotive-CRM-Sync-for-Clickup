@@ -846,13 +846,16 @@
 
                     // STATE 4: Fully Connected
                     var pendingCount = res.pendingQueueCount || 0;
+                    var clickupPlanStr = account.clickupPlan || 'Free';
                     var statusHtml = '<div class="clicksync-card" style="border-left: 4px solid #10b981;">' +
                         '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">' +
                         '<h3 style="margin: 0; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px;">' +
                         '<svg class="clicksync-title-icon" style="fill: #10b981;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg> ClickSync Connection</h3>' +
                         '<div style="display: flex; align-items: center; gap: 8px;">' +
-                        '<span class="clicksync-badge badge-info" style="background: #f3e8ff; color: #7c3aed; border-color: #d8b4fe;">' + (account.planName || 'Free Plan') + '</span>' +
-                        '<span class="clicksync-badge badge-success" style="background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0;">Active Connection</span>' +
+                        '<span class="clicksync-badge badge-info" style="background: #f3e8ff; color: #7c3aed; border-color: #d8b4fe; display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; font-weight: 600; font-size: 11px;">' +
+                        '<svg style="width: 12px; height: 12px; fill: currentColor;" viewBox="0 0 24 24"><path d="M2 18.439l3.69-2.828c1.961 2.56 4.044 3.739 6.363 3.739 2.307 0 4.33-1.166 6.203-3.704L22 18.405C19.298 22.065 15.941 24 12.053 24c-3.875 0-7.265-1.922-10.053-5.561zM12.04 6.15L5.472 11.81l-3.036-3.52L12.055 0l9.543 8.296-3.05 3.509z"/></svg>' +
+                        'ClickUp Subscription: ' + clickupPlanStr + '</span>' +
+                        '<span class="clicksync-badge badge-success" style="background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; padding: 4px 10px; font-weight: 600; font-size: 11px;">Active Connection</span>' +
                         '</div>' +
                         '</div>' +
                         '<p style="font-size: 13px; color: #64748b; margin-bottom: 16px; line-height: 1.5;">ClickSync is active. Background WooCommerce events are intercepted and synchronized into ClickUp instantly.</p>' +
@@ -860,10 +863,10 @@
                         '<svg class="clicksync-title-icon" style="width: 16px; height: 16px; fill: #64748b;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg> Your integration is subject to <strong>ClickUp\'s plan limits (100 API calls/min)</strong>. If a synchronization fails or experiences delays under heavy load, it is due to ClickUp\'s API rate limits rejecting incoming calls, not our app. ClickSync automatically queues and retries these requests for you.' +
                         '</div>' +
                         '<div style="display: flex; gap: 12px; align-items: center;">' +
-                        '<button id="clicksync-process-queue-btn" class="clicksync-btn-secondary" style="height: 36px; font-size: 13px; padding: 8px 16px; display: inline-flex; align-items: center; gap: 6px;">' +
+                        '<button id="clicksync-process-queue-btn" class="clicksync-btn-primary clicksync-btn-green" style="background: #10b981; color: white; border: none; height: 36px; font-size: 13px; padding: 8px 16px; display: inline-flex; align-items: center; gap: 6px; border-radius: 6px; font-weight: 500; cursor: pointer;">' +
                         '<svg class="clicksync-title-icon" style="width: 14px; height: 14px; fill: currentColor; margin-right: 6px; margin-left: 0;" viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg> Process Queue (' + pendingCount + ' pending)' +
                         '</button>' +
-                        '<button class="clicksync-disconnect-btn clicksync-btn-secondary" style="color: #ef4444; border-color: #fecaca; height: 36px; font-size: 13px; padding: 8px 16px;">Disconnect Integration</button>' +
+                        '<button class="clicksync-disconnect-btn clicksync-btn-primary clicksync-btn-red" style="background: #ef4444; color: white; border: none; height: 36px; font-size: 13px; padding: 8px 16px; border-radius: 6px; font-weight: 500; cursor: pointer;">Disconnect Integration</button>' +
                         '</div>' +
                         '</div>';
                     $('#clicksync-connection-status-block').html(statusHtml);
@@ -884,21 +887,36 @@
                         $('#clicksync-usage-count').text(syncCount);
                         $('#clicksync-usage-quota').text(quota);
                         
+                        // Hide all main billing bar action buttons by default
+                        $('#clicksync-activate-free-btn, #clicksync-toggle-upgrade-btn, #clicksync-upgrade-to-pro-btn, #clicksync-custom-quota-btn').hide();
+                        $('#clicksync-upgrade-drawer').hide();
+
                         if (plan === 'None') {
-                            $('.badge-info').text('No Plan Selected').css({ background: '#fee2e2', color: '#b91c1c' });
+                            $('.badge-info').text('No Plan Selected').css({ background: '#fee2e2', color: '#b91c1c', border: '1px solid #fca5a5' });
                             $('#clicksync-activate-free-btn').show();
                             lockSyncRules();
-                        } else {
-                            $('.badge-info').text(plan).css({ background: '#ecfdf5', color: '#047857' });
-                            $('#clicksync-activate-free-btn').hide();
+                        } else if (plan === 'Free Plan') {
+                            $('.badge-info').text('Free').css({ background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0' });
+                            $('#clicksync-toggle-upgrade-btn').show();
+                            unlockSyncRules();
+                        } else if (plan === 'Growth Plan') {
+                            $('.badge-info').text('Paid').css({ background: '#f3e8ff', color: '#7c3aed', border: '1px solid #d8b4fe' });
+                            $('#clicksync-upgrade-to-pro-btn').show();
                             
-                            if (plan.toLowerCase().includes('pro')) {
-                                $('#plan-card-pro').css({ border: '2px solid #c026d3', background: '#fdf4ff' }).find('.plan-active-badge').show();
-                                $('#plan-card-pro a').text('Active Plan').addClass('clicksync-btn-disabled').css('pointer-events', 'none');
-                            } else if (plan.toLowerCase().includes('growth')) {
-                                $('#plan-card-growth').css({ border: '2px solid #4c1d95', background: '#f5f3ff' }).find('.plan-active-badge').show();
-                                $('#plan-card-growth a').text('Active Plan').addClass('clicksync-btn-disabled').css('pointer-events', 'none');
-                            }
+                            // Highlight inside drawer just in case
+                            $('#plan-card-growth').css({ border: '2px solid #4c1d95', background: '#f5f3ff' }).find('.plan-active-badge').show();
+                            $('#plan-card-growth a').text('Active Plan').addClass('clicksync-btn-disabled').css('pointer-events', 'none');
+                            unlockSyncRules();
+                        } else if (plan === 'Pro Plan') {
+                            $('.badge-info').text('Paid').css({ background: '#f3e8ff', color: '#7c3aed', border: '1px solid #d8b4fe' });
+                            
+                            // Setup mailto dynamic parameters for custom request
+                            var mailtoLink = 'mailto:support@loopstates.com?subject=ClickSync%20Custom%20Quota%20Request%20-%20' + encodeURIComponent(host) + '&body=Hi%20ClickSync%20Team%2C%0A%0AI%20would%20like%20to%20request%20a%20custom%20quota%20for%20my%20store%20' + encodeURIComponent(host) + '.';
+                            $('#clicksync-custom-quota-btn').attr('href', mailtoLink).show();
+
+                            // Highlight inside drawer just in case
+                            $('#plan-card-pro').css({ border: '2px solid #c026d3', background: '#fdf4ff' }).find('.plan-active-badge').show();
+                            $('#plan-card-pro a').text('Active Plan').addClass('clicksync-btn-disabled').css('pointer-events', 'none');
                             unlockSyncRules();
                         }
                     }

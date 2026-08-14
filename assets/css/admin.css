@@ -176,7 +176,7 @@
     font-size: 14px !important;
     font-weight: 600 !important;
     cursor: pointer !important;
-    display: inline-flex !important;
+    display: inline-flex;
     align-items: center !important;
     justify-content: center !important;
     box-sizing: border-box !important;
@@ -201,7 +201,7 @@
     font-size: 13px !important;
     font-weight: 600 !important;
     cursor: pointer !important;
-    display: inline-flex !important;
+    display: inline-flex;
     align-items: center !important;
     justify-content: center !important;
     box-sizing: border-box !important;
@@ -279,6 +279,31 @@
     opacity: 0.4 !important;
     pointer-events: none !important;
     user-select: none !important;
+}
+
+.clicksync-wrap .clicksync-btn-green {
+    background: #10b981 !important;
+    color: #ffffff !important;
+    border-color: transparent !important;
+}
+.clicksync-wrap .clicksync-btn-green:hover {
+    background: #059669 !important;
+}
+.clicksync-wrap .clicksync-btn-red {
+    background: #ef4444 !important;
+    color: #ffffff !important;
+    border-color: transparent !important;
+}
+.clicksync-wrap .clicksync-btn-red:hover {
+    background: #dc2626 !important;
+}
+.clicksync-wrap .clicksync-btn-pro {
+    background: #c026d3 !important;
+    color: #ffffff !important;
+    border-color: transparent !important;
+}
+.clicksync-wrap .clicksync-btn-pro:hover {
+    background: #a21caf !important;
 }
 
 @keyframes spin {
