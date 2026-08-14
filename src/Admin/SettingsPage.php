@@ -251,18 +251,21 @@ class SettingsPage {
 							<div>
 								<label style="display: block; font-size: 11px; font-weight: 500; color: #6d7175; margin-bottom: 4px;"><?php esc_html_e( 'If WooCommerce Field:', 'clicksync-wordpress' ); ?></label>
 								<select class="clicksync-assignee-field clicksync-select" style="margin: 0; height: 36px;">
-									<option value="id">WooCommerce Order ID (id)</option>
-									<option value="total">Total Price (total)</option>
-									<option value="billing.email">Customer Email (billing.email)</option>
-									<option value="billing.country">Billing Country (billing.country)</option>
+									<option value=""><?php esc_html_e( 'Loading fields...', 'clicksync-wordpress' ); ?></option>
 								</select>
 							</div>
 							<div>
 								<label style="display: block; font-size: 11px; font-weight: 500; color: #6d7175; margin-bottom: 4px;"><?php esc_html_e( 'Operator:', 'clicksync-wordpress' ); ?></label>
 								<select class="clicksync-assignee-operator clicksync-select" style="margin: 0; height: 36px;">
 									<option value="equals">is equal to</option>
-									<option value="greater_than_or_equal">is greater than or equal to</option>
+									<option value="not_equals">is not equal to</option>
 									<option value="contains">contains</option>
+									<option value="not_contains">does not contain</option>
+									<option value="starts_with">starts with</option>
+									<option value="greater_than_or_equal">is greater than or equal to</option>
+									<option value="less_than_or_equal">is less than or equal to</option>
+									<option value="greater_than">is greater than</option>
+									<option value="less_than">is less than</option>
 								</select>
 							</div>
 							<div>
@@ -291,8 +294,7 @@ class SettingsPage {
 							<div>
 								<label style="display: block; font-size: 11px; font-weight: 500; color: #6d7175; margin-bottom: 4px;"><?php esc_html_e( 'If WooCommerce Field:', 'clicksync-wordpress' ); ?></label>
 								<select class="clicksync-priority-field clicksync-select" style="margin: 0; height: 36px;">
-									<option value="total">Total Price (total)</option>
-									<option value="id">WooCommerce Order ID (id)</option>
+									<option value=""><?php esc_html_e( 'Loading fields...', 'clicksync-wordpress' ); ?></option>
 								</select>
 							</div>
 							<div>
@@ -300,6 +302,13 @@ class SettingsPage {
 								<select class="clicksync-priority-operator clicksync-select" style="margin: 0; height: 36px;">
 									<option value="greater_than_or_equal">is greater than or equal to</option>
 									<option value="equals">is equal to</option>
+									<option value="not_equals">is not equal to</option>
+									<option value="contains">contains</option>
+									<option value="not_contains">does not contain</option>
+									<option value="starts_with">starts with</option>
+									<option value="less_than_or_equal">is less than or equal to</option>
+									<option value="greater_than">is greater than</option>
+									<option value="less_than">is less than</option>
 								</select>
 							</div>
 							<div>
@@ -331,18 +340,21 @@ class SettingsPage {
 							<div>
 								<label style="display: block; font-size: 11px; font-weight: 500; color: #6d7175; margin-bottom: 4px;"><?php esc_html_e( 'If WooCommerce Field:', 'clicksync-wordpress' ); ?></label>
 								<select class="clicksync-tag-field clicksync-select" style="margin: 0; height: 36px;">
-									<option value="id">WooCommerce Order ID (id)</option>
-									<option value="total">Total Price (total)</option>
-									<option value="billing.country">Billing Country (billing.country)</option>
-									<option value="shipping_method">Shipping Method (shipping_method)</option>
+									<option value=""><?php esc_html_e( 'Loading fields...', 'clicksync-wordpress' ); ?></option>
 								</select>
 							</div>
 							<div>
 								<label style="display: block; font-size: 11px; font-weight: 500; color: #6d7175; margin-bottom: 4px;"><?php esc_html_e( 'Operator:', 'clicksync-wordpress' ); ?></label>
 								<select class="clicksync-tag-operator clicksync-select" style="margin: 0; height: 36px;">
 									<option value="equals">is equal to</option>
-									<option value="greater_than_or_equal">is greater than or equal to</option>
+									<option value="not_equals">is not equal to</option>
 									<option value="contains">contains</option>
+									<option value="not_contains">does not contain</option>
+									<option value="starts_with">starts with</option>
+									<option value="greater_than_or_equal">is greater than or equal to</option>
+									<option value="less_than_or_equal">is less than or equal to</option>
+									<option value="greater_than">is greater than</option>
+									<option value="less_than">is less than</option>
 								</select>
 							</div>
 							<div>
@@ -367,16 +379,10 @@ class SettingsPage {
 
 						<div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: center; border-top: 1px solid #e2e8f0; padding-top: 12px;">
 							<select class="clicksync-field-field clicksync-select" style="margin: 0; height: 36px;">
-								<option value="id">WooCommerce Order ID (id)</option>
-								<option value="total">Total Price (total)</option>
-								<option value="billing.email">Billing Email (billing.email)</option>
-								<option value="billing.phone">Billing Phone (billing.phone)</option>
-								<option value="billing.city">Billing City (billing.city)</option>
-								<option value="billing.country">Billing Country (billing.country)</option>
-								<option value="customer_note">Customer Note (customer_note)</option>
+								<option value=""><?php esc_html_e( 'Loading fields...', 'clicksync-wordpress' ); ?></option>
 							</select>
 							<select class="clicksync-select clicksync-field-target" style="margin: 0; height: 36px;">
-								<option value="">Inv_Email (email)</option>
+								<option value=""><?php esc_html_e( 'Loading custom fields...', 'clicksync-wordpress' ); ?></option>
 							</select>
 							<button type="button" class="clicksync-add-field-mapping-btn clicksync-btn-secondary" style="height: 36px; white-space: nowrap;" data-event="orders/create"><?php esc_html_e( 'Add Mapping', 'clicksync-wordpress' ); ?></button>
 						</div>
@@ -448,24 +454,30 @@ class SettingsPage {
 							<div>
 								<label style="display: block; font-size: 11px; font-weight: 500; color: #6d7175; margin-bottom: 4px;"><?php esc_html_e( 'If WooCommerce Field:', 'clicksync-wordpress' ); ?></label>
 								<select class="clicksync-tag-field clicksync-select" style="margin: 0; height: 36px;">
-									<option value="id">Customer ID (id)</option>
-									<option value="email">Customer Email (email)</option>
-									<option value="billing.country">Billing Country (billing.country)</option>
+									<option value=""><?php esc_html_e( 'Loading fields...', 'clicksync-wordpress' ); ?></option>
 								</select>
 							</div>
 							<div>
 								<label style="display: block; font-size: 11px; font-weight: 500; color: #6d7175; margin-bottom: 4px;"><?php esc_html_e( 'Operator:', 'clicksync-wordpress' ); ?></label>
 								<select class="clicksync-tag-operator clicksync-select" style="margin: 0; height: 36px;">
 									<option value="equals">is equal to</option>
+									<option value="not_equals">is not equal to</option>
+									<option value="contains">contains</option>
+									<option value="not_contains">does not contain</option>
+									<option value="starts_with">starts with</option>
+									<option value="greater_than_or_equal">is greater than or equal to</option>
+									<option value="less_than_or_equal">is less than or equal to</option>
+									<option value="greater_than">is greater than</option>
+									<option value="less_than">is less than</option>
 								</select>
 							</div>
 							<div>
 								<label style="display: block; font-size: 11px; font-weight: 500; color: #6d7175; margin-bottom: 4px;"><?php esc_html_e( 'Compare Value:', 'clicksync-wordpress' ); ?></label>
-								<input type="text" class="clicksync-tag-value clicksync-select" style="margin: 0; height: 36px;" placeholder="e.g. Express" />
+								<input type="text" class="clicksync-tag-value clicksync-select" style="margin: 0; height: 36px;" placeholder="e.g. VIP-Customer" />
 							</div>
 							<div>
 								<label style="display: block; font-size: 11px; font-weight: 500; color: #6d7175; margin-bottom: 4px;"><?php esc_html_e( 'Then Apply Tag:', 'clicksync-wordpress' ); ?></label>
-								<input type="text" class="clicksync-tag-tag clicksync-select" style="margin: 0; height: 36px;" placeholder="e.g. Express-Order" />
+								<input type="text" class="clicksync-tag-tag clicksync-select" style="margin: 0; height: 36px;" placeholder="e.g. VIP" />
 							</div>
 							<button type="button" class="clicksync-add-tag-rule-btn clicksync-btn-secondary" style="height: 36px; white-space: nowrap;" data-event="customers/create"><?php esc_html_e( 'Add Rule', 'clicksync-wordpress' ); ?></button>
 						</div>
@@ -481,15 +493,10 @@ class SettingsPage {
 
 						<div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: center; border-top: 1px solid #e2e8f0; padding-top: 12px;">
 							<select class="clicksync-field-field clicksync-select" style="margin: 0; height: 36px;">
-								<option value="id">Customer ID (id)</option>
-								<option value="email">Customer Email (email)</option>
-								<option value="first_name">First Name (first_name)</option>
-								<option value="last_name">Last Name (last_name)</option>
-								<option value="billing.phone">Billing Phone (billing.phone)</option>
-								<option value="billing.city">Billing City (billing.city)</option>
+								<option value=""><?php esc_html_e( 'Loading fields...', 'clicksync-wordpress' ); ?></option>
 							</select>
 							<select class="clicksync-select clicksync-field-target" style="margin: 0; height: 36px;">
-								<option value="">Customer Email (email)</option>
+								<option value=""><?php esc_html_e( 'Loading custom fields...', 'clicksync-wordpress' ); ?></option>
 							</select>
 							<button type="button" class="clicksync-add-field-mapping-btn clicksync-btn-secondary" style="height: 36px; white-space: nowrap;" data-event="customers/create"><?php esc_html_e( 'Add Mapping', 'clicksync-wordpress' ); ?></button>
 						</div>

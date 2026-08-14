@@ -7,27 +7,21 @@
         var host = typeof clicksyncData !== 'undefined' ? clicksyncData.host : window.location.hostname;
         var cachedLogs = [];
 
-        // Global variables to store ClickUp members, fields, and statuses
+        // Global variables to store ClickUp members and statuses
         var workspacesData = [];
-        var customFieldsData = [];
-        var statusesData = [];
+        var woocommerceFields = {
+            orders: { default_fields: [], meta_fields: [], order_statuses: [] },
+            customers: { default_fields: [], meta_fields: [] }
+        };
 
         // Dynamic Rule Lists Rendering Helper
-        function getFriendlyFieldName(key) {
-            var map = {
-                'id': 'WooCommerce ID',
-                'total': 'Total Price',
-                'billing.email': 'Billing Email',
-                'email': 'Customer Email',
-                'billing.phone': 'Billing Phone',
-                'billing.city': 'Billing City',
-                'billing.country': 'Billing Country',
-                'shipping_method': 'Shipping Method',
-                'customer_note': 'Customer Note',
-                'first_name': 'First Name',
-                'last_name': 'Last Name'
-            };
-            return map[key] || key;
+        function getFriendlyFieldName(key, isCustomer) {
+            var list = isCustomer ? 
+                (woocommerceFields.customers.default_fields || []).concat(woocommerceFields.customers.meta_fields || []) : 
+                (woocommerceFields.orders.default_fields || []).concat(woocommerceFields.orders.meta_fields || []);
+            
+            var found = $.grep(list, function (f) { return f.key === key; })[0];
+            return found ? found.label : key;
         }
 
         function getFriendlyOperator(op) {
@@ -56,7 +50,7 @@
         }
 
         function getMemberName(userId, selectedTeamId) {
-            var activeTeam = $.grep(workspacesData, function (t) { return t.id === selectedTeamId; })[0];
+            var activeTeam = $.grep(workspacesData, function (t) { return String(t.id) === String(selectedTeamId); })[0];
             if (activeTeam && activeTeam.members) {
                 var found = $.grep(activeTeam.members, function (m) { return m.user && String(m.user.id) === String(userId); })[0];
                 if (found && found.user) {
@@ -66,20 +60,23 @@
             return 'User ' + userId;
         }
 
-        function getCustomFieldName(fieldId) {
-            var found = $.grep(customFieldsData, function (f) { return String(f.id) === String(fieldId); })[0];
+        function getCustomFieldName(fieldId, cardId) {
+            var cachedFields = $('#' + cardId).data('custom-fields') || [];
+            var found = $.grep(cachedFields, function (f) { return String(f.id) === String(fieldId); })[0];
             return found ? found.name : fieldId;
         }
 
         function renderRuleRows(rule, targetTeamId) {
-            var eventSuffix = rule.shopifyEvent === 'orders/create' ? 'orders' : 'customers';
+            var isCustomer = rule.shopifyEvent === 'customers/create';
+            var eventSuffix = isCustomer ? 'customers' : 'orders';
+            var cardId = isCustomer ? 'clicksync-customers-rule-card' : 'clicksync-orders-rule-card';
 
             // 1. Assignees
             var assigneeHtml = '';
             if (rule.assigneeRules && rule.assigneeRules.length > 0) {
                 $.each(rule.assigneeRules, function (i, r) {
                     assigneeHtml += '<div class="clicksync-rule-row" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 13px; margin-bottom: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">' +
-                        '<span>If <strong>' + getFriendlyFieldName(r.shopifyPropertyPath) + '</strong> ' + getFriendlyOperator(r.operator) + ' <strong>"' + r.value + '"</strong> then assign to <strong>' + getMemberName(r.clickupAssigneeId, targetTeamId) + '</strong></span>' +
+                        '<span>If <strong>' + getFriendlyFieldName(r.shopifyPropertyPath, isCustomer) + '</strong> ' + getFriendlyOperator(r.operator) + ' <strong>"' + r.value + '"</strong> then assign to <strong>' + getMemberName(r.clickupAssigneeId, targetTeamId) + '</strong></span>' +
                         '<button type="button" class="clicksync-delete-rule-btn" data-rule-id="' + r.id + '" data-action="delete_assignee_rule" style="background: none; border: none; color: #ef4444; cursor: pointer; display: flex; align-items: center; padding: 4px; transition: color 0.15s ease;">' +
                         '<svg style="width: 15px; height: 15px; fill: currentColor;" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>' +
                         '</button>' +
@@ -95,7 +92,7 @@
             if (rule.priorityRules && rule.priorityRules.length > 0) {
                 $.each(rule.priorityRules, function (i, r) {
                     priorityHtml += '<div class="clicksync-rule-row" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 13px; margin-bottom: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">' +
-                        '<span>If <strong>' + getFriendlyFieldName(r.shopifyPropertyPath) + '</strong> ' + getFriendlyOperator(r.operator) + ' <strong>"' + r.value + '"</strong> then set priority to <strong>' + getPriorityLabel(r.priorityLevel) + '</strong></span>' +
+                        '<span>If <strong>' + getFriendlyFieldName(r.shopifyPropertyPath, isCustomer) + '</strong> ' + getFriendlyOperator(r.operator) + ' <strong>"' + r.value + '"</strong> then set priority to <strong>' + getPriorityLabel(r.priorityLevel) + '</strong></span>' +
                         '<button type="button" class="clicksync-delete-rule-btn" data-rule-id="' + r.id + '" data-action="delete_priority_rule" style="background: none; border: none; color: #ef4444; cursor: pointer; display: flex; align-items: center; padding: 4px; transition: color 0.15s ease;">' +
                         '<svg style="width: 15px; height: 15px; fill: currentColor;" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>' +
                         '</button>' +
@@ -111,7 +108,7 @@
             if (rule.tagRules && rule.tagRules.length > 0) {
                 $.each(rule.tagRules, function (i, r) {
                     taggingHtml += '<div class="clicksync-rule-row" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 13px; margin-bottom: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">' +
-                        '<span>If <strong>' + getFriendlyFieldName(r.shopifyPropertyPath) + '</strong> ' + getFriendlyOperator(r.operator) + ' <strong>"' + r.value + '"</strong> then apply tag <span class="clicksync-badge" style="background: #efe6fc; color: #6d28d9; border: 1px solid #d8b4fe; font-size: 11px; padding: 2px 8px; border-radius: 12px;">' + r.clickupTag + '</span></span>' +
+                        '<span>If <strong>' + getFriendlyFieldName(r.shopifyPropertyPath, isCustomer) + '</strong> ' + getFriendlyOperator(r.operator) + ' <strong>"' + r.value + '"</strong> then apply tag <span class="clicksync-badge" style="background: #efe6fc; color: #6d28d9; border: 1px solid #d8b4fe; font-size: 11px; padding: 2px 8px; border-radius: 12px;">' + r.clickupTag + '</span></span>' +
                         '<button type="button" class="clicksync-delete-rule-btn" data-rule-id="' + r.id + '" data-action="delete_tag_rule" style="background: none; border: none; color: #ef4444; cursor: pointer; display: flex; align-items: center; padding: 4px; transition: color 0.15s ease;">' +
                         '<svg style="width: 15px; height: 15px; fill: currentColor;" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>' +
                         '</button>' +
@@ -127,7 +124,7 @@
             if (rule.fieldMappings && rule.fieldMappings.length > 0) {
                 $.each(rule.fieldMappings, function (i, r) {
                     cfHtml += '<div class="clicksync-rule-row" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 13px; margin-bottom: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">' +
-                        '<span>Map WooCommerce <strong>' + getFriendlyFieldName(r.shopifyPropertyPath) + '</strong> to ClickUp custom field <strong>' + getCustomFieldName(r.clickupFieldId) + '</strong></span>' +
+                        '<span>Map WooCommerce <strong>' + getFriendlyFieldName(r.shopifyPropertyPath, isCustomer) + '</strong> to ClickUp custom field <strong>' + getCustomFieldName(r.clickupFieldId, cardId) + '</strong></span>' +
                         '<button type="button" class="clicksync-delete-rule-btn" data-rule-id="' + r.id + '" data-action="delete_field_mapping" style="background: none; border: none; color: #ef4444; cursor: pointer; display: flex; align-items: center; padding: 4px; transition: color 0.15s ease;">' +
                         '<svg style="width: 15px; height: 15px; fill: currentColor;" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>' +
                         '</button>' +
@@ -560,6 +557,130 @@
             });
         });
 
+        // Dynamic List-Specific ClickUp Fields and Statuses Fetching
+        function fetchListMetadata(listId, cardId, callback) {
+            var card = $('#' + cardId);
+            if (!listId) {
+                card.find('.clicksync-field-target').html('<option value="">-- Select a target list first --</option>');
+                card.find('.clicksync-statuses-dropdown').html('<option value="">-- Select a target list first --</option>');
+                if (callback) callback();
+                return;
+            }
+
+            card.find('.clicksync-field-target').html('<option value="">Loading custom fields...</option>');
+            card.find('.clicksync-statuses-dropdown').html('<option value="">Loading statuses...</option>');
+
+            $.ajax({
+                url: cloudUrl + '/api/get-list-metadata?shop=' + encodeURIComponent(host) + '&listId=' + encodeURIComponent(listId),
+                type: 'GET',
+                dataType: 'json',
+                success: function (res) {
+                    // Cache list custom fields locally in DOM to resolve names in renderRuleRows
+                    card.data('custom-fields', res.customFields || []);
+
+                    // 1. Populate custom fields inside this card
+                    if (res.customFields && res.customFields.length > 0) {
+                        var fieldsHtml = '<option value="">-- Select ClickUp Custom Field --</option>';
+                        $.each(res.customFields, function (i, f) {
+                            fieldsHtml += '<option value="' + f.id + '">' + f.name + ' (' + f.type + ')</option>';
+                        });
+                        card.find('.clicksync-field-target').html(fieldsHtml);
+                    } else {
+                        card.find('.clicksync-field-target').html('<option value="">No custom fields available</option>');
+                    }
+
+                    // 2. Populate statuses inside this card
+                    if (res.statuses && res.statuses.length > 0) {
+                        var statusesHtml = '<option value="">-- Choose Status --</option>';
+                        $.each(res.statuses, function (i, s) {
+                            var statusName = s.status.charAt(0).toUpperCase() + s.status.slice(1);
+                            statusesHtml += '<option value="' + s.status + '">' + statusName + '</option>';
+                        });
+                        card.find('.clicksync-statuses-dropdown').html(statusesHtml);
+                    } else {
+                        card.find('.clicksync-statuses-dropdown').html('<option value="">No statuses available</option>');
+                    }
+
+                    if (callback) callback();
+                },
+                error: function (err) {
+                    console.error("Failed to fetch ClickUp list metadata:", err);
+                    card.find('.clicksync-field-target').html('<option value="">Failed to load custom fields</option>');
+                    card.find('.clicksync-statuses-dropdown').html('<option value="">Failed to load statuses</option>');
+                    if (callback) callback();
+                }
+            });
+        }
+
+        // Listen for list changes to dynamically reload list custom fields and statuses
+        $(document).on('change', '#clicksync-list-orders', function () {
+            fetchListMetadata($(this).val(), 'clicksync-orders-rule-card');
+        });
+
+        $(document).on('change', '#clicksync-list-customers', function () {
+            fetchListMetadata($(this).val(), 'clicksync-customers-rule-card');
+        });
+
+        // Dynamic WooCommerce Fields Retrieval
+        function fetchWooCommerceFields(callback) {
+            $.ajax({
+                url: clicksyncData.ajaxUrl,
+                type: 'POST',
+                data: {
+                    action: 'clicksync_get_wc_fields',
+                    nonce: clicksyncData.nonce
+                },
+                success: function (res) {
+                    if (res.success && res.data) {
+                        woocommerceFields = res.data;
+                        populateWooCommerceFieldsDropdowns();
+                        if (callback) callback();
+                    }
+                },
+                error: function (err) {
+                    console.error("Failed to fetch dynamic WooCommerce fields:", err);
+                }
+            });
+        }
+
+        function populateWooCommerceFieldsDropdowns() {
+            // Orders Field Selectors
+            var ordersHtml = '';
+            if (woocommerceFields.orders.default_fields && woocommerceFields.orders.default_fields.length > 0) {
+                ordersHtml += '<optgroup label="Default Fields">';
+                $.each(woocommerceFields.orders.default_fields, function (i, f) {
+                    ordersHtml += '<option value="' + f.key + '">' + f.label + '</option>';
+                });
+                ordersHtml += '</optgroup>';
+            }
+            if (woocommerceFields.orders.meta_fields && woocommerceFields.orders.meta_fields.length > 0) {
+                ordersHtml += '<optgroup label="Custom Meta Fields">';
+                $.each(woocommerceFields.orders.meta_fields, function (i, f) {
+                    ordersHtml += '<option value="' + f.key + '">' + f.label + '</option>';
+                });
+                ordersHtml += '</optgroup>';
+            }
+            $('#clicksync-orders-rule-card .clicksync-assignee-field, #clicksync-orders-rule-card .clicksync-priority-field, #clicksync-orders-rule-card .clicksync-tag-field, #clicksync-orders-rule-card .clicksync-field-field').html(ordersHtml);
+
+            // Customers Field Selectors
+            var customersHtml = '';
+            if (woocommerceFields.customers.default_fields && woocommerceFields.customers.default_fields.length > 0) {
+                customersHtml += '<optgroup label="Default Fields">';
+                $.each(woocommerceFields.customers.default_fields, function (i, f) {
+                    customersHtml += '<option value="' + f.key + '">' + f.label + '</option>';
+                });
+                customersHtml += '</optgroup>';
+            }
+            if (woocommerceFields.customers.meta_fields && woocommerceFields.customers.meta_fields.length > 0) {
+                customersHtml += '<optgroup label="Custom Meta Fields">';
+                $.each(woocommerceFields.customers.meta_fields, function (i, f) {
+                    customersHtml += '<option value="' + f.key + '">' + f.label + '</option>';
+                });
+                customersHtml += '</optgroup>';
+            }
+            $('#clicksync-customers-rule-card .clicksync-tag-field, #clicksync-customers-rule-card .clicksync-field-field').html(customersHtml);
+        }
+
         function fetchCloudConfig() {
             var connectUrl = $('#clicksync-connection-status-block').data('connect-url') || '';
 
@@ -725,10 +846,8 @@
                         }
                     }
 
-                    // Store workspaces, custom fields, and statuses globally for rule label resolution
+                    // Store workspaces globally for member resolution
                     workspacesData = res.workspaces || [];
-                    customFieldsData = res.customFields || [];
-                    statusesData = res.statuses || [];
 
                     // Populate Target Lists Dropdowns
                     if (res && res.lists && res.lists.length > 0) {
@@ -741,34 +860,11 @@
                         $('#clicksync-list-orders, #clicksync-list-customers').html('<option value="">No lists available</option>');
                     }
 
-                    // Populate Custom Fields Mapping options
-                    if (res && res.customFields && res.customFields.length > 0) {
-                        var fieldsHtml = '<option value="">-- Select ClickUp Custom Field --</option>';
-                        $.each(res.customFields, function (i, f) {
-                            fieldsHtml += '<option value="' + f.id + '">' + f.name + ' (' + f.type + ')</option>';
-                        });
-                        $('.clicksync-field-target').html(fieldsHtml);
-                    } else {
-                        $('.clicksync-field-target').html('<option value="">No custom fields</option>');
-                    }
-
-                    // Populate Statuses dynamically
-                    if (res && res.statuses && res.statuses.length > 0) {
-                        var statusesHtml = '<option value="">-- Choose Status --</option>';
-                        $.each(res.statuses, function (i, s) {
-                            var statusName = s.status.charAt(0).toUpperCase() + s.status.slice(1);
-                            statusesHtml += '<option value="' + s.status + '">' + statusName + '</option>';
-                        });
-                        $('.clicksync-statuses-dropdown').html(statusesHtml);
-                    } else {
-                        $('.clicksync-statuses-dropdown').html('<option value="">No statuses available</option>');
-                    }
-
                     // Populate Assignees dynamically from selected workspace members
                     if (res && res.workspaces && res.workspaces.length > 0) {
                         var assigneesHtml = '<option value="">-- Choose Assignee --</option>';
                         var selectedTeamId = res.account ? res.account.teamId : null;
-                        var activeTeam = $.grep(res.workspaces, function (t) { return t.id === selectedTeamId; })[0] || res.workspaces[0];
+                        var activeTeam = $.grep(res.workspaces, function (t) { return String(t.id) === String(selectedTeamId); })[0] || res.workspaces[0];
                         if (activeTeam && activeTeam.members) {
                             $.each(activeTeam.members, function (i, m) {
                                 if (m.user) {
@@ -781,49 +877,57 @@
                         $('.clicksync-assignees-dropdown').html('<option value="">No members available</option>');
                     }
 
-                    // Map Saved syncRules configurations to the settings view
-                    if (account && account.syncRules && account.syncRules.length > 0) {
-                        $.each(account.syncRules, function (i, rule) {
-                            if (rule.shopifyEvent === 'orders/create') {
-                                var card = $('#clicksync-orders-rule-card');
-                                card.data('rule-id', rule.id);
-                                $('#clicksync-list-orders').val(rule.clickupListId);
-                                $('#orders-toggle').prop('checked', rule.active);
-                                $('#orders-split-routing').prop('checked', rule.splitRouting);
+                    // Fetch dynamic WooCommerce fields from WP
+                    fetchWooCommerceFields(function () {
+                        // Map Saved syncRules configurations to the settings view
+                        if (account && account.syncRules && account.syncRules.length > 0) {
+                            $.each(account.syncRules, function (i, rule) {
+                                if (rule.shopifyEvent === 'orders/create') {
+                                    var card = $('#clicksync-orders-rule-card');
+                                    card.data('rule-id', rule.id);
+                                    $('#clicksync-list-orders').val(rule.clickupListId);
+                                    $('#orders-toggle').prop('checked', rule.active);
+                                    $('#orders-split-routing').prop('checked', rule.splitRouting);
 
-                                // Map options pill active states and show/hide blocks
-                                card.find('.clicksync-option-pill[data-field="assigneeRulesEnabled"]').toggleClass('active', rule.assigneeRulesEnabled);
-                                $('#orders-assignee-block').toggle(rule.assigneeRulesEnabled);
+                                    // Map options pill active states and show/hide blocks
+                                    card.find('.clicksync-option-pill[data-field="assigneeRulesEnabled"]').toggleClass('active', rule.assigneeRulesEnabled);
+                                    $('#orders-assignee-block').toggle(rule.assigneeRulesEnabled);
 
-                                card.find('.clicksync-option-pill[data-field="priorityRulesEnabled"]').toggleClass('active', rule.priorityRulesEnabled);
-                                $('#orders-priority-block').toggle(rule.priorityRulesEnabled);
+                                    card.find('.clicksync-option-pill[data-field="priorityRulesEnabled"]').toggleClass('active', rule.priorityRulesEnabled);
+                                    $('#orders-priority-block').toggle(rule.priorityRulesEnabled);
 
-                                card.find('.clicksync-option-pill[data-field="tagRulesEnabled"]').toggleClass('active', rule.tagRulesEnabled);
-                                $('#orders-tagging-block').toggle(rule.tagRulesEnabled);
+                                    card.find('.clicksync-option-pill[data-field="tagRulesEnabled"]').toggleClass('active', rule.tagRulesEnabled);
+                                    $('#orders-tagging-block').toggle(rule.tagRulesEnabled);
 
-                                card.find('.clicksync-option-pill[data-field="fieldMappingsEnabled"]').toggleClass('active', rule.fieldMappingsEnabled);
-                                $('#orders-customfields-block').toggle(rule.fieldMappingsEnabled);
+                                    card.find('.clicksync-option-pill[data-field="fieldMappingsEnabled"]').toggleClass('active', rule.fieldMappingsEnabled);
+                                    $('#orders-customfields-block').toggle(rule.fieldMappingsEnabled);
 
-                                // Render current configured rule list
-                                renderRuleRows(rule, account.teamId);
-                            }
+                                    // Load list-specific metadata (custom fields and statuses) for Order list
+                                    fetchListMetadata(rule.clickupListId, 'clicksync-orders-rule-card', function () {
+                                        renderRuleRows(rule, account.teamId);
+                                    });
+                                }
 
-                            if (rule.shopifyEvent === 'customers/create') {
-                                var card = $('#clicksync-customers-rule-card');
-                                card.data('rule-id', rule.id);
-                                $('#clicksync-list-customers').val(rule.clickupListId);
-                                $('#customers-toggle').prop('checked', rule.active);
+                                if (rule.shopifyEvent === 'customers/create') {
+                                    var card = $('#clicksync-customers-rule-card');
+                                    card.data('rule-id', rule.id);
+                                    $('#clicksync-list-customers').val(rule.clickupListId);
+                                    $('#customers-toggle').prop('checked', rule.active);
 
-                                card.find('.clicksync-option-pill[data-field="tagRulesEnabled"]').toggleClass('active', rule.tagRulesEnabled);
-                                $('#customers-tagging-block').toggle(rule.tagRulesEnabled);
+                                    card.find('.clicksync-option-pill[data-field="tagRulesEnabled"]').toggleClass('active', rule.tagRulesEnabled);
+                                    $('#customers-tagging-block').toggle(rule.tagRulesEnabled);
 
-                                card.find('.clicksync-option-pill[data-field="fieldMappingsEnabled"]').toggleClass('active', rule.fieldMappingsEnabled);
-                                $('#customers-customfields-block').toggle(rule.fieldMappingsEnabled);
+                                    card.find('.clicksync-option-pill[data-field="fieldMappingsEnabled"]').toggleClass('active', rule.fieldMappingsEnabled);
+                                    $('#customers-customfields-block').toggle(rule.fieldMappingsEnabled);
 
-                                renderRuleRows(rule, account.teamId);
-                            }
-                        });
-                    }
+                                    // Load list-specific metadata (custom fields) for Customer list
+                                    fetchListMetadata(rule.clickupListId, 'clicksync-customers-rule-card', function () {
+                                        renderRuleRows(rule, account.teamId);
+                                    });
+                                }
+                            });
+                        }
+                    });
 
                     if (res && res.logs) {
                         cachedLogs = res.logs;

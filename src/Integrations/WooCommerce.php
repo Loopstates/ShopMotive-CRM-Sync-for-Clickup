@@ -150,6 +150,16 @@ class WooCommerce {
 			return;
 		}
 
+		$user_meta = array();
+		$all_user_meta = get_user_meta( $customer_id );
+		if ( ! empty( $all_user_meta ) ) {
+			foreach ( $all_user_meta as $k => $values ) {
+				if ( strpos( $k, '_' ) !== 0 ) {
+					$user_meta[ $k ] = maybe_unserialize( $values[0] );
+				}
+			}
+		}
+
 		$payload = array(
 			'id'            => $customer_id,
 			'email'         => $user->user_email,
@@ -159,6 +169,7 @@ class WooCommerce {
 			'total_spent'   => (string) wc_get_customer_total_spent( $customer_id ),
 			'created_at'    => date( 'c', strtotime( $user->user_registered ) ),
 			'phone'         => get_user_meta( $customer_id, 'billing_phone', true ),
+			'meta'          => $user_meta,
 		);
 
 		Client::dispatch_event( 'customers/create', $payload );
@@ -196,6 +207,13 @@ class WooCommerce {
 	 * @return array
 	 */
 	public static function normalize_order( $order ) {
+		$meta_data = array();
+		foreach ( $order->get_meta_data() as $meta ) {
+			if ( strpos( $meta->key, '_' ) !== 0 ) {
+				$meta_data[ $meta->key ] = $meta->value;
+			}
+		}
+
 		$items = array();
 		foreach ( $order->get_items() as $item ) {
 			$product = $item->get_product();
@@ -269,6 +287,7 @@ class WooCommerce {
 				'country'    => $order->get_shipping_country(),
 				'zip'        => $order->get_shipping_postcode(),
 			),
+			'meta'               => $meta_data,
 		);
 	}
 }

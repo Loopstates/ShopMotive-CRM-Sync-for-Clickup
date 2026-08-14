@@ -22,6 +22,7 @@ class AdminMenu {
 		add_action( 'admin_menu', array( __CLASS__, 'register_menu' ), 20 );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_assets' ) );
 		add_action( 'admin_notices', array( __CLASS__, 'render_quota_notice' ) );
+		add_action( 'wp_ajax_clicksync_get_wc_fields', array( __CLASS__, 'ajax_get_wc_fields' ) );
 	}
 
 	/**
@@ -121,5 +122,126 @@ class AdminMenu {
 			</div>
 			<?php
 		}
+	}
+
+	/**
+	 * AJAX endpoint to retrieve dynamic WooCommerce fields, meta keys, and order statuses.
+	 */
+	public static function ajax_get_wc_fields() {
+		check_ajax_referer( 'clicksync_admin_nonce', 'nonce' );
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( 'Unauthorized', 403 );
+		}
+
+		global $wpdb;
+
+		// 1. Get WooCommerce Order Statuses dynamically
+		$statuses = array();
+		if ( function_exists( 'wc_get_order_statuses' ) ) {
+			foreach ( wc_get_order_statuses() as $slug => $label ) {
+				$statuses[] = array(
+					'slug'  => str_replace( 'wc-', '', $slug ),
+					'label' => $label,
+				);
+			}
+		}
+
+		// 2. Get distinct non-underscore Order meta keys from recent orders
+		$order_meta = array();
+		$order_meta_results = $wpdb->get_col( "
+			SELECT DISTINCT meta_key 
+			FROM {$wpdb->postmeta} 
+			WHERE post_id IN (
+				SELECT ID FROM {$wpdb->posts} 
+				WHERE post_type = 'shop_order' 
+				ORDER BY ID DESC LIMIT 100
+			) 
+			AND meta_key NOT LIKE '\_%'
+		" );
+		if ( ! empty( $order_meta_results ) ) {
+			foreach ( $order_meta_results as $key ) {
+				$order_meta[] = array(
+					'key'   => 'meta.' . $key,
+					'label' => 'Meta: ' . $key . ' (meta.' . $key . ')',
+				);
+			}
+		}
+
+		// 3. Get distinct non-underscore Customer user meta keys from recent users
+		$customer_meta = array();
+		$customer_meta_results = $wpdb->get_col( "
+			SELECT DISTINCT meta_key 
+			FROM {$wpdb->usermeta} 
+			WHERE user_id IN (
+				SELECT ID FROM {$wpdb->users} 
+				ORDER BY ID DESC LIMIT 100
+			) 
+			AND meta_key NOT LIKE '\_%'
+		" );
+		if ( ! empty( $customer_meta_results ) ) {
+			foreach ( $customer_meta_results as $key ) {
+				$customer_meta[] = array(
+					'key'   => 'meta.' . $key,
+					'label' => 'Meta: ' . $key . ' (meta.' . $key . ')',
+				);
+			}
+		}
+
+		$data = array(
+			'orders' => array(
+				'default_fields' => array(
+					array( 'key' => 'id', 'label' => 'WooCommerce Order ID (id)' ),
+					array( 'key' => 'name', 'label' => 'Order Name (name)' ),
+					array( 'key' => 'order_number', 'label' => 'Order Number (order_number)' ),
+					array( 'key' => 'email', 'label' => 'Customer Email (email)' ),
+					array( 'key' => 'total_price', 'label' => 'Total Price (total_price)' ),
+					array( 'key' => 'subtotal_price', 'label' => 'Subtotal Price (subtotal_price)' ),
+					array( 'key' => 'total_tax', 'label' => 'Total Tax (total_tax)' ),
+					array( 'key' => 'currency', 'label' => 'Currency (currency)' ),
+					array( 'key' => 'financial_status', 'label' => 'Financial Status (financial_status)' ),
+					array( 'key' => 'fulfillment_status', 'label' => 'Fulfillment Status (fulfillment_status)' ),
+					array( 'key' => 'note', 'label' => 'Customer Note (note)' ),
+					array( 'key' => 'created_at', 'label' => 'Created Date (created_at)' ),
+					array( 'key' => 'updated_at', 'label' => 'Updated Date (updated_at)' ),
+					array( 'key' => 'billing_address.first_name', 'label' => 'Billing First Name (billing_address.first_name)' ),
+					array( 'key' => 'billing_address.last_name', 'label' => 'Billing Last Name (billing_address.last_name)' ),
+					array( 'key' => 'billing_address.company', 'label' => 'Billing Company (billing_address.company)' ),
+					array( 'key' => 'billing_address.address1', 'label' => 'Billing Address 1 (billing_address.address1)' ),
+					array( 'key' => 'billing_address.address2', 'label' => 'Billing Address 2 (billing_address.address2)' ),
+					array( 'key' => 'billing_address.city', 'label' => 'Billing City (billing_address.city)' ),
+					array( 'key' => 'billing_address.province', 'label' => 'Billing State (billing_address.province)' ),
+					array( 'key' => 'billing_address.country', 'label' => 'Billing Country (billing_address.country)' ),
+					array( 'key' => 'billing_address.zip', 'label' => 'Billing Zip (billing_address.zip)' ),
+					array( 'key' => 'billing_address.phone', 'label' => 'Billing Phone (billing_address.phone)' ),
+					array( 'key' => 'shipping_address.first_name', 'label' => 'Shipping First Name (shipping_address.first_name)' ),
+					array( 'key' => 'shipping_address.last_name', 'label' => 'Shipping Last Name (shipping_address.last_name)' ),
+					array( 'key' => 'shipping_address.company', 'label' => 'Shipping Company (shipping_address.company)' ),
+					array( 'key' => 'shipping_address.address1', 'label' => 'Shipping Address 1 (shipping_address.address1)' ),
+					array( 'key' => 'shipping_address.address2', 'label' => 'Shipping Address 2 (shipping_address.address2)' ),
+					array( 'key' => 'shipping_address.city', 'label' => 'Shipping City (shipping_address.city)' ),
+					array( 'key' => 'shipping_address.province', 'label' => 'Shipping State (shipping_address.province)' ),
+					array( 'key' => 'shipping_address.country', 'label' => 'Shipping Country (shipping_address.country)' ),
+					array( 'key' => 'shipping_address.zip', 'label' => 'Shipping Zip (shipping_address.zip)' ),
+				),
+				'meta_fields'    => $order_meta,
+				'order_statuses' => $statuses,
+			),
+			'customers' => array(
+				'default_fields' => array(
+					array( 'key' => 'id', 'label' => 'Customer User ID (id)' ),
+					array( 'key' => 'email', 'label' => 'Customer Email (email)' ),
+					array( 'key' => 'first_name', 'label' => 'First Name (first_name)' ),
+					array( 'key' => 'last_name', 'label' => 'Last Name (last_name)' ),
+					array( 'key' => 'phone', 'label' => 'Customer Phone (phone)' ),
+					array( 'key' => 'orders_count', 'label' => 'Total Orders Count (orders_count)' ),
+					array( 'key' => 'total_spent', 'label' => 'Total Amount Spent (total_spent)' ),
+					array( 'key' => 'created_at', 'label' => 'Registered Date (created_at)' ),
+				),
+				'meta_fields'    => $customer_meta,
+			),
+		);
+
+		wp_send_json_success( $data );
 	}
 }
