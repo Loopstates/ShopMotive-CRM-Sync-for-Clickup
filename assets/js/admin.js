@@ -14,30 +14,30 @@
             customers: { default_fields: [], meta_fields: [] }
         };
 
-        // Onboarding Lock Overlays Helpers
+        // Onboarding Lock Helpers (WordPress Compliant Notice & Disabled Inputs)
         function lockSyncRules() {
+            $('#clicksync-rules-lock-banner').slideDown(200);
             $('.clicksync-card').not('#billing-section').not('#clicksync-connection-status-block').each(function () {
                 var card = $(this);
-                // Check if already locked
-                if (card.find('.clicksync-lock-overlay').length === 0) {
-                    card.css('position', 'relative');
-                    var overlay = $('<div class="clicksync-lock-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.75); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 10; border-radius: 8px; backdrop-filter: blur(1px);">' +
-                        '<div style="background: #ffffff; padding: 20px 24px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); text-align: center; max-width: 320px; border: 1px solid #e2e8f0;">' +
-                        '<svg style="width: 36px; height: 36px; fill: #7c3aed; margin-bottom: 12px;" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>' +
-                        '<h4 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600; color: #1e1b4b;">Synchronization Locked</h4>' +
-                        '<p style="margin: 0; font-size: 12px; color: #475569; line-height: 1.4;">Please select a subscription plan above to unlock and configure synchronization rules.</p>' +
-                        '</div>' +
-                        '</div>');
-                    card.append(overlay);
-                    card.find('input, select, button').prop('disabled', true);
-                }
+                card.css('opacity', '0.6');
+                card.find('input, select, button').prop('disabled', true);
             });
         }
 
         function unlockSyncRules() {
-            $('.clicksync-lock-overlay').remove();
-            $('.clicksync-card').find('input, select, button').prop('disabled', false);
+            $('#clicksync-rules-lock-banner').slideUp(200);
+            $('.clicksync-card').not('#billing-section').not('#clicksync-connection-status-block').each(function () {
+                var card = $(this);
+                card.css('opacity', '1');
+                card.find('input, select, button').prop('disabled', false);
+            });
         }
+
+        // Toggle Upgrade Drawer
+        $(document).on('click', '#clicksync-toggle-upgrade-btn', function (e) {
+            e.preventDefault();
+            $('#clicksync-upgrade-drawer').slideToggle(200);
+        });
 
         // Dynamic Rule Lists Rendering Helper
         function getFriendlyFieldName(key, isCustomer) {
@@ -870,14 +870,13 @@
                     $('#clicksync-onboarding-container').hide();
                     $('#clicksync-settings-main-container').show().removeClass('clicksync-settings-disabled');
 
-                    // Reset plan active badges & visual cards styles
+                    // Reset plan active badges inside drawer & visual cards styles
                     $('.plan-active-badge').hide();
-                    $('#plan-card-free, #plan-card-growth, #plan-card-pro').css({ border: '1px solid #e1e3e5', background: '#ffffff' });
-                    $('#plan-card-free a').text('Get Free').removeClass('clicksync-btn-disabled').css('pointer-events', 'auto');
-                    $('#plan-card-growth a').text('Get Growth ($19.99/mo)').removeClass('clicksync-btn-disabled').css('pointer-events', 'auto');
-                    $('#plan-card-pro a').text('Get Pro ($49.99/mo)').removeClass('clicksync-btn-disabled').css('pointer-events', 'auto');
+                    $('#plan-card-growth, #plan-card-pro').css({ border: '1px solid #e1e3e5', background: '#fdfdfd' });
+                    $('#plan-card-growth a').text('Select Growth').removeClass('clicksync-btn-disabled').css('pointer-events', 'auto');
+                    $('#plan-card-pro a').text('Select Pro').removeClass('clicksync-btn-disabled').css('pointer-events', 'auto');
 
-                    // Update Plan details & Lock overlay if plan is None
+                    // Update Plan details & Lock notices
                     if (res && res.account) {
                         var plan = res.account.planName || 'None';
                         var syncCount = res.account.monthlySyncCount || 0;
@@ -886,10 +885,12 @@
                         $('#clicksync-usage-quota').text(quota);
                         
                         if (plan === 'None') {
-                            $('.badge-info').text('Active: No Plan Selected').css({ background: '#fee2e2', color: '#b91c1c' });
+                            $('.badge-info').text('No Plan Selected').css({ background: '#fee2e2', color: '#b91c1c' });
+                            $('#clicksync-activate-free-btn').show();
                             lockSyncRules();
                         } else {
-                            $('.badge-info').text('Active: ' + plan).css({ background: '#ecfdf5', color: '#047857' });
+                            $('.badge-info').text(plan).css({ background: '#ecfdf5', color: '#047857' });
+                            $('#clicksync-activate-free-btn').hide();
                             
                             if (plan.toLowerCase().includes('pro')) {
                                 $('#plan-card-pro').css({ border: '2px solid #c026d3', background: '#fdf4ff' }).find('.plan-active-badge').show();
@@ -897,9 +898,6 @@
                             } else if (plan.toLowerCase().includes('growth')) {
                                 $('#plan-card-growth').css({ border: '2px solid #4c1d95', background: '#f5f3ff' }).find('.plan-active-badge').show();
                                 $('#plan-card-growth a').text('Active Plan').addClass('clicksync-btn-disabled').css('pointer-events', 'none');
-                            } else {
-                                $('#plan-card-free').css({ border: '2px solid #10b981', background: '#ecfdf5' }).find('.plan-active-badge').show();
-                                $('#plan-card-free a').text('Active Plan').addClass('clicksync-btn-disabled').css('pointer-events', 'none');
                             }
                             unlockSyncRules();
                         }
