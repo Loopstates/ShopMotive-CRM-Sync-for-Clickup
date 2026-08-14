@@ -728,6 +728,7 @@
             $('.clicksync-status-action').html(statusActionsHtml);
         }
 
+        var configRetryCount = 0;
         function fetchCloudConfig() {
             var connectUrl = $('#clicksync-connection-status-block').data('connect-url') || '';
 
@@ -736,6 +737,7 @@
                 type: 'GET',
                 dataType: 'json',
                 success: function (res) {
+                    configRetryCount = 0; // Reset retry counter on success
                     var account = res ? res.account : null;
                     var isConnected = account && account.accessToken && account.accessToken !== 'pending';
 
@@ -1027,6 +1029,12 @@
                     }
                 },
                 error: function (err) {
+                    if (configRetryCount < 3) {
+                        configRetryCount++;
+                        console.warn("ClickSync Cloud connection failed. Retrying (" + configRetryCount + "/3) in 2 seconds...");
+                        setTimeout(fetchCloudConfig, 2000);
+                        return;
+                    }
                     console.error("Failed to connect to ClickSync Connect Cloud Service:", err);
                     var statusHtml = '<div class="clicksync-card" style="background: #fff5f5; border: 1px solid #fed7d7; border-radius: 8px; padding: 20px; margin-bottom: 20px;">' +
                         '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">' +
