@@ -47,38 +47,141 @@
                 type: 'GET',
                 dataType: 'json',
                 success: function (res) {
-                    // Update Connection Banner dynamically
-                    if (res && res.account && res.account.accessToken && res.account.accessToken !== 'pending' && res.account.accessToken !== 'pending_workspace') {
-                        var statusHtml = '<div class="clicksync-card" style="background: #ffffff; border: 1px solid #e1e3e5; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">' +
+                    var account = res ? res.account : null;
+                    var isConnected = account && account.accessToken && account.accessToken !== 'pending';
+
+                    if (!isConnected) {
+                        // STATE 1: Not Connected
+                        var statusHtml = '<div class="clicksync-card" style="border-left: 4px solid #7c3aed;">' +
                             '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">' +
-                            '<h3 style="margin: 0; font-size: 16px; font-weight: 600; color: #202223; display: flex; align-items: center; gap: 8px;">' +
-                            '<svg style="width: 18px; height: 18px; fill: #6A2B8F;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>' +
-                            'ClickSync Status</h3>' +
-                            '<span class="clicksync-badge badge-success" style="background: #e3f1df; color: #008060; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;">Active Connection</span>' +
+                            '<h3 style="margin: 0; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px;">' +
+                            '🔌 ClickSync Status</h3>' +
+                            '<span class="clicksync-badge badge-warning" style="background: #fffbeb; color: #b45309; border: 1px solid #fde68a;">Not Connected</span>' +
                             '</div>' +
-                            '<p style="font-size: 13px; color: #6d7175; margin-bottom: 16px; line-height: 1.5;">Successfully synced to ClickUp. Background WooCommerce events are intercepted and queued instantly.</p>' +
-                            '<a href="' + connectUrl + '" target="_blank" class="clicksync-btn-primary" style="background: #d82c0d; border-color: #bc2205; color: white; padding: 8px 16px; height: 36px; border-radius: 4px; text-decoration: none; display: inline-flex; align-items: center; font-weight: 600; font-size: 13px;">Disconnect Integration</a>' +
+                            '<p style="font-size: 13px; color: #64748b; margin-bottom: 16px; line-height: 1.5;">ClickSync is not connected to your ClickUp workspace yet. Authorize ClickSync to connect your store with ClickUp spaces.</p>' +
+                            '<a href="' + connectUrl + '" target="_blank" class="clicksync-btn-primary" style="background: #7c3aed; color: white; border: none; text-decoration: none; display: inline-flex; align-items: center;">Connect ClickUp Workspace</a>' +
                             '</div>';
                         $('#clicksync-connection-status-block').html(statusHtml);
-
-                        // Enable settings main container
-                        $('#clicksync-settings-main-container').removeClass('clicksync-settings-disabled');
-                    } else {
-                        var statusHtml = '<div class="clicksync-card" style="background: #ffffff; border: 1px solid #e1e3e5; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">' +
-                            '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">' +
-                            '<h3 style="margin: 0; font-size: 16px; font-weight: 600; color: #202223; display: flex; align-items: center; gap: 8px;">' +
-                            '<svg style="width: 18px; height: 18px; fill: #d82c0d;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>' +
-                            'ClickSync Status</h3>' +
-                            '<span class="clicksync-badge badge-warning" style="background: #fff4e5; color: #b97a00; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;">Not Connected</span>' +
-                            '</div>' +
-                            '<p style="font-size: 13px; color: #6d7175; margin-bottom: 16px; line-height: 1.5;">ClickSync is not connected to your ClickUp workspace yet. Click the button below to authorize connection.</p>' +
-                            '<a href="' + connectUrl + '" target="_blank" class="clicksync-btn-primary" style="background: #7c3aed; border-color: #6d28d9; color: white; padding: 8px 16px; height: 36px; border-radius: 4px; text-decoration: none; display: inline-flex; align-items: center; font-weight: 600; font-size: 13px;">Connect ClickUp Workspace</a>' +
-                            '</div>';
-                        $('#clicksync-connection-status-block').html(statusHtml);
-
-                        // Disable settings main container
-                        $('#clicksync-settings-main-container').addClass('clicksync-settings-disabled');
+                        $('#clicksync-onboarding-container').hide();
+                        $('#clicksync-settings-main-container').hide().addClass('clicksync-settings-disabled');
+                        return;
                     }
+
+                    // We are connected. Now verify onboarding state.
+                    var teamId = account.teamId;
+                    var hasRules = account.syncRules && account.syncRules.length > 0;
+
+                    if (!teamId || teamId === 'pending_workspace') {
+                        // STATE 2: Onboarding Step 1 - Select Workspace
+                        var statusHtml = '<div class="clicksync-card" style="border-left: 4px solid #7c3aed;">' +
+                            '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">' +
+                            '<h3 style="margin: 0; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px;">' +
+                            '⚡ ClickSync Status</h3>' +
+                            '<span class="clicksync-badge badge-warning" style="background: #f3e8ff; color: #7c3aed; border-color: #d8b4fe;">Setup Pending</span>' +
+                            '</div>' +
+                            '<p style="font-size: 13px; color: #64748b; margin-bottom: 16px; line-height: 1.5;">Successfully authenticated with ClickUp. Please complete the workspace connection steps below.</p>' +
+                            '<a href="' + connectUrl + '" target="_blank" class="clicksync-btn-secondary" style="color: #ef4444; border-color: #fecaca; display: inline-flex; align-items: center; height: 32px; font-size: 12px; padding: 4px 12px;">Disconnect Integration</a>' +
+                            '</div>';
+                        $('#clicksync-connection-status-block').html(statusHtml);
+                        $('#clicksync-settings-main-container').hide().addClass('clicksync-settings-disabled');
+
+                        // Render Step 1 Card
+                        var workspacesHtml = '<option value="">-- Choose ClickUp Workspace --</option>';
+                        if (res.workspaces && res.workspaces.length > 0) {
+                            $.each(res.workspaces, function(i, w) {
+                                workspacesHtml += '<option value="' + w.id + '">' + w.name + '</option>';
+                            });
+                        }
+                        var step1Html = '<div class="clicksync-onboarding-card">' +
+                            '<div class="clicksync-steps">' +
+                            '<div class="clicksync-step active"></div>' +
+                            '<div class="clicksync-step"></div>' +
+                            '</div>' +
+                            '<h2 class="clicksync-onboarding-title">Step 1: Select ClickUp Workspace</h2>' +
+                            '<p class="clicksync-onboarding-desc">Choose the ClickUp workspace that contains the spaces, folders, and task lists you wish to synchronize WooCommerce with.</p>' +
+                            '<form id="clicksync-setup-workspace-form">' +
+                            '<div style="margin-bottom: 20px;">' +
+                            '<label class="clicksync-label">Select Workspace</label>' +
+                            '<select id="clicksync-setup-team-id" class="clicksync-select" required>' + workspacesHtml + '</select>' +
+                            '</div>' +
+                            '<button type="submit" class="clicksync-btn-primary" style="width: 100%;">Connect Workspace & Continue</button>' +
+                            '</form>' +
+                            '</div>';
+                        $('#clicksync-onboarding-container').html(step1Html).show();
+                        return;
+                    }
+
+                    if (!hasRules) {
+                        // STATE 3: Onboarding Step 2 - Select Lists
+                        var statusHtml = '<div class="clicksync-card" style="border-left: 4px solid #7c3aed;">' +
+                            '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">' +
+                            '<h3 style="margin: 0; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px;">' +
+                            '⚡ ClickSync Status</h3>' +
+                            '<span class="clicksync-badge badge-warning" style="background: #f3e8ff; color: #7c3aed; border-color: #d8b4fe;">Setup Pending</span>' +
+                            '</div>' +
+                            '<p style="font-size: 13px; color: #64748b; margin-bottom: 16px; line-height: 1.5;">Successfully authenticated. Please choose your synchronization lists to complete onboarding.</p>' +
+                            '<a href="' + connectUrl + '" target="_blank" class="clicksync-btn-secondary" style="color: #ef4444; border-color: #fecaca; display: inline-flex; align-items: center; height: 32px; font-size: 12px; padding: 4px 12px;">Disconnect Integration</a>' +
+                            '</div>';
+                        $('#clicksync-connection-status-block').html(statusHtml);
+                        $('#clicksync-settings-main-container').hide().addClass('clicksync-settings-disabled');
+
+                        // Render Step 2 Card
+                        var listsHtml = '<option value="">-- Choose target ClickUp list --</option>';
+                        if (res.lists && res.lists.length > 0) {
+                            $.each(res.lists, function(i, l) {
+                                listsHtml += '<option value="' + l.id + '">' + l.name + '</option>';
+                            });
+                        }
+                        var step2Html = '<div class="clicksync-onboarding-card">' +
+                            '<div class="clicksync-steps">' +
+                            '<div class="clicksync-step"></div>' +
+                            '<div class="clicksync-step active"></div>' +
+                            '</div>' +
+                            '<h2 class="clicksync-onboarding-title">Step 2: Choose Target Lists</h2>' +
+                            '<p class="clicksync-onboarding-desc">Map WooCommerce events to target ClickUp task lists. You can map them all to the same list or choose different lists. You can change this later.</p>' +
+                            '<form id="clicksync-setup-lists-form">' +
+                            '<div style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px;">' +
+                            '<div>' +
+                            '<label class="clicksync-label">WooCommerce Order Created List</label>' +
+                            '<select id="clicksync-setup-orders-list" class="clicksync-select" required>' + listsHtml + '</select>' +
+                            '</div>' +
+                            '<div>' +
+                            '<label class="clicksync-label">WooCommerce Customer Created List</label>' +
+                            '<select id="clicksync-setup-customers-list" class="clicksync-select" required>' + listsHtml + '</select>' +
+                            '</div>' +
+                            '</div>' +
+                            '<button type="submit" class="clicksync-btn-primary" style="width: 100%;">Complete Setup & Open Dashboard</button>' +
+                            '</form>' +
+                            '</div>';
+                        $('#clicksync-onboarding-container').html(step2Html).show();
+                        return;
+                    }
+
+                    // STATE 4: Fully Connected & Configured
+                    var pendingCount = res.pendingQueueCount || 0;
+                    var statusHtml = '<div class="clicksync-card" style="border-left: 4px solid #10b981;">' +
+                        '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">' +
+                        '<h3 style="margin: 0; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px;">' +
+                        '✅ ClickSync Status</h3>' +
+                        '<div style="display: flex; align-items: center; gap: 8px;">' +
+                        '<span class="clicksync-badge badge-info" style="background: #f3e8ff; color: #7c3aed; border-color: #d8b4fe;">' + (account.clickupPlan || 'Free') + ' Workspace</span>' +
+                        '<span class="clicksync-badge badge-success" style="background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0;">Active Connection</span>' +
+                        '</div>' +
+                        '</div>' +
+                        '<p style="font-size: 13px; color: #64748b; margin-bottom: 16px; line-height: 1.5;">ClickSync is active. Background WooCommerce events are intercepted and synchronized into ClickUp instantly.</p>' +
+                        '<div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px; font-size: 13px; color: #475569; margin-bottom: 16px; line-height: 1.5;">' +
+                        'ℹ️ Your integration is subject to <strong>ClickUp\'s plan limits (100 API calls/min)</strong>. If a synchronization fails or experiences delays under heavy load, it is due to ClickUp\'s API rate limits rejecting incoming calls, not our app. ClickSync automatically queues and retries these requests for you.' +
+                        '</div>' +
+                        '<div style="display: flex; gap: 12px; align-items: center;">' +
+                        '<button id="clicksync-process-queue-btn" class="clicksync-btn-secondary" style="height: 36px; font-size: 13px; padding: 8px 16px; display: inline-flex; align-items: center; gap: 6px;">' +
+                        '🔄 Process Queue (' + pendingCount + ' pending)' +
+                        '</button>' +
+                        '<a href="' + connectUrl + '" target="_blank" class="clicksync-btn-secondary" style="color: #ef4444; border-color: #fecaca; display: inline-flex; align-items: center; height: 36px; font-size: 13px; padding: 8px 16px;">Disconnect Integration</a>' +
+                        '</div>' +
+                        '</div>';
+                    $('#clicksync-connection-status-block').html(statusHtml);
+                    $('#clicksync-onboarding-container').hide();
+                    $('#clicksync-settings-main-container').show().removeClass('clicksync-settings-disabled');
 
                     // Update Plan details
                     if (res && res.account) {
@@ -91,13 +194,13 @@
 
                         // Highlight active card
                         $('.plan-active-badge').hide();
-                        $('#plan-card-free, #plan-card-growth, #plan-card-pro').css({ border: '1px solid #e1e3e5', background: '#ffffff' });
+                        $('#plan-card-free, #plan-card-growth, #plan-card-pro').css({ border: '1px solid #e2e8f0', background: '#ffffff' });
                         if (plan.toLowerCase().includes('pro')) {
-                            $('#plan-card-pro').css({ border: '2px solid #ff007f', background: '#fff0f7' }).find('.plan-active-badge').show();
+                            $('#plan-card-pro').css({ border: '2px solid #7c3aed', background: '#f5f3ff' }).find('.plan-active-badge').show();
                         } else if (plan.toLowerCase().includes('growth')) {
-                            $('#plan-card-growth').css({ border: '2px solid #4c1d95', background: '#f5f3ff' }).find('.plan-active-badge').show();
+                            $('#plan-card-growth').css({ border: '2px solid #7c3aed', background: '#f5f3ff' }).find('.plan-active-badge').show();
                         } else {
-                            $('#plan-card-free').css({ border: '2px solid #008060', background: '#f4f6f8' }).find('.plan-active-badge').show();
+                            $('#plan-card-free').css({ border: '2px solid #10b981', background: '#ecfdf5' }).find('.plan-active-badge').show();
                         }
                     }
 
@@ -172,6 +275,90 @@
                 }
             });
         }
+
+        // Onboarding Form Submissions
+        $(document).on('submit', '#clicksync-setup-workspace-form', function (e) {
+            e.preventDefault();
+            var btn = $(this).find('button[type="submit"]');
+            btn.text('Connecting Workspace...').prop('disabled', true);
+            var teamId = $('#clicksync-setup-team-id').val();
+
+            $.ajax({
+                url: cloudUrl + '/api/save-config',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    shop: host,
+                    actionType: 'save_workspace',
+                    payload: { teamId: teamId }
+                }),
+                success: function (res) {
+                    fetchCloudConfig();
+                },
+                error: function (xhr) {
+                    alert('Failed to connect workspace: ' + xhr.responseText);
+                    btn.text('Connect Workspace & Continue').prop('disabled', false);
+                }
+            });
+        });
+
+        $(document).on('submit', '#clicksync-setup-lists-form', function (e) {
+            e.preventDefault();
+            var btn = $(this).find('button[type="submit"]');
+            btn.text('Saving destination lists...').prop('disabled', true);
+            var ordersListId = $('#clicksync-setup-orders-list').val();
+            var customersListId = $('#clicksync-setup-customers-list').val();
+
+            $.ajax({
+                url: cloudUrl + '/api/save-config',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    shop: host,
+                    actionType: 'save_list_mapping',
+                    payload: {
+                        ordersListId: ordersListId,
+                        customersListId: customersListId,
+                        checkoutsListId: ordersListId,
+                        draftOrdersListId: ordersListId
+                    }
+                }),
+                success: function (res) {
+                    fetchCloudConfig();
+                },
+                error: function (xhr) {
+                    alert('Failed to configure lists: ' + xhr.responseText);
+                    btn.text('Complete Setup & Open Dashboard').prop('disabled', false);
+                }
+            });
+        });
+
+        // Trigger manual queue processing sweep
+        $(document).on('click', '#clicksync-process-queue-btn', function (e) {
+            e.preventDefault();
+            var btn = $(this);
+            var originalText = btn.html();
+            btn.html('🔄 Processing...').prop('disabled', true);
+
+            $.ajax({
+                url: cloudUrl + '/api/save-config',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    shop: host,
+                    actionType: 'process_queue',
+                    payload: {}
+                }),
+                success: function (res) {
+                    alert('Queue sweep complete. Processed ' + (res.processedCount || 0) + ' items.');
+                    fetchCloudConfig();
+                },
+                error: function (xhr) {
+                    alert('Failed to process queue: ' + (xhr.responseJSON?.error || xhr.responseText));
+                    btn.html(originalText).prop('disabled', false);
+                }
+            });
+        });
 
         function renderFullLogs(logs) {
             if ($('#full-sync-logs-tbody').length === 0) return;

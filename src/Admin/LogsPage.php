@@ -22,7 +22,7 @@ class LogsPage {
 		$account  = Options::get_account();
 		$logo_url = CLICKSYNC_URL . 'assets/images/logo.png';
 		?>
-		<div class="wrap clicksync-wrap" style="max-width: 1100px; margin: 20px auto; font-family: -apple-system, BlinkMacSystemFont, 'San Francisco', 'Segoe UI', Roboto, sans-serif;">
+		<div class="wrap clicksync-wrap" style="max-width: 1100px; margin: 20px auto;">
 			
 			<!-- Page Header -->
 			<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #e2e8f0;">

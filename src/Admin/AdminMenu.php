@@ -88,8 +88,9 @@ class AdminMenu {
 			return;
 		}
 
-		wp_enqueue_style( 'clicksync-admin-css', CLICKSYNC_URL . 'assets/css/admin.css', array(), CLICKSYNC_VERSION );
-		wp_enqueue_script( 'clicksync-admin-js', CLICKSYNC_URL . 'assets/js/admin.js', array( 'jquery' ), CLICKSYNC_VERSION, true );
+		wp_enqueue_style( 'clicksync-google-fonts', 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap' );
+		wp_enqueue_style( 'clicksync-admin-css', CLICKSYNC_URL . 'assets/css/admin.css', array(), time() );
+		wp_enqueue_script( 'clicksync-admin-js', CLICKSYNC_URL . 'assets/js/admin.js', array( 'jquery' ), time(), true );
 
 		wp_localize_script( 'clicksync-admin-js', 'clicksyncData', array(
 			'ajaxUrl'  => admin_url( 'admin-ajax.php' ),

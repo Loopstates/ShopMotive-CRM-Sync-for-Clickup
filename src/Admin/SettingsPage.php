@@ -43,7 +43,7 @@ class SettingsPage {
 		$quota      = (int) ( $account['monthly_quota'] ?? 100 );
 		$reset_date = $account['last_sync_reset'] ?? date( 'm/d/Y' );
 		?>
-		<div class="wrap clicksync-wrap" style="max-width: 1050px; margin: 20px auto; font-family: -apple-system, BlinkMacSystemFont, 'San Francisco', 'Segoe UI', Roboto, sans-serif; color: #202223;">
+		<div class="wrap clicksync-wrap" style="max-width: 1050px; margin: 20px auto;">
 			
 			<!-- Header Status Banner -->
 			<div id="clicksync-connection-status-block" data-connect-url="<?php echo esc_url( $connect_url ); ?>">
@@ -60,6 +60,9 @@ class SettingsPage {
 					</p>
 				</div>
 			</div>
+
+			<!-- Onboarding Wizard Container -->
+			<div id="clicksync-onboarding-container" style="display: none;"></div>
 
 			<!-- main container (disabled until ClickUp workspace connection is established) -->
 			<div id="clicksync-settings-main-container" class="clicksync-settings-disabled">
