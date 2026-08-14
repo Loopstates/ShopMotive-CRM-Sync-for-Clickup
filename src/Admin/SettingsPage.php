@@ -147,7 +147,7 @@ class SettingsPage {
 				<!-- ========================================== -->
 				<!-- CARD 1: WooCommerce Order Created Card -->
 				<!-- ========================================== -->
-				<div class="clicksync-card" style="background: #ffffff; border: 1px solid #e1e3e5; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+				<div class="clicksync-card" id="clicksync-orders-rule-card" style="background: #ffffff; border: 1px solid #e1e3e5; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
 					
 					<!-- Header with Toggle Switch -->
 					<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
@@ -155,7 +155,7 @@ class SettingsPage {
 							<svg class="clicksync-title-icon" viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg> <?php esc_html_e( 'WooCommerce Order Created', 'clicksync-wordpress' ); ?>
 						</span>
 						<label class="clicksync-switch">
-							<input type="checkbox" id="orders-toggle" checked>
+							<input type="checkbox" id="orders-toggle" class="clicksync-rule-toggle" checked>
 							<span class="clicksync-slider"></span>
 						</label>
 					</div>
@@ -189,7 +189,7 @@ class SettingsPage {
 									</div>
 								</div>
 								<label class="clicksync-switch">
-									<input type="checkbox" checked>
+									<input type="checkbox" id="orders-sync-refunds" checked>
 									<span class="clicksync-slider"></span>
 								</label>
 							</div>
@@ -206,7 +206,7 @@ class SettingsPage {
 									</div>
 								</div>
 								<label class="clicksync-switch">
-									<input type="checkbox" checked>
+									<input type="checkbox" id="orders-sync-fulfillment" checked>
 									<span class="clicksync-slider"></span>
 								</label>
 							</div>
@@ -223,7 +223,7 @@ class SettingsPage {
 									</div>
 								</div>
 								<label class="clicksync-switch">
-									<input type="checkbox">
+									<input type="checkbox" id="orders-split-routing">
 									<span class="clicksync-slider"></span>
 								</label>
 							</div>
@@ -233,34 +233,33 @@ class SettingsPage {
 					<!-- Option Pills Toolbar -->
 					<div style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; background: #f4f6f8; padding: 8px 12px; border-radius: 6px; border: 1px solid #e1e3e5; align-items: center;">
 						<span style="font-size: 12px; font-weight: 600; color: #6d7175; margin-right: 4px;"><?php esc_html_e( 'Configure Options:', 'clicksync-wordpress' ); ?></span>
-						<button type="button" class="clicksync-option-pill active" data-target="orders-assignee-block"><?php esc_html_e( 'Assignee Routing', 'clicksync-wordpress' ); ?></button>
-						<button type="button" class="clicksync-option-pill active" data-target="orders-priority-block"><?php esc_html_e( 'Priority Rules', 'clicksync-wordpress' ); ?></button>
-						<button type="button" class="clicksync-option-pill active" data-target="orders-tagging-block"><?php esc_html_e( 'Tagging Rules', 'clicksync-wordpress' ); ?></button>
-						<button type="button" class="clicksync-option-pill active" data-target="orders-customfields-block"><?php esc_html_e( 'Custom Fields', 'clicksync-wordpress' ); ?></button>
+						<button type="button" class="clicksync-option-pill" data-target="orders-assignee-block" data-field="assigneeRulesEnabled"><?php esc_html_e( 'Assignee Routing', 'clicksync-wordpress' ); ?></button>
+						<button type="button" class="clicksync-option-pill" data-target="orders-priority-block" data-field="priorityRulesEnabled"><?php esc_html_e( 'Priority Rules', 'clicksync-wordpress' ); ?></button>
+						<button type="button" class="clicksync-option-pill" data-target="orders-tagging-block" data-field="tagRulesEnabled"><?php esc_html_e( 'Tagging Rules', 'clicksync-wordpress' ); ?></button>
+						<button type="button" class="clicksync-option-pill" data-target="orders-customfields-block" data-field="fieldMappingsEnabled"><?php esc_html_e( 'Custom Fields', 'clicksync-wordpress' ); ?></button>
 					</div>
 
 					<!-- 1. Assignee Routing Rules Sub-section -->
-					<div id="orders-assignee-block" style="margin-bottom: 16px; padding: 16px; background: #f9fafb; border-radius: 6px; border: 1px solid #edeeef;">
+					<div id="orders-assignee-block" style="display: none; margin-bottom: 16px; padding: 16px; background: #f9fafb; border-radius: 6px; border: 1px solid #edeeef;">
 						<div style="font-size: 14px; font-weight: 600; color: #202223; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
 							<svg class="clicksync-title-icon" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg> <?php esc_html_e( 'Assignee Routing Rules', 'clicksync-wordpress' ); ?>
 						</div>
-						<p style="font-size: 12px; color: #6d7175; margin-bottom: 12px; font-style: italic;">
-							<?php esc_html_e( 'No assignee routing rules configured yet. Order tasks will remain unassigned by default.', 'clicksync-wordpress' ); ?>
-						</p>
+						
+						<div id="orders-assignee-rules-list" style="margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px;"></div>
 
-						<div style="display: grid; grid-template-columns: 1.2fr 1fr 1fr 1.2fr auto; gap: 10px; align-items: end;">
+						<div style="display: grid; grid-template-columns: 1.2fr 1fr 1fr 1.2fr auto; gap: 10px; align-items: end; border-top: 1px solid #e2e8f0; padding-top: 12px;">
 							<div>
 								<label style="display: block; font-size: 11px; font-weight: 500; color: #6d7175; margin-bottom: 4px;"><?php esc_html_e( 'If WooCommerce Field:', 'clicksync-wordpress' ); ?></label>
-								<select class="clicksync-select" style="margin: 0; height: 36px;">
-									<option value="id">WooCommerce Order ID</option>
-									<option value="total_price">Total Price</option>
-									<option value="customer.email">Customer Email</option>
-									<option value="billing_address.country">Billing Country</option>
+								<select class="clicksync-assignee-field clicksync-select" style="margin: 0; height: 36px;">
+									<option value="id">WooCommerce Order ID (id)</option>
+									<option value="total">Total Price (total)</option>
+									<option value="billing.email">Customer Email (billing.email)</option>
+									<option value="billing.country">Billing Country (billing.country)</option>
 								</select>
 							</div>
 							<div>
 								<label style="display: block; font-size: 11px; font-weight: 500; color: #6d7175; margin-bottom: 4px;"><?php esc_html_e( 'Operator:', 'clicksync-wordpress' ); ?></label>
-								<select class="clicksync-select" style="margin: 0; height: 36px;">
+								<select class="clicksync-assignee-operator clicksync-select" style="margin: 0; height: 36px;">
 									<option value="equals">is equal to</option>
 									<option value="greater_than_or_equal">is greater than or equal to</option>
 									<option value="contains">contains</option>
@@ -268,7 +267,7 @@ class SettingsPage {
 							</div>
 							<div>
 								<label style="display: block; font-size: 11px; font-weight: 500; color: #6d7175; margin-bottom: 4px;"><?php esc_html_e( 'Compare Value:', 'clicksync-wordpress' ); ?></label>
-								<input type="text" class="clicksync-select" style="margin: 0; height: 36px;" placeholder="e.g. VIP-Buyer" />
+								<input type="text" class="clicksync-assignee-value clicksync-select" style="margin: 0; height: 36px;" placeholder="e.g. VIP-Buyer" />
 							</div>
 							<div>
 								<label style="display: block; font-size: 11px; font-weight: 500; color: #6d7175; margin-bottom: 4px;"><?php esc_html_e( 'Then Assign To:', 'clicksync-wordpress' ); ?></label>
@@ -276,105 +275,110 @@ class SettingsPage {
 									<option value=""><?php esc_html_e( 'Loading members...', 'clicksync-wordpress' ); ?></option>
 								</select>
 							</div>
-							<button type="button" class="clicksync-btn-secondary" style="height: 36px; white-space: nowrap;"><?php esc_html_e( 'Add Rule', 'clicksync-wordpress' ); ?></button>
+							<button type="button" class="clicksync-add-assignee-rule-btn clicksync-btn-secondary" style="height: 36px; white-space: nowrap;" data-event="orders/create"><?php esc_html_e( 'Add Rule', 'clicksync-wordpress' ); ?></button>
 						</div>
 					</div>
 
 					<!-- 2. Task Priority Rules Sub-section -->
-					<div id="orders-priority-block" style="margin-bottom: 16px; padding: 16px; background: #f9fafb; border-radius: 6px; border: 1px solid #edeeef;">
+					<div id="orders-priority-block" style="display: none; margin-bottom: 16px; padding: 16px; background: #f9fafb; border-radius: 6px; border: 1px solid #edeeef;">
 						<div style="font-size: 14px; font-weight: 600; color: #202223; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
 							<svg class="clicksync-title-icon" viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg> <?php esc_html_e( 'Task Priority Rules', 'clicksync-wordpress' ); ?>
 						</div>
-						<p style="font-size: 12px; color: #6d7175; margin-bottom: 12px; font-style: italic;">
-							<?php esc_html_e( 'No priority routing rules configured yet. Order tasks will default to no priority.', 'clicksync-wordpress' ); ?>
-						</p>
+						
+						<div id="orders-priority-rules-list" style="margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px;"></div>
 
-						<div style="display: grid; grid-template-columns: 1.2fr 1fr 1fr 1.2fr auto; gap: 10px; align-items: end;">
+						<div style="display: grid; grid-template-columns: 1.2fr 1fr 1fr 1.2fr auto; gap: 10px; align-items: end; border-top: 1px solid #e2e8f0; padding-top: 12px;">
 							<div>
 								<label style="display: block; font-size: 11px; font-weight: 500; color: #6d7175; margin-bottom: 4px;"><?php esc_html_e( 'If WooCommerce Field:', 'clicksync-wordpress' ); ?></label>
-								<select class="clicksync-select" style="margin: 0; height: 36px;">
-									<option value="total_price">Total Price</option>
-									<option value="id">WooCommerce Order ID</option>
+								<select class="clicksync-priority-field clicksync-select" style="margin: 0; height: 36px;">
+									<option value="total">Total Price (total)</option>
+									<option value="id">WooCommerce Order ID (id)</option>
 								</select>
 							</div>
 							<div>
 								<label style="display: block; font-size: 11px; font-weight: 500; color: #6d7175; margin-bottom: 4px;"><?php esc_html_e( 'Operator:', 'clicksync-wordpress' ); ?></label>
-								<select class="clicksync-select" style="margin: 0; height: 36px;">
+								<select class="clicksync-priority-operator clicksync-select" style="margin: 0; height: 36px;">
 									<option value="greater_than_or_equal">is greater than or equal to</option>
 									<option value="equals">is equal to</option>
 								</select>
 							</div>
 							<div>
 								<label style="display: block; font-size: 11px; font-weight: 500; color: #6d7175; margin-bottom: 4px;"><?php esc_html_e( 'Compare Value:', 'clicksync-wordpress' ); ?></label>
-								<input type="text" class="clicksync-select" style="margin: 0; height: 36px;" placeholder="e.g. 500" />
+								<input type="text" class="clicksync-priority-value clicksync-select" style="margin: 0; height: 36px;" placeholder="e.g. 500" />
 							</div>
 							<div>
 								<label style="display: block; font-size: 11px; font-weight: 500; color: #6d7175; margin-bottom: 4px;"><?php esc_html_e( 'Then Set Priority:', 'clicksync-wordpress' ); ?></label>
-								<select class="clicksync-select" style="margin: 0; height: 36px;">
+								<select class="clicksync-priority-level clicksync-select" style="margin: 0; height: 36px;">
 									<option value="1">Urgent</option>
 									<option value="2">High</option>
 									<option value="3">Normal</option>
 									<option value="4">Low</option>
 								</select>
 							</div>
-							<button type="button" class="clicksync-btn-secondary" style="height: 36px; white-space: nowrap;"><?php esc_html_e( 'Add Rule', 'clicksync-wordpress' ); ?></button>
+							<button type="button" class="clicksync-add-priority-rule-btn clicksync-btn-secondary" style="height: 36px; white-space: nowrap;" data-event="orders/create"><?php esc_html_e( 'Add Rule', 'clicksync-wordpress' ); ?></button>
 						</div>
 					</div>
 
 					<!-- 3. Task Tagging Rules Sub-section -->
-					<div id="orders-tagging-block" style="margin-bottom: 16px; padding: 16px; background: #f9fafb; border-radius: 6px; border: 1px solid #edeeef;">
+					<div id="orders-tagging-block" style="display: none; margin-bottom: 16px; padding: 16px; background: #f9fafb; border-radius: 6px; border: 1px solid #edeeef;">
 						<div style="font-size: 14px; font-weight: 600; color: #202223; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
 							<svg class="clicksync-title-icon" viewBox="0 0 24 24"><path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.55-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z"/></svg> <?php esc_html_e( 'Task Tagging Rules', 'clicksync-wordpress' ); ?>
 						</div>
-						<p style="font-size: 12px; color: #6d7175; margin-bottom: 12px; font-style: italic;">
-							<?php esc_html_e( 'No tagging rules configured yet. Add rules below to automatically assign tags in ClickUp.', 'clicksync-wordpress' ); ?>
-						</p>
+						
+						<div id="orders-tagging-rules-list" style="margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px;"></div>
 
-						<div style="display: grid; grid-template-columns: 1.2fr 1fr 1fr 1.2fr auto; gap: 10px; align-items: end;">
+						<div style="display: grid; grid-template-columns: 1.2fr 1fr 1fr 1.2fr auto; gap: 10px; align-items: end; border-top: 1px solid #e2e8f0; padding-top: 12px;">
 							<div>
 								<label style="display: block; font-size: 11px; font-weight: 500; color: #6d7175; margin-bottom: 4px;"><?php esc_html_e( 'If WooCommerce Field:', 'clicksync-wordpress' ); ?></label>
-								<select class="clicksync-select" style="margin: 0; height: 36px;">
-									<option value="id">WooCommerce Order ID</option>
-									<option value="total_price">Total Price</option>
+								<select class="clicksync-tag-field clicksync-select" style="margin: 0; height: 36px;">
+									<option value="id">WooCommerce Order ID (id)</option>
+									<option value="total">Total Price (total)</option>
+									<option value="billing.country">Billing Country (billing.country)</option>
+									<option value="shipping_method">Shipping Method (shipping_method)</option>
 								</select>
 							</div>
 							<div>
 								<label style="display: block; font-size: 11px; font-weight: 500; color: #6d7175; margin-bottom: 4px;"><?php esc_html_e( 'Operator:', 'clicksync-wordpress' ); ?></label>
-								<select class="clicksync-select" style="margin: 0; height: 36px;">
+								<select class="clicksync-tag-operator clicksync-select" style="margin: 0; height: 36px;">
 									<option value="equals">is equal to</option>
+									<option value="greater_than_or_equal">is greater than or equal to</option>
+									<option value="contains">contains</option>
 								</select>
 							</div>
 							<div>
 								<label style="display: block; font-size: 11px; font-weight: 500; color: #6d7175; margin-bottom: 4px;"><?php esc_html_e( 'Compare Value:', 'clicksync-wordpress' ); ?></label>
-								<input type="text" class="clicksync-select" style="margin: 0; height: 36px;" placeholder="e.g. Express" />
+								<input type="text" class="clicksync-tag-value clicksync-select" style="margin: 0; height: 36px;" placeholder="e.g. Express" />
 							</div>
 							<div>
 								<label style="display: block; font-size: 11px; font-weight: 500; color: #6d7175; margin-bottom: 4px;"><?php esc_html_e( 'Then Apply Tag:', 'clicksync-wordpress' ); ?></label>
-								<input type="text" class="clicksync-select" style="margin: 0; height: 36px;" placeholder="e.g. Express-Order" />
+								<input type="text" class="clicksync-tag-tag clicksync-select" style="margin: 0; height: 36px;" placeholder="e.g. Express-Order" />
 							</div>
-							<button type="button" class="clicksync-btn-secondary" style="height: 36px; white-space: nowrap;"><?php esc_html_e( 'Add Rule', 'clicksync-wordpress' ); ?></button>
+							<button type="button" class="clicksync-add-tag-rule-btn clicksync-btn-secondary" style="height: 36px; white-space: nowrap;" data-event="orders/create"><?php esc_html_e( 'Add Rule', 'clicksync-wordpress' ); ?></button>
 						</div>
 					</div>
 
 					<!-- 4. Custom Field Mappings Sub-section -->
-					<div id="orders-customfields-block" style="margin-bottom: 16px; padding: 16px; background: #f9fafb; border-radius: 6px; border: 1px solid #edeeef;">
+					<div id="orders-customfields-block" style="display: none; margin-bottom: 16px; padding: 16px; background: #f9fafb; border-radius: 6px; border: 1px solid #edeeef;">
 						<div style="font-size: 14px; font-weight: 600; color: #202223; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
 							<svg class="clicksync-title-icon" viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg> <?php esc_html_e( 'Custom Field Mappings', 'clicksync-wordpress' ); ?>
 						</div>
-						<p style="font-size: 12px; color: #6d7175; margin-bottom: 12px; font-style: italic;">
-							<?php esc_html_e( 'No custom field mappings defined yet for this rule.', 'clicksync-wordpress' ); ?>
-						</p>
+						
+						<div id="orders-customfields-rules-list" style="margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px;"></div>
 
-						<div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: center;">
-							<select class="clicksync-select" style="margin: 0; height: 36px;">
-								<option value="id">WooCommerce Order ID</option>
-								<option value="total_price">Total Price (total_price)</option>
-								<option value="customer.email">Customer Email (customer.email)</option>
+						<div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: center; border-top: 1px solid #e2e8f0; padding-top: 12px;">
+							<select class="clicksync-field-field clicksync-select" style="margin: 0; height: 36px;">
+								<option value="id">WooCommerce Order ID (id)</option>
+								<option value="total">Total Price (total)</option>
+								<option value="billing.email">Billing Email (billing.email)</option>
+								<option value="billing.phone">Billing Phone (billing.phone)</option>
+								<option value="billing.city">Billing City (billing.city)</option>
+								<option value="billing.country">Billing Country (billing.country)</option>
+								<option value="customer_note">Customer Note (customer_note)</option>
 							</select>
 							<select class="clicksync-select clicksync-field-target" style="margin: 0; height: 36px;">
 								<option value="">Inv_Email (email)</option>
 							</select>
-							<button type="button" class="clicksync-btn-secondary" style="height: 36px; white-space: nowrap;"><?php esc_html_e( 'Add Mapping', 'clicksync-wordpress' ); ?></button>
+							<button type="button" class="clicksync-add-field-mapping-btn clicksync-btn-secondary" style="height: 36px; white-space: nowrap;" data-event="orders/create"><?php esc_html_e( 'Add Mapping', 'clicksync-wordpress' ); ?></button>
 						</div>
 					</div>
 
@@ -384,23 +388,19 @@ class SettingsPage {
 							<div style="font-size: 14px; font-weight: 600; color: #202223; display: flex; align-items: center; gap: 6px;">
 								<svg class="clicksync-title-icon" viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg> <?php esc_html_e( 'ClickUp Status to WooCommerce Actions', 'clicksync-wordpress' ); ?>
 							</div>
-							<label style="font-size: 12px; color: #6d7175; display: flex; align-items: center; gap: 4px;">
-								<input type="checkbox" /> <?php esc_html_e( 'Show Advanced WooCommerce Actions', 'clicksync-wordpress' ); ?>
-							</label>
 						</div>
-						<p style="font-size: 12px; color: #6d7175; margin-bottom: 12px; font-style: italic;">
-							<?php esc_html_e( 'No status action mappings configured.', 'clicksync-wordpress' ); ?>
-						</p>
+						
+						<div id="orders-status-rules-list" style="margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px;"></div>
 
-						<div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: center;">
+						<div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: center; border-top: 1px solid #e2e8f0; padding-top: 12px;">
 							<select class="clicksync-select clicksync-statuses-dropdown" style="margin: 0; height: 36px;">
 								<option value=""><?php esc_html_e( 'Loading statuses...', 'clicksync-wordpress' ); ?></option>
 							</select>
-							<select class="clicksync-select" style="margin: 0; height: 36px;">
+							<select class="clicksync-status-action clicksync-select" style="margin: 0; height: 36px;">
 								<option value="fulfill">Fulfill WooCommerce Order (Complete Order)</option>
 								<option value="cancel">Cancel WooCommerce Order</option>
 							</select>
-							<button type="button" class="clicksync-btn-secondary" style="height: 36px; white-space: nowrap;"><?php esc_html_e( 'Add Action', 'clicksync-wordpress' ); ?></button>
+							<button type="button" class="clicksync-add-status-mapping-btn clicksync-btn-secondary" style="height: 36px; white-space: nowrap;" data-event="orders/create"><?php esc_html_e( 'Add Action', 'clicksync-wordpress' ); ?></button>
 						</div>
 					</div>
 
@@ -410,13 +410,13 @@ class SettingsPage {
 				<!-- ========================================== -->
 				<!-- CARD 3: WooCommerce Customer Created -->
 				<!-- ========================================== -->
-				<div class="clicksync-card" style="background: #ffffff; border: 1px solid #e1e3e5; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+				<div class="clicksync-card" id="clicksync-customers-rule-card" style="background: #ffffff; border: 1px solid #e1e3e5; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
 					<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
 						<span style="font-size: 16px; font-weight: 600; color: #202223; display: flex; align-items: center; gap: 8px;">
 							<svg class="clicksync-title-icon" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg> <?php esc_html_e( 'WooCommerce Customer Created', 'clicksync-wordpress' ); ?>
 						</span>
 						<label class="clicksync-switch">
-							<input type="checkbox" checked>
+							<input type="checkbox" id="customers-toggle" class="clicksync-rule-toggle" checked>
 							<span class="clicksync-slider"></span>
 						</label>
 					</div>
@@ -432,58 +432,82 @@ class SettingsPage {
 
 					<div style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; background: #f4f6f8; padding: 8px 12px; border-radius: 6px; border: 1px solid #e1e3e5; align-items: center;">
 						<span style="font-size: 12px; font-weight: 600; color: #6d7175; margin-right: 4px;"><?php esc_html_e( 'Configure Options:', 'clicksync-wordpress' ); ?></span>
-						<button type="button" class="clicksync-option-pill active"><?php esc_html_e( 'Tagging Rules', 'clicksync-wordpress' ); ?></button>
-						<button type="button" class="clicksync-option-pill active"><?php esc_html_e( 'Custom Fields', 'clicksync-wordpress' ); ?></button>
+						<button type="button" class="clicksync-option-pill" data-target="customers-tagging-block" data-field="tagRulesEnabled"><?php esc_html_e( 'Tagging Rules', 'clicksync-wordpress' ); ?></button>
+						<button type="button" class="clicksync-option-pill" data-target="customers-customfields-block" data-field="fieldMappingsEnabled"><?php esc_html_e( 'Custom Fields', 'clicksync-wordpress' ); ?></button>
 					</div>
 
 					<!-- Task Tagging Rules -->
-					<div style="margin-bottom: 16px; padding: 16px; background: #f9fafb; border-radius: 6px; border: 1px solid #edeeef;">
+					<div id="customers-tagging-block" style="display: none; margin-bottom: 16px; padding: 16px; background: #f9fafb; border-radius: 6px; border: 1px solid #edeeef;">
 						<div style="font-size: 14px; font-weight: 600; color: #202223; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
 							<svg class="clicksync-title-icon" viewBox="0 0 24 24"><path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.55-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z"/></svg> <?php esc_html_e( 'Task Tagging Rules', 'clicksync-wordpress' ); ?>
 						</div>
-						<p style="font-size: 12px; color: #6d7175; margin-bottom: 12px; font-style: italic;">
-							<?php esc_html_e( 'No tagging rules configured yet. Add rules below to automatically assign tags in ClickUp.', 'clicksync-wordpress' ); ?>
-						</p>
+						
+						<div id="customers-tagging-rules-list" style="margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px;"></div>
 
-						<div style="display: grid; grid-template-columns: 1.2fr 1fr 1fr 1.2fr auto; gap: 10px; align-items: end;">
+						<div style="display: grid; grid-template-columns: 1.2fr 1fr 1fr 1.2fr auto; gap: 10px; align-items: end; border-top: 1px solid #e2e8f0; padding-top: 12px;">
 							<div>
 								<label style="display: block; font-size: 11px; font-weight: 500; color: #6d7175; margin-bottom: 4px;"><?php esc_html_e( 'If WooCommerce Field:', 'clicksync-wordpress' ); ?></label>
-								<select class="clicksync-select" style="margin: 0; height: 36px;"><option>Customer ID</option></select>
+								<select class="clicksync-tag-field clicksync-select" style="margin: 0; height: 36px;">
+									<option value="id">Customer ID (id)</option>
+									<option value="email">Customer Email (email)</option>
+									<option value="billing.country">Billing Country (billing.country)</option>
+								</select>
 							</div>
 							<div>
 								<label style="display: block; font-size: 11px; font-weight: 500; color: #6d7175; margin-bottom: 4px;"><?php esc_html_e( 'Operator:', 'clicksync-wordpress' ); ?></label>
-								<select class="clicksync-select" style="margin: 0; height: 36px;"><option>is equal to</option></select>
+								<select class="clicksync-tag-operator clicksync-select" style="margin: 0; height: 36px;">
+									<option value="equals">is equal to</option>
+								</select>
 							</div>
 							<div>
 								<label style="display: block; font-size: 11px; font-weight: 500; color: #6d7175; margin-bottom: 4px;"><?php esc_html_e( 'Compare Value:', 'clicksync-wordpress' ); ?></label>
-								<input type="text" class="clicksync-select" style="margin: 0; height: 36px;" placeholder="e.g. Express" />
+								<input type="text" class="clicksync-tag-value clicksync-select" style="margin: 0; height: 36px;" placeholder="e.g. Express" />
 							</div>
 							<div>
 								<label style="display: block; font-size: 11px; font-weight: 500; color: #6d7175; margin-bottom: 4px;"><?php esc_html_e( 'Then Apply Tag:', 'clicksync-wordpress' ); ?></label>
-								<input type="text" class="clicksync-select" style="margin: 0; height: 36px;" placeholder="e.g. Express-Order" />
+								<input type="text" class="clicksync-tag-tag clicksync-select" style="margin: 0; height: 36px;" placeholder="e.g. Express-Order" />
 							</div>
-							<button type="button" class="clicksync-btn-secondary" style="height: 36px; white-space: nowrap;"><?php esc_html_e( 'Add Rule', 'clicksync-wordpress' ); ?></button>
+							<button type="button" class="clicksync-add-tag-rule-btn clicksync-btn-secondary" style="height: 36px; white-space: nowrap;" data-event="customers/create"><?php esc_html_e( 'Add Rule', 'clicksync-wordpress' ); ?></button>
 						</div>
 					</div>
 
 					<!-- Custom Field Mappings -->
-					<div style="padding: 16px; background: #f9fafb; border-radius: 6px; border: 1px solid #edeeef;">
+					<div id="customers-customfields-block" style="display: none; padding: 16px; background: #f9fafb; border-radius: 6px; border: 1px solid #edeeef;">
 						<div style="font-size: 14px; font-weight: 600; color: #202223; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
 							<svg class="clicksync-title-icon" viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg> <?php esc_html_e( 'Custom Field Mappings', 'clicksync-wordpress' ); ?>
 						</div>
-						<p style="font-size: 12px; color: #6d7175; margin-bottom: 12px; font-style: italic;">
-							<?php esc_html_e( 'No custom field mappings defined yet for this rule.', 'clicksync-wordpress' ); ?>
-						</p>
+						
+						<div id="customers-customfields-rules-list" style="margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px;"></div>
 
-						<div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: center;">
-							<select class="clicksync-select" style="margin: 0; height: 36px;"><option>Customer ID</option></select>
-							<select class="clicksync-select clicksync-field-target" style="margin: 0; height: 36px;"><option>Customer Email (email)</option></select>
-							<button type="button" class="clicksync-btn-secondary" style="height: 36px; white-space: nowrap;"><?php esc_html_e( 'Add Mapping', 'clicksync-wordpress' ); ?></button>
+						<div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: center; border-top: 1px solid #e2e8f0; padding-top: 12px;">
+							<select class="clicksync-field-field clicksync-select" style="margin: 0; height: 36px;">
+								<option value="id">Customer ID (id)</option>
+								<option value="email">Customer Email (email)</option>
+								<option value="first_name">First Name (first_name)</option>
+								<option value="last_name">Last Name (last_name)</option>
+								<option value="billing.phone">Billing Phone (billing.phone)</option>
+								<option value="billing.city">Billing City (billing.city)</option>
+							</select>
+							<select class="clicksync-select clicksync-field-target" style="margin: 0; height: 36px;">
+								<option value="">Customer Email (email)</option>
+							</select>
+							<button type="button" class="clicksync-add-field-mapping-btn clicksync-btn-secondary" style="height: 36px; white-space: nowrap;" data-event="customers/create"><?php esc_html_e( 'Add Mapping', 'clicksync-wordpress' ); ?></button>
 						</div>
 					</div>
 				</div>
 
-
+				<!-- Floating / Action Footer to Save Settings -->
+				<div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; margin-top: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+					<div>
+						<h4 style="margin: 0; font-size: 14px; font-weight: 700; color: #0f172a;"><?php esc_html_e( 'Save Integration Configurations', 'clicksync-wordpress' ); ?></h4>
+						<p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;"><?php esc_html_e( 'Commit all dropdown target list selections and active switch configuration options to the database.', 'clicksync-wordpress' ); ?></p>
+					</div>
+					<div>
+						<button type="button" id="clicksync-save-all-settings" class="clicksync-btn-primary" style="height: 40px; padding: 0 24px; font-weight: 700; background: #7c3aed; color: #ffffff; border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+							<svg style="width: 16px; height: 16px; fill: currentColor;" viewBox="0 0 24 24"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg> <?php esc_html_e( 'Save Settings', 'clicksync-wordpress' ); ?>
+						</button>
+					</div>
+				</div>
 
 			</div> <!-- end main container -->
 

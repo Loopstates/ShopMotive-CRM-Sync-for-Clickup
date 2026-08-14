@@ -7,38 +7,559 @@
         var host = typeof clicksyncData !== 'undefined' ? clicksyncData.host : window.location.hostname;
         var cachedLogs = [];
 
-        // Option Pills Toggle
-        $('.clicksync-option-pill').on('click', function (e) {
+        // Global variables to store ClickUp members, fields, and statuses
+        var workspacesData = [];
+        var customFieldsData = [];
+        var statusesData = [];
+
+        // Dynamic Rule Lists Rendering Helper
+        function getFriendlyFieldName(key) {
+            var map = {
+                'id': 'WooCommerce ID',
+                'total': 'Total Price',
+                'billing.email': 'Billing Email',
+                'email': 'Customer Email',
+                'billing.phone': 'Billing Phone',
+                'billing.city': 'Billing City',
+                'billing.country': 'Billing Country',
+                'shipping_method': 'Shipping Method',
+                'customer_note': 'Customer Note',
+                'first_name': 'First Name',
+                'last_name': 'Last Name'
+            };
+            return map[key] || key;
+        }
+
+        function getFriendlyOperator(op) {
+            var map = {
+                'equals': 'is equal to',
+                'not_equals': 'is not equal to',
+                'contains': 'contains',
+                'not_contains': 'does not contain',
+                'starts_with': 'starts with',
+                'greater_than_or_equal': 'is greater than or equal to',
+                'less_than_or_equal': 'is less than or equal to',
+                'greater_than': 'is greater than',
+                'less_than': 'is less than'
+            };
+            return map[op] || op;
+        }
+
+        function getPriorityLabel(level) {
+            var map = {
+                1: 'Urgent',
+                2: 'High',
+                3: 'Normal',
+                4: 'Low'
+            };
+            return map[level] || 'Priority ' + level;
+        }
+
+        function getMemberName(userId, selectedTeamId) {
+            var activeTeam = $.grep(workspacesData, function (t) { return t.id === selectedTeamId; })[0];
+            if (activeTeam && activeTeam.members) {
+                var found = $.grep(activeTeam.members, function (m) { return m.user && String(m.user.id) === String(userId); })[0];
+                if (found && found.user) {
+                    return found.user.username || found.user.email;
+                }
+            }
+            return 'User ' + userId;
+        }
+
+        function getCustomFieldName(fieldId) {
+            var found = $.grep(customFieldsData, function (f) { return String(f.id) === String(fieldId); })[0];
+            return found ? found.name : fieldId;
+        }
+
+        function renderRuleRows(rule, targetTeamId) {
+            var eventSuffix = rule.shopifyEvent === 'orders/create' ? 'orders' : 'customers';
+
+            // 1. Assignees
+            var assigneeHtml = '';
+            if (rule.assigneeRules && rule.assigneeRules.length > 0) {
+                $.each(rule.assigneeRules, function (i, r) {
+                    assigneeHtml += '<div class="clicksync-rule-row" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 13px; margin-bottom: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">' +
+                        '<span>If <strong>' + getFriendlyFieldName(r.shopifyPropertyPath) + '</strong> ' + getFriendlyOperator(r.operator) + ' <strong>"' + r.value + '"</strong> then assign to <strong>' + getMemberName(r.clickupAssigneeId, targetTeamId) + '</strong></span>' +
+                        '<button type="button" class="clicksync-delete-rule-btn" data-rule-id="' + r.id + '" data-action="delete_assignee_rule" style="background: none; border: none; color: #ef4444; cursor: pointer; display: flex; align-items: center; padding: 4px; transition: color 0.15s ease;">' +
+                        '<svg style="width: 15px; height: 15px; fill: currentColor;" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>' +
+                        '</button>' +
+                        '</div>';
+                });
+            } else {
+                assigneeHtml = '<p style="font-size: 12px; color: #6d7175; margin-bottom: 12px; font-style: italic;">No assignee routing rules configured yet. Order tasks will remain unassigned by default.</p>';
+            }
+            $('#' + eventSuffix + '-assignee-rules-list').html(assigneeHtml);
+
+            // 2. Priorities
+            var priorityHtml = '';
+            if (rule.priorityRules && rule.priorityRules.length > 0) {
+                $.each(rule.priorityRules, function (i, r) {
+                    priorityHtml += '<div class="clicksync-rule-row" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 13px; margin-bottom: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">' +
+                        '<span>If <strong>' + getFriendlyFieldName(r.shopifyPropertyPath) + '</strong> ' + getFriendlyOperator(r.operator) + ' <strong>"' + r.value + '"</strong> then set priority to <strong>' + getPriorityLabel(r.priorityLevel) + '</strong></span>' +
+                        '<button type="button" class="clicksync-delete-rule-btn" data-rule-id="' + r.id + '" data-action="delete_priority_rule" style="background: none; border: none; color: #ef4444; cursor: pointer; display: flex; align-items: center; padding: 4px; transition: color 0.15s ease;">' +
+                        '<svg style="width: 15px; height: 15px; fill: currentColor;" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>' +
+                        '</button>' +
+                        '</div>';
+                });
+            } else {
+                priorityHtml = '<p style="font-size: 12px; color: #6d7175; margin-bottom: 12px; font-style: italic;">No priority routing rules configured yet. Order tasks will default to no priority.</p>';
+            }
+            $('#' + eventSuffix + '-priority-rules-list').html(priorityHtml);
+
+            // 3. Tagging
+            var taggingHtml = '';
+            if (rule.tagRules && rule.tagRules.length > 0) {
+                $.each(rule.tagRules, function (i, r) {
+                    taggingHtml += '<div class="clicksync-rule-row" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 13px; margin-bottom: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">' +
+                        '<span>If <strong>' + getFriendlyFieldName(r.shopifyPropertyPath) + '</strong> ' + getFriendlyOperator(r.operator) + ' <strong>"' + r.value + '"</strong> then apply tag <span class="clicksync-badge" style="background: #efe6fc; color: #6d28d9; border: 1px solid #d8b4fe; font-size: 11px; padding: 2px 8px; border-radius: 12px;">' + r.clickupTag + '</span></span>' +
+                        '<button type="button" class="clicksync-delete-rule-btn" data-rule-id="' + r.id + '" data-action="delete_tag_rule" style="background: none; border: none; color: #ef4444; cursor: pointer; display: flex; align-items: center; padding: 4px; transition: color 0.15s ease;">' +
+                        '<svg style="width: 15px; height: 15px; fill: currentColor;" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>' +
+                        '</button>' +
+                        '</div>';
+                });
+            } else {
+                taggingHtml = '<p style="font-size: 12px; color: #6d7175; margin-bottom: 12px; font-style: italic;">No tagging rules configured yet. Add rules below to automatically assign tags in ClickUp.</p>';
+            }
+            $('#' + eventSuffix + '-tagging-rules-list').html(taggingHtml);
+
+            // 4. Custom fields
+            var cfHtml = '';
+            if (rule.fieldMappings && rule.fieldMappings.length > 0) {
+                $.each(rule.fieldMappings, function (i, r) {
+                    cfHtml += '<div class="clicksync-rule-row" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 13px; margin-bottom: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">' +
+                        '<span>Map WooCommerce <strong>' + getFriendlyFieldName(r.shopifyPropertyPath) + '</strong> to ClickUp custom field <strong>' + getCustomFieldName(r.clickupFieldId) + '</strong></span>' +
+                        '<button type="button" class="clicksync-delete-rule-btn" data-rule-id="' + r.id + '" data-action="delete_field_mapping" style="background: none; border: none; color: #ef4444; cursor: pointer; display: flex; align-items: center; padding: 4px; transition: color 0.15s ease;">' +
+                        '<svg style="width: 15px; height: 15px; fill: currentColor;" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>' +
+                        '</button>' +
+                        '</div>';
+                });
+            } else {
+                cfHtml = '<p style="font-size: 12px; color: #6d7175; margin-bottom: 12px; font-style: italic;">No custom field mappings defined yet for this rule.</p>';
+            }
+            $('#' + eventSuffix + '-customfields-rules-list').html(cfHtml);
+
+            // 5. Status actions (orders only)
+            if (rule.shopifyEvent === 'orders/create') {
+                var statusHtml = '';
+                if (rule.statusMappings && rule.statusMappings.length > 0) {
+                    $.each(rule.statusMappings, function (i, r) {
+                        var actionText = r.shopifyAction === 'fulfill' ? 'Fulfill WooCommerce Order (Complete Order)' : 'Cancel WooCommerce Order';
+                        statusHtml += '<div class="clicksync-rule-row" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 13px; margin-bottom: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">' +
+                            '<span>When ClickUp task status updates to <strong>' + String(r.clickupStatus).toUpperCase() + '</strong>, then execute action <strong>' + actionText + '</strong></span>' +
+                            '<button type="button" class="clicksync-delete-rule-btn" data-rule-id="' + r.id + '" data-action="delete_status_mapping" style="background: none; border: none; color: #ef4444; cursor: pointer; display: flex; align-items: center; padding: 4px; transition: color 0.15s ease;">' +
+                            '<svg style="width: 15px; height: 15px; fill: currentColor;" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>' +
+                            '</button>' +
+                            '</div>';
+                    });
+                } else {
+                    statusHtml = '<p style="font-size: 12px; color: #6d7175; margin-bottom: 12px; font-style: italic;">No status action mappings configured.</p>';
+                }
+                $('#orders-status-rules-list').html(statusHtml);
+            }
+        }
+
+        // Option Pills Toggle Click Handlers
+        $(document).on('click', '.clicksync-option-pill', function (e) {
             e.preventDefault();
             var targetId = $(this).data('target');
-            $(this).toggleClass('active');
-            $('#' + targetId).slideToggle(200);
+            var isCurrentlyActive = $(this).hasClass('active');
+
+            if (isCurrentlyActive) {
+                $(this).removeClass('active');
+                $('#' + targetId).slideUp(200);
+            } else {
+                $(this).addClass('active');
+                $('#' + targetId).slideDown(200);
+            }
+
+            // Immediately save options status
+            var cardId = $(this).closest('.clicksync-card').attr('id');
+            var eventType = cardId === 'clicksync-orders-rule-card' ? 'orders/create' : 'customers/create';
+            saveOptionTogglesForEvent(eventType);
         });
 
-        // Add Field Mapping Row
-        $('#add-orders-field-mapping').on('click', function (e) {
+        function saveOptionTogglesForEvent(eventType) {
+            var cardSelector = eventType === 'orders/create' ? '#clicksync-orders-rule-card' : '#clicksync-customers-rule-card';
+            var card = $(cardSelector);
+            var ruleId = card.data('rule-id');
+            if (!ruleId) return;
+
+            var splitRouting = $('#orders-split-routing').is(':checked');
+
+            // Map button states to variables
+            var assigneeEnabled = card.find('.clicksync-option-pill[data-target*="assignee"]').hasClass('active');
+            var priorityEnabled = card.find('.clicksync-option-pill[data-target*="priority"]').hasClass('active');
+            var taggingEnabled = card.find('.clicksync-option-pill[data-target*="tagging"]').hasClass('active');
+            var fieldMappingsEnabled = card.find('.clicksync-option-pill[data-target*="customfields"]').hasClass('active');
+
+            $.ajax({
+                url: cloudUrl + '/api/save-config',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    shop: host,
+                    actionType: 'save_option_toggles',
+                    payload: {
+                        ruleId: ruleId,
+                        splitRouting: splitRouting,
+                        assigneeRulesEnabled: assigneeEnabled,
+                        priorityRulesEnabled: priorityEnabled,
+                        tagRulesEnabled: taggingEnabled,
+                        fieldMappingsEnabled: fieldMappingsEnabled
+                    }
+                }),
+                success: function (res) {
+                    console.log('Saved options toggles status successfully.');
+                },
+                error: function (xhr) {
+                    console.error('Failed to auto-save toggle state: ' + xhr.responseText);
+                }
+            });
+        }
+
+        // Save target lists and active rule toggles (Save Settings button)
+        $(document).on('click', '#clicksync-save-all-settings', function (e) {
             e.preventDefault();
-            var rowHtml = '<tr>' +
-                '<td style="padding: 6px 8px;"><select class="clicksync-select" style="margin: 0;">' +
-                '<option value="order_number">Order Number (order_number)</option>' +
-                '<option value="total_price">Total Price (total_price)</option>' +
-                '<option value="customer.email">Customer Email (customer.email)</option>' +
-                '<option value="customer.phone">Customer Phone (customer.phone)</option>' +
-                '<option value="billing_address.city">Billing City (billing_address.city)</option>' +
-                '<option value="billing_address.country">Billing Country (billing_address.country)</option>' +
-                '<option value="note">Customer Note (note)</option>' +
-                '</select></td>' +
-                '<td style="padding: 6px 8px;"><select class="clicksync-select clicksync-field-target" style="margin: 0;"><option>Select ClickUp Field</option></select></td>' +
-                '<td style="padding: 6px 8px; text-align: right;"><button type="button" class="button button-small clicksync-remove-row" style="color: #dc2626;">Remove</button></td>' +
-                '</tr>';
-            $('#orders-field-mappings-tbody').append(rowHtml);
+            var btn = $(this);
+            var originalHtml = btn.html();
+            btn.html('<svg style="width: 16px; height: 16px; fill: currentColor; animation: spin 1s linear infinite;" viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm-6 8c0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v-3l4 4-4-4v3c-3.31 0-6-2.69-6-6z"/></svg> Saving...').prop('disabled', true);
+
+            var ordersListId = $('#clicksync-list-orders').val();
+            var customersListId = $('#clicksync-list-customers').val();
+
+            // First save target list mapping
+            $.ajax({
+                url: cloudUrl + '/api/save-config',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    shop: host,
+                    actionType: 'save_list_mapping',
+                    payload: {
+                        ordersListId: ordersListId,
+                        customersListId: customersListId,
+                        checkoutsListId: ordersListId,
+                        draftOrdersListId: ordersListId
+                    }
+                }),
+                success: function (res) {
+                    // Update active statuses for rules as well
+                    var ordersRuleId = $('#clicksync-orders-rule-card').data('rule-id');
+                    var customersRuleId = $('#clicksync-customers-rule-card').data('rule-id');
+
+                    var ordersActive = $('#orders-toggle').is(':checked');
+                    var customersActive = $('#customers-toggle').is(':checked');
+
+                    // Call toggle rule for orders
+                    $.ajax({
+                        url: cloudUrl + '/api/save-config',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            shop: host,
+                            actionType: 'toggle_rule',
+                            payload: { ruleId: ordersRuleId, active: ordersActive }
+                        }),
+                        success: function () {
+                            // Call toggle rule for customers
+                            $.ajax({
+                                url: cloudUrl + '/api/save-config',
+                                type: 'POST',
+                                contentType: 'application/json',
+                                data: JSON.stringify({
+                                    shop: host,
+                                    actionType: 'toggle_rule',
+                                    payload: { ruleId: customersRuleId, active: customersActive }
+                                }),
+                                success: function () {
+                                    // Save toggles (pills) for both rules
+                                    saveOptionTogglesForEvent('orders/create');
+                                    saveOptionTogglesForEvent('customers/create');
+
+                                    alert('Configurations saved successfully.');
+                                    btn.html(originalHtml).prop('disabled', false);
+                                    fetchCloudConfig();
+                                },
+                                error: function (err) {
+                                    alert('Failed to save customer rule active status.');
+                                    btn.html(originalHtml).prop('disabled', false);
+                                }
+                            });
+                        },
+                        error: function (err) {
+                            alert('Failed to save order rule active status.');
+                            btn.html(originalHtml).prop('disabled', false);
+                        }
+                    });
+                },
+                error: function (xhr) {
+                    alert('Failed to configure target lists: ' + xhr.responseText);
+                    btn.html(originalHtml).prop('disabled', false);
+                }
+            });
         });
 
-        $(document).on('click', '.clicksync-remove-row', function () {
-            $(this).closest('tr').remove();
+        // Add assignee rule
+        $(document).on('click', '.clicksync-add-assignee-rule-btn', function (e) {
+            e.preventDefault();
+            var btn = $(this);
+            var eventType = btn.data('event');
+            var container = btn.closest('.clicksync-card');
+
+            var field = container.find('.clicksync-assignee-field').val();
+            var operator = container.find('.clicksync-assignee-operator').val();
+            var value = container.find('.clicksync-assignee-value').val();
+            var assignee = container.find('.clicksync-assignees-dropdown').val();
+
+            if (!value) {
+                alert('Please input a compare value.');
+                return;
+            }
+            if (!assignee) {
+                alert('Please select an assignee.');
+                return;
+            }
+
+            btn.text('Adding...').prop('disabled', true);
+
+            $.ajax({
+                url: cloudUrl + '/api/save-config',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    shop: host,
+                    actionType: 'add_assignee_rule',
+                    payload: {
+                        event: eventType,
+                        shopifyPropertyPath: field,
+                        operator: operator,
+                        value: value,
+                        clickupAssigneeId: assignee
+                    }
+                }),
+                success: function (res) {
+                    container.find('.clicksync-assignee-value').val('');
+                    btn.text('Add Rule').prop('disabled', false);
+                    fetchCloudConfig();
+                },
+                error: function (xhr) {
+                    alert('Failed to add rule: ' + xhr.responseText);
+                    btn.text('Add Rule').prop('disabled', false);
+                }
+            });
         });
 
-        // Load Config & Logs
+        // Add priority rule
+        $(document).on('click', '.clicksync-add-priority-rule-btn', function (e) {
+            e.preventDefault();
+            var btn = $(this);
+            var eventType = btn.data('event');
+            var container = btn.closest('.clicksync-card');
+
+            var field = container.find('.clicksync-priority-field').val();
+            var operator = container.find('.clicksync-priority-operator').val();
+            var value = container.find('.clicksync-priority-value').val();
+            var priority = container.find('.clicksync-priority-level').val();
+
+            if (!value) {
+                alert('Please input a compare value.');
+                return;
+            }
+
+            btn.text('Adding...').prop('disabled', true);
+
+            $.ajax({
+                url: cloudUrl + '/api/save-config',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    shop: host,
+                    actionType: 'add_priority_rule',
+                    payload: {
+                        event: eventType,
+                        shopifyPropertyPath: field,
+                        operator: operator,
+                        value: value,
+                        priorityLevel: priority
+                    }
+                }),
+                success: function (res) {
+                    container.find('.clicksync-priority-value').val('');
+                    btn.text('Add Rule').prop('disabled', false);
+                    fetchCloudConfig();
+                },
+                error: function (xhr) {
+                    alert('Failed to add rule: ' + xhr.responseText);
+                    btn.text('Add Rule').prop('disabled', false);
+                }
+            });
+        });
+
+        // Add tag rule
+        $(document).on('click', '.clicksync-add-tag-rule-btn', function (e) {
+            e.preventDefault();
+            var btn = $(this);
+            var eventType = btn.data('event');
+            var container = btn.closest('.clicksync-card');
+
+            var field = container.find('.clicksync-tag-field').val();
+            var operator = container.find('.clicksync-tag-operator').val();
+            var value = container.find('.clicksync-tag-value').val();
+            var tag = container.find('.clicksync-tag-tag').val();
+
+            if (!value) {
+                alert('Please input a compare value.');
+                return;
+            }
+            if (!tag) {
+                alert('Please specify the tag to apply.');
+                return;
+            }
+
+            btn.text('Adding...').prop('disabled', true);
+
+            $.ajax({
+                url: cloudUrl + '/api/save-config',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    shop: host,
+                    actionType: 'add_tag_rule',
+                    payload: {
+                        event: eventType,
+                        shopifyPropertyPath: field,
+                        operator: operator,
+                        value: value,
+                        clickupTag: tag
+                    }
+                }),
+                success: function (res) {
+                    container.find('.clicksync-tag-value').val('');
+                    container.find('.clicksync-tag-tag').val('');
+                    btn.text('Add Rule').prop('disabled', false);
+                    fetchCloudConfig();
+                },
+                error: function (xhr) {
+                    alert('Failed to add rule: ' + xhr.responseText);
+                    btn.text('Add Rule').prop('disabled', false);
+                }
+            });
+        });
+
+        // Add custom field mapping
+        $(document).on('click', '.clicksync-add-field-mapping-btn', function (e) {
+            e.preventDefault();
+            var btn = $(this);
+            var eventType = btn.data('event');
+            var container = btn.closest('.clicksync-card');
+
+            var field = container.find('.clicksync-field-field').val();
+            var target = container.find('.clicksync-field-target').val();
+
+            if (!target) {
+                alert('Please select a target ClickUp custom field.');
+                return;
+            }
+
+            btn.text('Mapping...').prop('disabled', true);
+
+            $.ajax({
+                url: cloudUrl + '/api/save-config',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    shop: host,
+                    actionType: 'add_field_mapping',
+                    payload: {
+                        event: eventType,
+                        shopifyPropertyPath: field,
+                        clickupFieldId: target
+                    }
+                }),
+                success: function (res) {
+                    btn.text('Add Mapping').prop('disabled', false);
+                    fetchCloudConfig();
+                },
+                error: function (xhr) {
+                    alert('Failed to add mapping: ' + (xhr.responseJSON?.error || xhr.responseText));
+                    btn.text('Add Mapping').prop('disabled', false);
+                }
+            });
+        });
+
+        // Add status mapping action
+        $(document).on('click', '.clicksync-add-status-mapping-btn', function (e) {
+            e.preventDefault();
+            var btn = $(this);
+            var eventType = btn.data('event');
+            var container = btn.closest('.clicksync-card');
+
+            var status = container.find('.clicksync-statuses-dropdown').val();
+            var action = container.find('.clicksync-status-action').val();
+
+            if (!status) {
+                alert('Please select a ClickUp status.');
+                return;
+            }
+
+            btn.text('Adding...').prop('disabled', true);
+
+            $.ajax({
+                url: cloudUrl + '/api/save-config',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    shop: host,
+                    actionType: 'add_status_mapping',
+                    payload: {
+                        event: eventType,
+                        clickupStatus: status,
+                        shopifyAction: action
+                    }
+                }),
+                success: function (res) {
+                    btn.text('Add Action').prop('disabled', false);
+                    fetchCloudConfig();
+                },
+                error: function (xhr) {
+                    alert('Failed to add status mapping: ' + xhr.responseText);
+                    btn.text('Add Action').prop('disabled', false);
+                }
+            });
+        });
+
+        // Handle rule removal click
+        $(document).on('click', '.clicksync-delete-rule-btn', function (e) {
+            e.preventDefault();
+            var btn = $(this);
+            var ruleId = btn.data('rule-id');
+            var action = btn.data('action');
+
+            if (!confirm('Are you sure you want to delete this configuration rule?')) {
+                return;
+            }
+
+            btn.prop('disabled', true).css('opacity', 0.5);
+
+            $.ajax({
+                url: cloudUrl + '/api/save-config',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    shop: host,
+                    actionType: action,
+                    payload: { ruleId: ruleId }
+                }),
+                success: function (res) {
+                    fetchCloudConfig();
+                },
+                error: function (xhr) {
+                    alert('Failed to delete rule: ' + xhr.responseText);
+                    btn.prop('disabled', false).css('opacity', 1);
+                }
+            });
+        });
+
         function fetchCloudConfig() {
             var connectUrl = $('#clicksync-connection-status-block').data('connect-url') || '';
 
@@ -204,15 +725,20 @@
                         }
                     }
 
-                    // Populate Target Lists
+                    // Store workspaces, custom fields, and statuses globally for rule label resolution
+                    workspacesData = res.workspaces || [];
+                    customFieldsData = res.customFields || [];
+                    statusesData = res.statuses || [];
+
+                    // Populate Target Lists Dropdowns
                     if (res && res.lists && res.lists.length > 0) {
                         var optionsHtml = '<option value="">-- Select ClickUp List --</option>';
                         $.each(res.lists, function (i, l) {
                             optionsHtml += '<option value="' + l.id + '">' + l.name + '</option>';
                         });
-                        $('#clicksync-list-orders, #clicksync-list-drafts, #clicksync-list-customers, #clicksync-list-checkouts').html(optionsHtml);
+                        $('#clicksync-list-orders, #clicksync-list-customers').html(optionsHtml);
                     } else {
-                        $('#clicksync-list-orders, #clicksync-list-drafts, #clicksync-list-customers, #clicksync-list-checkouts').html('<option value="">No lists available</option>');
+                        $('#clicksync-list-orders, #clicksync-list-customers').html('<option value="">No lists available</option>');
                     }
 
                     // Populate Custom Fields Mapping options
@@ -253,6 +779,50 @@
                         $('.clicksync-assignees-dropdown').html(assigneesHtml);
                     } else {
                         $('.clicksync-assignees-dropdown').html('<option value="">No members available</option>');
+                    }
+
+                    // Map Saved syncRules configurations to the settings view
+                    if (account && account.syncRules && account.syncRules.length > 0) {
+                        $.each(account.syncRules, function (i, rule) {
+                            if (rule.shopifyEvent === 'orders/create') {
+                                var card = $('#clicksync-orders-rule-card');
+                                card.data('rule-id', rule.id);
+                                $('#clicksync-list-orders').val(rule.clickupListId);
+                                $('#orders-toggle').prop('checked', rule.active);
+                                $('#orders-split-routing').prop('checked', rule.splitRouting);
+
+                                // Map options pill active states and show/hide blocks
+                                card.find('.clicksync-option-pill[data-field="assigneeRulesEnabled"]').toggleClass('active', rule.assigneeRulesEnabled);
+                                $('#orders-assignee-block').toggle(rule.assigneeRulesEnabled);
+
+                                card.find('.clicksync-option-pill[data-field="priorityRulesEnabled"]').toggleClass('active', rule.priorityRulesEnabled);
+                                $('#orders-priority-block').toggle(rule.priorityRulesEnabled);
+
+                                card.find('.clicksync-option-pill[data-field="tagRulesEnabled"]').toggleClass('active', rule.tagRulesEnabled);
+                                $('#orders-tagging-block').toggle(rule.tagRulesEnabled);
+
+                                card.find('.clicksync-option-pill[data-field="fieldMappingsEnabled"]').toggleClass('active', rule.fieldMappingsEnabled);
+                                $('#orders-customfields-block').toggle(rule.fieldMappingsEnabled);
+
+                                // Render current configured rule list
+                                renderRuleRows(rule, account.teamId);
+                            }
+
+                            if (rule.shopifyEvent === 'customers/create') {
+                                var card = $('#clicksync-customers-rule-card');
+                                card.data('rule-id', rule.id);
+                                $('#clicksync-list-customers').val(rule.clickupListId);
+                                $('#customers-toggle').prop('checked', rule.active);
+
+                                card.find('.clicksync-option-pill[data-field="tagRulesEnabled"]').toggleClass('active', rule.tagRulesEnabled);
+                                $('#customers-tagging-block').toggle(rule.tagRulesEnabled);
+
+                                card.find('.clicksync-option-pill[data-field="fieldMappingsEnabled"]').toggleClass('active', rule.fieldMappingsEnabled);
+                                $('#customers-customfields-block').toggle(rule.fieldMappingsEnabled);
+
+                                renderRuleRows(rule, account.teamId);
+                            }
+                        });
                     }
 
                     if (res && res.logs) {
@@ -408,6 +978,25 @@
                     '</tr>';
             });
             $('#full-sync-logs-tbody').html(html);
+        }
+
+        function renderErrorLogs(logs) {
+            if ($('#error-sync-logs-tbody').length === 0) return;
+            var errorLogs = $.grep(logs, function (l) { return l.status !== 'Success'; });
+            if (errorLogs.length === 0) {
+                $('#error-sync-logs-tbody').html('<tr><td colSpan="3" style="padding: 30px; text-align: center; color: #64748b;">No error logs recorded. Great job!</td></tr>');
+                return;
+            }
+
+            var html = '';
+            $.each(errorLogs, function (i, log) {
+                html += '<tr>' +
+                    '<td style="padding: 12px; border-bottom: 1px solid #e2e8f0;"><strong>' + (log.event || 'Sync Event') + '</strong></td>' +
+                    '<td style="padding: 12px; border-bottom: 1px solid #e2e8f0; color: #ef4444;">' + (log.error || 'Unknown Error') + '</td>' +
+                    '<td style="padding: 12px; border-bottom: 1px solid #e2e8f0; text-align: right; font-size: 12px; color: #64748b;">' + (log.createdAt || '') + '</td>' +
+                    '</tr>';
+            });
+            $('#error-sync-logs-tbody').html(html);
         }
 
         // Initialize Fetch
