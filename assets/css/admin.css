@@ -18,250 +18,255 @@
 }
 
 /* Card Styling */
-.clicksync-card {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 24px;
-    margin-bottom: 24px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-    transition: box-shadow 0.25s ease;
+.clicksync-wrap .clicksync-card {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    padding: 24px !important;
+    margin-bottom: 24px !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05) !important;
+    transition: box-shadow 0.25s ease !important;
 }
 
-.clicksync-card:hover {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+.clicksync-wrap .clicksync-card:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05) !important;
 }
 
 /* Onboarding Wizards */
-.clicksync-onboarding-card {
-    max-width: 620px;
-    margin: 40px auto;
-    border: 1px solid #e2e8f0;
-    border-radius: 16px;
-    padding: 32px;
-    background: #ffffff;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+.clicksync-wrap .clicksync-onboarding-card {
+    max-width: 620px !important;
+    margin: 40px auto !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 16px !important;
+    padding: 32px !important;
+    background: #ffffff !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05) !important;
 }
 
-.clicksync-onboarding-title {
-    font-family: 'Outfit', sans-serif;
-    font-size: 22px;
-    font-weight: 700;
-    color: #0f172a;
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.clicksync-wrap .clicksync-onboarding-title {
+    font-family: 'Outfit', sans-serif !important;
+    font-size: 22px !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    margin-bottom: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
 }
 
-.clicksync-onboarding-desc {
-    font-size: 14px;
-    color: #64748b;
-    line-height: 1.6;
-    margin-bottom: 24px;
+.clicksync-wrap .clicksync-onboarding-desc {
+    font-size: 14px !important;
+    color: #64748b !important;
+    line-height: 1.6 !important;
+    margin-bottom: 24px !important;
 }
 
 /* Step Indicators */
-.clicksync-steps {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    margin-bottom: 24px;
+.clicksync-wrap .clicksync-steps {
+    display: flex !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    margin-bottom: 24px !important;
 }
 
-.clicksync-step {
-    width: 36px;
-    height: 6px;
-    background: #e2e8f0;
-    border-radius: 3px;
-    transition: background 0.3s ease;
+.clicksync-wrap .clicksync-step {
+    width: 36px !important;
+    height: 6px !important;
+    background: #e2e8f0 !important;
+    border-radius: 3px !important;
+    transition: background 0.3s ease !important;
 }
 
-.clicksync-step.active {
-    background: #7c3aed; /* ClickUp Purple */
+.clicksync-wrap .clicksync-step.active {
+    background: #7c3aed !important; /* ClickUp Purple */
 }
 
 /* Option Pills */
-.clicksync-option-pill {
-    background: #f1f5f9;
-    border: 1px solid #e2e8f0;
-    color: #475569;
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    height: 32px;
+.clicksync-wrap .clicksync-option-pill {
+    background: #f1f5f9 !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #475569 !important;
+    padding: 6px 14px !important;
+    border-radius: 20px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    height: 32px !important;
 }
 
-.clicksync-option-pill:hover {
-    background: #e2e8f0;
-    border-color: #cbd5e1;
+.clicksync-wrap .clicksync-option-pill:hover {
+    background: #e2e8f0 !important;
+    border-color: #cbd5e1 !important;
 }
 
-.clicksync-option-pill.active {
-    background: #ecfdf5;
-    color: #047857;
-    border-color: #a7f3d0;
+.clicksync-wrap .clicksync-option-pill.active {
+    background: #ecfdf5 !important;
+    color: #047857 !important;
+    border-color: #a7f3d0 !important;
 }
 
 /* Toggle Switch */
-.clicksync-switch {
-    position: relative;
-    display: inline-block;
-    width: 46px;
-    height: 26px;
-    margin: 0;
+.clicksync-wrap .clicksync-switch {
+    position: relative !important;
+    display: inline-block !important;
+    width: 46px !important;
+    height: 26px !important;
+    margin: 0 !important;
 }
 
-.clicksync-switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
+.clicksync-wrap .clicksync-switch input {
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
 }
 
-.clicksync-slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #cbd5e1;
-    transition: .25s ease;
-    border-radius: 26px;
+.clicksync-wrap .clicksync-slider {
+    position: absolute !important;
+    cursor: pointer !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background-color: #cbd5e1 !important;
+    transition: .25s ease !important;
+    border-radius: 26px !important;
 }
 
-.clicksync-slider:before {
-    position: absolute;
-    content: "";
-    height: 20px;
-    width: 20px;
-    left: 3px;
-    bottom: 3px;
-    background-color: white;
-    transition: .25s ease;
-    border-radius: 50%;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+.clicksync-wrap .clicksync-slider:before {
+    position: absolute !important;
+    content: "" !important;
+    height: 20px !important;
+    width: 20px !important;
+    left: 3px !important;
+    bottom: 3px !important;
+    background-color: white !important;
+    transition: .25s ease !important;
+    border-radius: 50% !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
 }
 
-.clicksync-switch input:checked + .clicksync-slider {
-    background-color: #10b981; /* Shopify Green */
+.clicksync-wrap .clicksync-switch input:checked + .clicksync-slider {
+    background-color: #10b981 !important; /* Shopify Green */
 }
 
-.clicksync-switch input:checked + .clicksync-slider:before {
-    transform: translateX(20px);
+.clicksync-wrap .clicksync-switch input:checked + .clicksync-slider:before {
+    transform: translateX(20px) !important;
 }
 
 /* Buttons */
-.clicksync-btn-primary {
-    background: #7c3aed; /* Brand Accent ClickUp Purple */
-    color: #ffffff;
-    border: 1px solid transparent;
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    box-sizing: border-box;
-    height: 40px;
-    transition: all 0.2s ease;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+.clicksync-wrap .clicksync-btn-primary {
+    background: #7c3aed !important; /* Brand Accent ClickUp Purple */
+    color: #ffffff !important;
+    border: 1px solid transparent !important;
+    padding: 10px 20px !important;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+    height: 40px !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
+    text-decoration: none !important;
+    outline: none !important;
 }
 
-.clicksync-btn-primary:hover {
-    background: #6d28d9;
-    transform: translateY(-1px);
+.clicksync-wrap .clicksync-btn-primary:hover {
+    background: #6d28d9 !important;
+    transform: translateY(-1px) !important;
 }
 
-.clicksync-btn-secondary {
-    background: #ffffff;
-    color: #334155;
-    border: 1px solid #cbd5e1;
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    box-sizing: border-box;
-    height: 40px;
-    transition: all 0.2s ease;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+.clicksync-wrap .clicksync-btn-secondary {
+    background: #ffffff !important;
+    color: #334155 !important;
+    border: 1px solid #cbd5e1 !important;
+    padding: 8px 16px !important;
+    border-radius: 8px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+    height: 40px !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
+    text-decoration: none !important;
+    outline: none !important;
 }
 
-.clicksync-btn-secondary:hover {
-    background: #f8fafc;
-    border-color: #94a3b8;
+.clicksync-wrap .clicksync-btn-secondary:hover {
+    background: #f8fafc !important;
+    border-color: #94a3b8 !important;
 }
 
 /* Form Fields */
-.clicksync-select {
-    width: 100%;
-    height: 40px;
-    padding: 8px 12px;
-    border-radius: 8px;
-    border: 1px solid #cbd5e1;
-    background: #ffffff;
-    font-size: 13px;
-    color: #334155;
-    box-sizing: border-box;
-    transition: all 0.2s ease;
+.clicksync-wrap .clicksync-select {
+    width: 100% !important;
+    height: 40px !important;
+    padding: 8px 12px !important;
+    border-radius: 8px !important;
+    border: 1px solid #cbd5e1 !important;
+    background: #ffffff !important;
+    font-size: 13px !important;
+    color: #334155 !important;
+    box-sizing: border-box !important;
+    transition: all 0.2s ease !important;
 }
 
-.clicksync-select:focus {
-    outline: none;
-    border-color: #7c3aed;
-    box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.15);
+.clicksync-wrap .clicksync-select:focus {
+    outline: none !important;
+    border-color: #7c3aed !important;
+    box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.15) !important;
 }
 
-.clicksync-label {
-    display: block;
-    font-size: 13px;
-    font-weight: 600;
-    color: #475569;
-    margin-bottom: 6px;
+.clicksync-wrap .clicksync-label {
+    display: block !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    color: #475569 !important;
+    margin-bottom: 6px !important;
 }
 
 /* Badges */
-.clicksync-badge {
-    padding: 6px 12px;
-    border-radius: 9999px;
-    font-size: 12px;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
+.clicksync-wrap .clicksync-badge {
+    padding: 6px 12px !important;
+    border-radius: 9999px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    border: 1px solid transparent !important;
 }
 
-.clicksync-badge.badge-success {
-    background: #ecfdf5;
-    color: #047857;
-    border: 1px solid #a7f3d0;
+.clicksync-wrap .clicksync-badge.badge-success {
+    background: #ecfdf5 !important;
+    color: #047857 !important;
+    border: 1px solid #a7f3d0 !important;
 }
 
-.clicksync-badge.badge-warning {
-    background: #fffbeb;
-    color: #b45309;
-    border: 1px solid #fde68a;
+.clicksync-wrap .clicksync-badge.badge-warning {
+    background: #fffbeb !important;
+    color: #b45309 !important;
+    border: 1px solid #fde68a !important;
 }
 
-.clicksync-badge.badge-info {
-    background: #f0f9ff;
-    color: #0369a1;
-    border: 1px solid #bae6fd;
+.clicksync-wrap .clicksync-badge.badge-info {
+    background: #f0f9ff !important;
+    color: #0369a1 !important;
+    border: 1px solid #bae6fd !important;
 }
 
-.clicksync-settings-disabled {
-    opacity: 0.4;
-    pointer-events: none;
-    user-select: none;
+.clicksync-wrap .clicksync-settings-disabled {
+    opacity: 0.4 !important;
+    pointer-events: none !important;
+    user-select: none !important;
 }

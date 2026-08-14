@@ -80,7 +80,7 @@
                             '<span class="clicksync-badge badge-warning" style="background: #f3e8ff; color: #7c3aed; border-color: #d8b4fe;">Setup Pending</span>' +
                             '</div>' +
                             '<p style="font-size: 13px; color: #64748b; margin-bottom: 16px; line-height: 1.5;">Successfully authenticated with ClickUp. Please complete the workspace connection steps below.</p>' +
-                            '<a href="' + connectUrl + '" target="_blank" class="clicksync-btn-secondary" style="color: #ef4444; border-color: #fecaca; display: inline-flex; align-items: center; height: 32px; font-size: 12px; padding: 4px 12px;">Disconnect Integration</a>' +
+                            '<button class="clicksync-disconnect-btn clicksync-btn-secondary" style="color: #ef4444; border-color: #fecaca; height: 32px; font-size: 12px; padding: 4px 12px;">Disconnect Integration</button>' +
                             '</div>';
                         $('#clicksync-connection-status-block').html(statusHtml);
                         $('#clicksync-settings-main-container').hide().addClass('clicksync-settings-disabled');
@@ -120,7 +120,7 @@
                             '<span class="clicksync-badge badge-warning" style="background: #f3e8ff; color: #7c3aed; border-color: #d8b4fe;">Setup Pending</span>' +
                             '</div>' +
                             '<p style="font-size: 13px; color: #64748b; margin-bottom: 16px; line-height: 1.5;">Successfully authenticated. Please choose your synchronization lists to complete onboarding.</p>' +
-                            '<a href="' + connectUrl + '" target="_blank" class="clicksync-btn-secondary" style="color: #ef4444; border-color: #fecaca; display: inline-flex; align-items: center; height: 32px; font-size: 12px; padding: 4px 12px;">Disconnect Integration</a>' +
+                            '<button class="clicksync-disconnect-btn clicksync-btn-secondary" style="color: #ef4444; border-color: #fecaca; height: 32px; font-size: 12px; padding: 4px 12px;">Disconnect Integration</button>' +
                             '</div>';
                         $('#clicksync-connection-status-block').html(statusHtml);
                         $('#clicksync-settings-main-container').hide().addClass('clicksync-settings-disabled');
@@ -176,7 +176,7 @@
                         '<button id="clicksync-process-queue-btn" class="clicksync-btn-secondary" style="height: 36px; font-size: 13px; padding: 8px 16px; display: inline-flex; align-items: center; gap: 6px;">' +
                         '🔄 Process Queue (' + pendingCount + ' pending)' +
                         '</button>' +
-                        '<a href="' + connectUrl + '" target="_blank" class="clicksync-btn-secondary" style="color: #ef4444; border-color: #fecaca; display: inline-flex; align-items: center; height: 36px; font-size: 13px; padding: 8px 16px;">Disconnect Integration</a>' +
+                        '<button class="clicksync-disconnect-btn clicksync-btn-secondary" style="color: #ef4444; border-color: #fecaca; height: 36px; font-size: 13px; padding: 8px 16px;">Disconnect Integration</button>' +
                         '</div>' +
                         '</div>';
                     $('#clicksync-connection-status-block').html(statusHtml);
@@ -355,6 +355,35 @@
                 },
                 error: function (xhr) {
                     alert('Failed to process queue: ' + (xhr.responseJSON?.error || xhr.responseText));
+                    btn.html(originalText).prop('disabled', false);
+                }
+            });
+        });
+
+        // Trigger manual disconnection
+        $(document).on('click', '.clicksync-disconnect-btn', function (e) {
+            e.preventDefault();
+            if (!confirm("Are you sure you want to disconnect ClickUp? This will reset all your sync rules and mappings.")) {
+                return;
+            }
+            var btn = $(this);
+            var originalText = btn.html();
+            btn.text('Disconnecting...').prop('disabled', true);
+
+            $.ajax({
+                url: cloudUrl + '/api/save-config',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    shop: host,
+                    actionType: 'disconnect',
+                    payload: {}
+                }),
+                success: function (res) {
+                    fetchCloudConfig();
+                },
+                error: function (xhr) {
+                    alert('Failed to disconnect ClickUp: ' + (xhr.responseJSON?.error || xhr.responseText));
                     btn.html(originalText).prop('disabled', false);
                 }
             });
