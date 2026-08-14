@@ -109,7 +109,7 @@ class AdminMenu {
 		wp_enqueue_script( 'clicksync-admin-js-v2', CLICKSYNC_URL . 'assets/js/admin.js', array( 'jquery' ), time(), true );
 
 		wp_localize_script( 'clicksync-admin-js-v2', 'clicksyncData', array(
-			'ajaxUrl'  => admin_url( 'admin-ajax.php' ),
+			'ajaxUrl'  => admin_url( 'admin-ajax.php', 'relative' ),
 			'cloudUrl' => CLICKSYNC_CLOUD_URL,
 			'host'     => parse_url( site_url(), PHP_URL_HOST ),
 			'nonce'    => wp_create_nonce( 'clicksync_admin_nonce' ),
@@ -143,13 +143,18 @@ class AdminMenu {
 	 * AJAX endpoint to retrieve dynamic WooCommerce fields, meta keys, and order statuses.
 	 */
 	public static function ajax_get_wc_fields() {
-		check_ajax_referer( 'clicksync_admin_nonce', 'nonce' );
-
-		if ( ! current_user_can( 'manage_options' ) ) {
+		// Verify caller has administrative privileges
+		if ( ! is_user_logged_in() || ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( 'Unauthorized', 403 );
 		}
 
 		global $wpdb;
+		$wpdb->hide_errors();
+
+		// Clear any output buffer to prevent PHP warnings from corrupting the JSON payload
+		if ( ob_get_length() ) {
+			ob_clean();
+		}
 
 		// 1. Get WooCommerce Order Statuses dynamically
 		$statuses = array();

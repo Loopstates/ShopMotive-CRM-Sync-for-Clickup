@@ -623,8 +623,10 @@
                     if (res.statuses && res.statuses.length > 0) {
                         var statusesHtml = '<option value="">-- Choose Status --</option>';
                         $.each(res.statuses, function (i, s) {
-                            var statusName = s.status.charAt(0).toUpperCase() + s.status.slice(1);
-                            statusesHtml += '<option value="' + s.status + '">' + statusName + '</option>';
+                            var statusVal = typeof s === 'string' ? s : (s.status || '');
+                            if (!statusVal) return;
+                            var statusName = statusVal.charAt(0).toUpperCase() + statusVal.slice(1);
+                            statusesHtml += '<option value="' + statusVal + '">' + statusName + '</option>';
                         });
                         card.find('.clicksync-statuses-dropdown').html(statusesHtml);
                     } else {
@@ -847,14 +849,21 @@
                     // STATE 4: Fully Connected
                     var pendingCount = res.pendingQueueCount || 0;
                     var clickupPlanStr = account.clickupPlan || 'Free';
+                    
+                    // Disable Process Queue button if nothing is in the queue
+                    var isQueueEmpty = pendingCount === 0;
+                    var queueDisabledAttr = isQueueEmpty ? 'disabled="disabled"' : '';
+                    var queueDisabledStyle = isQueueEmpty ? 'opacity: 0.65; cursor: not-allowed; pointer-events: none;' : '';
+
                     var statusHtml = '<div class="clicksync-card" style="border-left: 4px solid #10b981;">' +
                         '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">' +
                         '<h3 style="margin: 0; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px;">' +
-                        '<svg class="clicksync-title-icon" style="fill: #10b981;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg> ClickSync Connection</h3>' +
+                        '<svg class="clicksync-title-icon" style="fill: #10b981;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg> ClickUp Connection</h3>' +
                         '<div style="display: flex; align-items: center; gap: 8px;">' +
-                        '<span class="clicksync-badge badge-info" style="background: #f3e8ff; color: #7c3aed; border-color: #d8b4fe; display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; font-weight: 600; font-size: 11px;">' +
-                        '<svg style="width: 12px; height: 12px; fill: currentColor;" viewBox="0 0 24 24"><path d="M2 18.439l3.69-2.828c1.961 2.56 4.044 3.739 6.363 3.739 2.307 0 4.33-1.166 6.203-3.704L22 18.405C19.298 22.065 15.941 24 12.053 24c-3.875 0-7.265-1.922-10.053-5.561zM12.04 6.15L5.472 11.81l-3.036-3.52L12.055 0l9.543 8.296-3.05 3.509z"/></svg>' +
-                        'ClickUp Subscription: ' + clickupPlanStr + '</span>' +
+                        '<span style="font-size: 13px; font-weight: 600; color: #475569; display: inline-flex; align-items: center; gap: 4px;">' +
+                        '<svg style="width: 14px; height: 14px; fill: #7c3aed; margin-right: 4px;" viewBox="0 0 24 24"><path d="M2 18.439l3.69-2.828c1.961 2.56 4.044 3.739 6.363 3.739 2.307 0 4.33-1.166 6.203-3.704L22 18.405C19.298 22.065 15.941 24 12.053 24c-3.875 0-7.265-1.922-10.053-5.561zM12.04 6.15L5.472 11.81l-3.036-3.52L12.055 0l9.543 8.296-3.05 3.509z"/></svg>' +
+                        'ClickUp Plan:</span> ' +
+                        '<span class="clicksync-badge badge-info" style="background: #f3e8ff; color: #7c3aed; border-color: #d8b4fe; padding: 4px 10px; font-weight: 600; font-size: 11px;">' + clickupPlanStr + '</span>' +
                         '<span class="clicksync-badge badge-success" style="background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; padding: 4px 10px; font-weight: 600; font-size: 11px;">Active Connection</span>' +
                         '</div>' +
                         '</div>' +
@@ -863,7 +872,7 @@
                         '<svg class="clicksync-title-icon" style="width: 16px; height: 16px; fill: #64748b;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg> Your integration is subject to <strong>ClickUp\'s plan limits (100 API calls/min)</strong>. If a synchronization fails or experiences delays under heavy load, it is due to ClickUp\'s API rate limits rejecting incoming calls, not our app. ClickSync automatically queues and retries these requests for you.' +
                         '</div>' +
                         '<div style="display: flex; gap: 12px; align-items: center;">' +
-                        '<button id="clicksync-process-queue-btn" class="clicksync-btn-primary clicksync-btn-green" style="background: #10b981; color: white; border: none; height: 36px; font-size: 13px; padding: 8px 16px; display: inline-flex; align-items: center; gap: 6px; border-radius: 6px; font-weight: 500; cursor: pointer;">' +
+                        '<button id="clicksync-process-queue-btn" class="clicksync-btn-primary clicksync-btn-green" style="background: #10b981; color: white; border: none; height: 36px; font-size: 13px; padding: 8px 16px; display: inline-flex; align-items: center; gap: 6px; border-radius: 6px; font-weight: 500; cursor: pointer; ' + queueDisabledStyle + '" ' + queueDisabledAttr + '>' +
                         '<svg class="clicksync-title-icon" style="width: 14px; height: 14px; fill: currentColor; margin-right: 6px; margin-left: 0;" viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg> Process Queue (' + pendingCount + ' pending)' +
                         '</button>' +
                         '<button class="clicksync-disconnect-btn clicksync-btn-primary clicksync-btn-red" style="background: #ef4444; color: white; border: none; height: 36px; font-size: 13px; padding: 8px 16px; border-radius: 6px; font-weight: 500; cursor: pointer;">Disconnect Integration</button>' +
@@ -875,7 +884,7 @@
 
                     // Reset plan active badges inside drawer & visual cards styles
                     $('.plan-active-badge').hide();
-                    $('#plan-card-growth, #plan-card-pro').css({ border: '1px solid #e1e3e5', background: '#fdfdfd' });
+                    $('#plan-card-growth, #plan-card-pro').css({ border: '1px solid #cbd5e1', background: '#ffffff' });
                     $('#plan-card-growth a').text('Select Growth').removeClass('clicksync-btn-disabled').css('pointer-events', 'auto');
                     $('#plan-card-pro a').text('Select Pro').removeClass('clicksync-btn-disabled').css('pointer-events', 'auto');
 
@@ -904,7 +913,7 @@
                             $('#clicksync-upgrade-to-pro-btn').show();
                             
                             // Highlight inside drawer just in case
-                            $('#plan-card-growth').css({ border: '2px solid #4c1d95', background: '#f5f3ff' }).find('.plan-active-badge').show();
+                            $('#plan-card-growth').css({ border: '2px solid #7c3aed', background: '#f5f3ff' }).find('.plan-active-badge').show();
                             $('#plan-card-growth a').text('Active Plan').addClass('clicksync-btn-disabled').css('pointer-events', 'none');
                             unlockSyncRules();
                         } else if (plan === 'Pro Plan') {
@@ -915,7 +924,7 @@
                             $('#clicksync-custom-quota-btn').attr('href', mailtoLink).show();
 
                             // Highlight inside drawer just in case
-                            $('#plan-card-pro').css({ border: '2px solid #c026d3', background: '#fdf4ff' }).find('.plan-active-badge').show();
+                            $('#plan-card-pro').css({ border: '2px solid #7c3aed', background: '#f5f3ff' }).find('.plan-active-badge').show();
                             $('#plan-card-pro a').text('Active Plan').addClass('clicksync-btn-disabled').css('pointer-events', 'none');
                             unlockSyncRules();
                         }
