@@ -298,7 +298,7 @@ class HelpPage {
 							<div class="clicksync-help-input-group">
 								<span style="display: block; font-size: 13px; font-weight: 600; color: #202223; margin-bottom: 6px;"><?php esc_html_e( 'How can we help?', 'clicksync-wordpress' ); ?></span>
 								<select name="contact_subject" style="width: 100%; height: 36px; padding: 0 12px; border: 1px solid #e1e3e5; border-radius: 6px; font-size: 13px; color: #202223; background: #ffffff; box-shadow: none; box-sizing: border-box; outline: none; display: block;" required>
-									<option value="Technical Support"><?php esc_html_e( 'Technical Support / Help', 'clicksync-wordpress' ); ?></option>
+									<option value="Technical Support"><?php esc_html_e( 'Technical Support', 'clicksync-wordpress' ); ?></option>
 									<option value="Bespoke Development"><?php esc_html_e( 'Bespoke Development', 'clicksync-wordpress' ); ?></option>
 									<option value="Billing"><?php esc_html_e( 'Billing Inquiry', 'clicksync-wordpress' ); ?></option>
 									<option value="General Feedback"><?php esc_html_e( 'General Feedback', 'clicksync-wordpress' ); ?></option>
