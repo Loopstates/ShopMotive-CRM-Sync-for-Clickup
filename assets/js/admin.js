@@ -1748,7 +1748,7 @@
                     },
                     success: function (res) {
                         if (res.success) {
-                            alert('Successfully synchronized with ClickUp!');
+                            alert(res.data.message || 'Successfully synchronized with ClickUp!');
                             window.location.reload();
                         } else {
                             alert('Sync failure: ' + res.data);

@@ -566,7 +566,10 @@ class AdminMenu {
 		$body = json_decode( wp_remote_retrieve_body( $response ), true );
 		
 		if ( empty( $body['task_ids'] ) ) {
-			wp_send_json_error( isset( $body['message'] ) ? $body['message'] : 'Manual sync queued successfully. Refreshed cached values will load shortly.', 202 );
+			wp_send_json_success( array(
+				'message' => isset( $body['message'] ) ? $body['message'] : __( 'Manual sync queued successfully. Refreshed cached values will load shortly.', 'clicksync-wordpress' ),
+				'queued'  => true
+			) );
 		}
 
 		wp_send_json_success( array(
