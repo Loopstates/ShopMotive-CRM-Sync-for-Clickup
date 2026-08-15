@@ -626,8 +626,8 @@ class SettingsPage {
 						<p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;"><?php esc_html_e( 'Commit all dropdown target list selections and active switch configuration options to the database.', 'clicksync-wordpress' ); ?></p>
 					</div>
 					<div>
-						<button type="button" id="clicksync-save-all-settings" class="clicksync-btn-primary" style="height: 40px; padding: 0 24px; font-weight: 700; background: #7c3aed; color: #ffffff; border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 8px;">
-							<svg style="width: 16px; height: 16px; fill: currentColor;" viewBox="0 0 24 24"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg> <?php esc_html_e( 'Save Settings', 'clicksync-wordpress' ); ?>
+						<button type="button" id="clicksync-save-all-settings" class="clicksync-btn-primary" style="height: 40px; padding: 0 24px; font-weight: 700; background: #008060; color: #ffffff; border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background 0.2s;">
+							<svg style="width: 16px; height: 16px; fill: currentColor;" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg> <?php esc_html_e( 'Save Settings', 'clicksync-wordpress' ); ?>
 						</button>
 					</div>
 				</div>

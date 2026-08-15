@@ -310,7 +310,7 @@ class HelpPage {
 								<textarea name="contact_message" style="width: 100%; height: 120px; padding: 10px 12px; border: 1px solid #e1e3e5; border-radius: 6px; font-size: 13px; color: #202223; background: #ffffff; box-shadow: none; box-sizing: border-box; outline: none; line-height: 1.5; resize: vertical;" required placeholder="<?php esc_attr_e( 'Describe your requirements or any error details you encountered...', 'clicksync-wordpress' ); ?>"></textarea>
 							</div>
 
-							<button type="submit" class="clicksync-btn-primary" style="width: 100%; height: 38px; font-weight: 600; background: #7c3aed; color: #ffffff; border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; transition: background 0.2s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.05); margin-top: 4px;">
+							<button type="submit" class="clicksync-btn-primary" style="width: 100%; height: 38px; font-weight: 600; background: #008060; color: #ffffff; border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; transition: background 0.2s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.05); margin-top: 4px;">
 								<svg style="width: 14px; height: 14px; fill: currentColor;" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
 								<span><?php esc_html_e( 'Submit Message', 'clicksync-wordpress' ); ?></span>
 							</button>

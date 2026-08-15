@@ -594,11 +594,21 @@ class AdminMenu {
 
 		$host = parse_url( site_url(), PHP_URL_HOST );
 
+		$account   = Options::get_account();
+		$plan_name = $account['plan_name'] ?? 'Free Plan';
+		$quota     = isset( $account['monthly_quota'] ) ? $account['monthly_quota'] : 100;
+		$usage     = isset( $account['monthly_sync_count'] ) ? $account['monthly_sync_count'] : 0;
+		$team_name = $account['team_name'] ?? 'Not Connected';
+
 		$pumble_text = sprintf(
-			"📢 *New ClickSync WordPress Support Submission*\n👤 *Name*: %s\n✉️ *Email*: %s\n🌐 *Site*: %s\n🏷️ *Subject*: %s\n📝 *Message*:\n%s",
+			"📢 *New ClickSync WordPress Support Submission*\n👤 *Name*: %s\n✉️ *Email*: %s\n🌐 *Site*: %s\n💳 *Plan*: %s (Usage: %d / %d runs)\n👥 *Workspace Team*: %s\n🏷️ *Subject*: %s\n📝 *Message*:\n%s",
 			$name,
 			$email,
 			$host,
+			$plan_name,
+			$usage,
+			$quota,
+			$team_name,
 			$subject,
 			$message
 		);

@@ -249,7 +249,7 @@
             e.preventDefault();
             var btn = $(this);
             var originalHtml = btn.html();
-            btn.html('<svg style="width: 16px; height: 16px; fill: currentColor; animation: spin 1s linear infinite;" viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm-6 8c0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v-3l4 4-4-4v3c-3.31 0-6-2.69-6-6z"/></svg> Saving...').prop('disabled', true);
+            btn.html('<svg style="width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; margin-right: 8px;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.2)"></circle><path d="M4 12a8 8 0 018-8" fill="none" stroke="currentColor"></path></svg> Saving...').prop('disabled', true);
 
             var ordersListId = $('#clicksync-list-orders').val();
             var customersListId = $('#clicksync-list-customers').val();
@@ -1577,7 +1577,7 @@
             var form = $(this);
             var btn = form.find('button[type="submit"]');
             var originalText = btn.html();
-            btn.html('Sending...').prop('disabled', true);
+            btn.html('<svg style="width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; margin-right: 8px;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.2)"></circle><path d="M4 12a8 8 0 018-8" fill="none" stroke="currentColor"></path></svg> Sending...').prop('disabled', true);
 
             $.ajax({
                 url: clicksyncData.ajaxUrl,
