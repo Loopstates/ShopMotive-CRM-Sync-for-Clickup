@@ -604,6 +604,7 @@
                 url: cloudUrl + '/api/get-list-metadata?shop=' + encodeURIComponent(host) + '&listId=' + encodeURIComponent(listId),
                 type: 'GET',
                 dataType: 'json',
+                cache: false,
                 success: function (res) {
                     // Cache list custom fields locally in DOM to resolve names in renderRuleRows
                     card.data('custom-fields', res.customFields || []);
@@ -736,6 +737,7 @@
                 url: cloudUrl + '/api/get-config?shop=' + encodeURIComponent(host),
                 type: 'GET',
                 dataType: 'json',
+                cache: false,
                 success: function (res) {
                     configRetryCount = 0; // Reset retry counter on success
                     var account = res ? res.account : null;
@@ -858,15 +860,19 @@
                     var queueDisabledStyle = isQueueEmpty ? 'opacity: 0.65; cursor: not-allowed; pointer-events: none;' : '';
 
                     var statusHtml = '<div class="clicksync-card" style="border-left: 4px solid #10b981;">' +
-                        '<div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap;">' +
+                        '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 12px;">' +
+                        // LHS: Title + Active Connection Badge
+                        '<div style="display: flex; align-items: center; gap: 12px;">' +
                         '<h3 style="margin: 0; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px;">' +
                         '<svg class="clicksync-title-icon" style="fill: #10b981;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg> ClickUp Connection</h3>' +
+                        '<span class="clicksync-badge badge-success" style="background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; padding: 4px 10px; font-weight: 600; font-size: 11px;">Active Connection</span>' +
+                        '</div>' +
+                        // RHS: ClickUp Subscription logo + Plan
                         '<div style="display: flex; align-items: center; gap: 8px;">' +
                         '<span style="font-size: 13px; font-weight: 600; color: #475569; display: inline-flex; align-items: center; gap: 4px;">' +
                         '<svg style="width: 14px; height: 14px; fill: #7c3aed; margin-right: 4px;" viewBox="0 0 24 24"><path d="M2 18.439l3.69-2.828c1.961 2.56 4.044 3.739 6.363 3.739 2.307 0 4.33-1.166 6.203-3.704L22 18.405C19.298 22.065 15.941 24 12.053 24c-3.875 0-7.265-1.922-10.053-5.561zM12.04 6.15L5.472 11.81l-3.036-3.52L12.055 0l9.543 8.296-3.05 3.509z"/></svg>' +
                         'ClickUp Subscription:</span> ' +
                         '<span class="clicksync-badge badge-info" style="background: #f3e8ff; color: #7c3aed; border-color: #d8b4fe; padding: 4px 10px; font-weight: 600; font-size: 11px;">' + clickupPlanStr + '</span>' +
-                        '<span class="clicksync-badge badge-success" style="background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; padding: 4px 10px; font-weight: 600; font-size: 11px;">Active Connection</span>' +
                         '</div>' +
                         '</div>' +
                         '<p style="font-size: 13px; color: #64748b; margin-bottom: 16px; line-height: 1.5;">ClickSync is active. Background WooCommerce events are intercepted and synchronized into ClickUp instantly.</p>' +
