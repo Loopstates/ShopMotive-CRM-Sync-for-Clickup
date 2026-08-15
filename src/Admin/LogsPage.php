@@ -22,7 +22,7 @@ class LogsPage {
 		$account  = Options::get_account();
 		$logo_url = CLICKSYNC_URL . 'assets/images/logo.png';
 		?>
-		<div class="wrap clicksync-wrap" style="max-width: 1100px; margin: 20px auto;">
+		<div class="wrap clicksync-wrap" style="max-width: 1050px; margin: 20px auto;">
 			
 			<!-- Page Header -->
 			<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #e2e8f0;">
@@ -45,7 +45,7 @@ class LogsPage {
 			</div>
 
 			<!-- Filter & Action Controls -->
-			<div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 16px; margin-bottom: 20px; display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+			<div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 16px 24px; margin-bottom: 20px; display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
 				<div style="display: flex; gap: 12px; flex: 1; min-width: 280px;">
 					<input type="text" id="logs-search" class="clicksync-select" style="margin: 0; flex: 1;" placeholder="<?php esc_attr_e( 'Search by order #, event, or task ID...', 'clicksync-wordpress' ); ?>" />
 					<select id="logs-status-filter" class="clicksync-select" style="margin: 0; width: 160px;">
@@ -62,19 +62,19 @@ class LogsPage {
 			</div>
 
 			<!-- Logs Table -->
-			<div class="clicksync-card" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.04); overflow: hidden;">
-				<table style="width: 100%; border-collapse: collapse; margin: 0;">
+			<div class="clicksync-card" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.04); overflow: hidden; margin-bottom: 24px;">
+				<table class="wp-list-table widefat fixed striped" style="width: 100%; border: none; margin: 0; border-collapse: collapse; box-shadow: none;">
 					<thead>
-						<tr style="background: #f8fafc; text-align: left; font-size: 12px; color: #475569; border-bottom: 1px solid #e2e8f0;">
-							<th style="padding: 12px 16px; font-weight: 600;"><?php esc_html_e( 'Event & Entity', 'clicksync-wordpress' ); ?></th>
-							<th style="padding: 12px 16px; font-weight: 600;"><?php esc_html_e( 'Execution Status', 'clicksync-wordpress' ); ?></th>
-							<th style="padding: 12px 16px; font-weight: 600;"><?php esc_html_e( 'ClickUp Task Link', 'clicksync-wordpress' ); ?></th>
-							<th style="padding: 12px 16px; font-weight: 600; text-align: right;"><?php esc_html_e( 'Timestamp', 'clicksync-wordpress' ); ?></th>
+						<tr>
+							<th style="padding: 12px 24px; font-weight: 600; font-size: 13px; color: #475569; border-bottom: 1px solid #cbd5e1; background: #f8fafc;"><?php esc_html_e( 'Event & Entity', 'clicksync-wordpress' ); ?></th>
+							<th style="padding: 12px 24px; font-weight: 600; font-size: 13px; color: #475569; border-bottom: 1px solid #cbd5e1; background: #f8fafc;"><?php esc_html_e( 'Execution Status', 'clicksync-wordpress' ); ?></th>
+							<th style="padding: 12px 24px; font-weight: 600; font-size: 13px; color: #475569; border-bottom: 1px solid #cbd5e1; background: #f8fafc;"><?php esc_html_e( 'ClickUp Task Link', 'clicksync-wordpress' ); ?></th>
+							<th style="padding: 12px 24px; font-weight: 600; font-size: 13px; color: #475569; border-bottom: 1px solid #cbd5e1; background: #f8fafc; text-align: right;"><?php esc_html_e( 'Timestamp', 'clicksync-wordpress' ); ?></th>
 						</tr>
 					</thead>
 					<tbody id="full-sync-logs-tbody">
 						<tr>
-							<td colSpan="4" style="padding: 30px 16px; text-align: center; color: #64748b;">
+							<td colSpan="4" style="padding: 30px 24px; text-align: center; color: #64748b;">
 								<?php esc_html_e( 'Loading audit log history...', 'clicksync-wordpress' ); ?>
 							</td>
 						</tr>
@@ -82,7 +82,7 @@ class LogsPage {
 				</table>
 
 				<!-- Pagination controls -->
-				<div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #e2e8f0; padding: 16px 20px; background: #ffffff;">
+				<div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #e2e8f0; padding: 16px 24px; background: #ffffff;">
 					<div style="display: flex; align-items: center; gap: 4px; font-size: 13px; color: #64748b;">
 						<span><?php esc_html_e( 'Show', 'clicksync-wordpress' ); ?></span>
 						<select id="logs-per-page" class="clicksync-select" style="width: 70px; height: 32px; padding: 4px; margin: 0 4px; font-size: 12px; display: inline-block; vertical-align: middle;">
