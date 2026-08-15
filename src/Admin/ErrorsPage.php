@@ -57,22 +57,24 @@ class ErrorsPage {
 			</div>
 
 			<!-- Error Logs Table -->
-			<div class="clicksync-card" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
-				<h3 style="margin: 0 0 16px 0; font-size: 16px; font-weight: 600; color: #0f172a;">
-					<?php esc_html_e( 'Failed Event Traces & Retries', 'clicksync-wordpress' ); ?>
-				</h3>
+			<div class="clicksync-card" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.04); overflow: hidden;">
+				<div style="padding: 16px 20px; border-bottom: 1px solid #e2e8f0; background: #ffffff;">
+					<h3 style="margin: 0; font-size: 15px; font-weight: 700; color: #0f172a;">
+						<?php esc_html_e( 'Failed Event Traces & Retries', 'clicksync-wordpress' ); ?>
+					</h3>
+				</div>
 
-				<table style="width: 100%; border-collapse: collapse;">
+				<table style="width: 100%; border-collapse: collapse; margin: 0;">
 					<thead>
-						<tr style="background: #f8fafc; text-align: left; font-size: 12px; color: #64748b;">
-							<th style="padding: 12px; border-bottom: 2px solid #e2e8f0;"><?php esc_html_e( 'Failed Event', 'clicksync-wordpress' ); ?></th>
-							<th style="padding: 12px; border-bottom: 2px solid #e2e8f0;"><?php esc_html_e( 'Error Traceback', 'clicksync-wordpress' ); ?></th>
-							<th style="padding: 12px; border-bottom: 2px solid #e2e8f0; text-align: right;"><?php esc_html_e( 'Action', 'clicksync-wordpress' ); ?></th>
+						<tr style="background: #f8fafc; text-align: left; font-size: 12px; color: #475569; border-bottom: 1px solid #e2e8f0;">
+							<th style="padding: 12px 16px; font-weight: 600;"><?php esc_html_e( 'Failed Event', 'clicksync-wordpress' ); ?></th>
+							<th style="padding: 12px 16px; font-weight: 600;"><?php esc_html_e( 'Error Traceback', 'clicksync-wordpress' ); ?></th>
+							<th style="padding: 12px 16px; font-weight: 600; text-align: right;"><?php esc_html_e( 'Action', 'clicksync-wordpress' ); ?></th>
 						</tr>
 					</thead>
 					<tbody id="sync-errors-tbody">
 						<tr>
-							<td colSpan="3" style="padding: 30px; text-align: center; color: #64748b;">
+							<td colSpan="3" style="padding: 30px 16px; text-align: center; color: #64748b;">
 								<?php esc_html_e( 'No error traces found. All sync events are running cleanly!', 'clicksync-wordpress' ); ?>
 							</td>
 						</tr>
@@ -80,10 +82,10 @@ class ErrorsPage {
 				</table>
 
 				<!-- Pagination controls -->
-				<div style="display: flex; align-items: center; justify-content: space-between; margin-top: 16px; border-top: 1px solid #e2e8f0; padding-top: 16px;">
-					<div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #64748b;">
-						<span><?php esc_html_e( 'Show:', 'clicksync-wordpress' ); ?></span>
-						<select id="errors-per-page" class="clicksync-select" style="width: 70px; height: 32px; padding: 4px; margin: 0; font-size: 12px;">
+				<div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #e2e8f0; padding: 16px 20px; background: #ffffff;">
+					<div style="display: flex; align-items: center; gap: 4px; font-size: 13px; color: #64748b;">
+						<span><?php esc_html_e( 'Show', 'clicksync-wordpress' ); ?></span>
+						<select id="errors-per-page" class="clicksync-select" style="width: 70px; height: 32px; padding: 4px; margin: 0 4px; font-size: 12px; display: inline-block; vertical-align: middle;">
 							<option value="10">10</option>
 							<option value="25" selected>25</option>
 							<option value="50">50</option>

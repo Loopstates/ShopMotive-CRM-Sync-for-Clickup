@@ -96,14 +96,14 @@ class AdminMenu {
 			array( ErrorsPage::class, 'render' )
 		);
 
-		// Submenu 4: User Guide
+		// Submenu 4: Help Center
 		add_submenu_page(
 			'clicksync',
-			__( 'User Guide & Documentation', 'clicksync-wordpress' ),
-			__( 'User Guide', 'clicksync-wordpress' ),
+			__( 'Help & Documentation', 'clicksync-wordpress' ),
+			__( 'Help Center', 'clicksync-wordpress' ),
 			'manage_options',
-			'clicksync-guide',
-			array( GuidePage::class, 'render' )
+			'clicksync-help',
+			array( HelpPage::class, 'render' )
 		);
 	}
 
