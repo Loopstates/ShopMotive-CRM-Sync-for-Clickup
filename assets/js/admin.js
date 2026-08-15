@@ -1471,6 +1471,106 @@
             applyErrorsFiltersAndRender();
         });
 
+        // Client-side CSV Exporter Helper
+        function downloadCSV(filename, headers, rows) {
+            var csv = "\uFEFF"; // BOM for Excel Compatibility
+            csv += headers.join(",") + "\r\n";
+            
+            $.each(rows, function(i, row) {
+                var escapedRow = $.map(row, function(val) {
+                    var str = (val === null || val === undefined) ? '' : String(val);
+                    str = str.replace(/"/g, '""'); // Escape inner double quotes
+                    if (str.indexOf(',') !== -1 || str.indexOf('"') !== -1 || str.indexOf('\n') !== -1 || str.indexOf('\r') !== -1) {
+                        str = '"' + str + '"';
+                    }
+                    return str;
+                });
+                csv += escapedRow.join(",") + "\r\n";
+            });
+            
+            var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            var link = document.createElement("a");
+            link.setAttribute("href", window.URL.createObjectURL(blob));
+            link.setAttribute("download", filename);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Export Logs CSV Trigger
+        $(document).on('click', '#btn-export-logs', function(e) {
+            e.preventDefault();
+            var searchVal = ($('#logs-search').val() || '').toLowerCase().trim();
+            var statusFilter = $('#logs-status-filter').val() || '';
+            var logs = window.clicksyncAllLogs || [];
+            
+            var filtered = $.grep(logs, function(log) {
+                var matchesSearch = true;
+                var matchesStatus = true;
+
+                if (searchVal) {
+                    var event = (log.event || '').toLowerCase();
+                    var taskId = (log.clickupTaskId || '').toLowerCase();
+                    var details = (log.details || '').toLowerCase();
+                    var error = (log.error || '').toLowerCase();
+                    matchesSearch = event.indexOf(searchVal) !== -1 || 
+                                    taskId.indexOf(searchVal) !== -1 || 
+                                    details.indexOf(searchVal) !== -1 || 
+                                    error.indexOf(searchVal) !== -1;
+                }
+
+                if (statusFilter) {
+                    matchesStatus = log.status === statusFilter;
+                }
+
+                return matchesSearch && matchesStatus;
+            });
+
+            var headers = ["Event & Entity", "Status", "ClickUp Task", "Details", "Error Trace", "Timestamp"];
+            var rows = $.map(filtered, function(log) {
+                return [[
+                    log.event || '',
+                    log.status || '',
+                    log.clickupTaskId || '',
+                    log.details || '',
+                    log.error || '',
+                    log.createdAt || ''
+                ]];
+            });
+
+            downloadCSV("clicksync-audit-logs.csv", headers, rows);
+        });
+
+        // Export Errors CSV Trigger
+        $(document).on('click', '#btn-export-errors', function(e) {
+            e.preventDefault();
+            var searchVal = ($('#errors-search').val() || '').toLowerCase().trim();
+            var logs = window.clicksyncAllLogs || [];
+            var errorLogs = $.grep(logs, function(l) { return l.status !== 'Success'; });
+            
+            var filtered = $.grep(errorLogs, function(log) {
+                if (searchVal) {
+                    var event = (log.event || '').toLowerCase();
+                    var error = (log.error || '').toLowerCase();
+                    return event.indexOf(searchVal) !== -1 || error.indexOf(searchVal) !== -1;
+                }
+                return true;
+            });
+
+            var headers = ["Failed Event", "Error Traceback", "Payload JSON", "Timestamp"];
+            var rows = $.map(filtered, function(log) {
+                return [[
+                    log.event || '',
+                    log.error || '',
+                    log.payload ? JSON.stringify(log.payload) : '{}',
+                    log.createdAt || ''
+                ]];
+            });
+
+            downloadCSV("clicksync-error-traces.csv", headers, rows);
+        });
+
+
         // Support Form Submission
         $(document).on('submit', '#clicksync-support-contact-form', function(e) {
             e.preventDefault();

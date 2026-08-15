@@ -30,10 +30,10 @@ class LogsPage {
 					<img src="<?php echo esc_url( $logo_url ); ?>" alt="ClickSync" style="width: 42px; height: 42px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.12);" />
 					<div>
 						<h1 style="font-weight: 700; font-size: 24px; margin: 0; color: #0f172a; line-height: 1.2;">
-							<?php esc_html_e( 'Sync Audit Logs', 'clicksync-wordpress' ); ?>
+							<?php esc_html_e( 'Sync Logs', 'clicksync-wordpress' ); ?>
 						</h1>
 						<p style="margin: 4px 0 0 0; font-size: 13px; color: #64748b;">
-							<?php esc_html_e( 'Real-time telemetry and audit trail for all events dispatched from WooCommerce to ClickUp.', 'clicksync-wordpress' ); ?>
+							<?php esc_html_e( 'Real-time telemetry and logs for all events dispatched from WooCommerce to ClickUp.', 'clicksync-wordpress' ); ?>
 						</p>
 					</div>
 				</div>
@@ -62,7 +62,7 @@ class LogsPage {
 			</div>
 
 			<!-- Logs Table -->
-			<div class="clicksync-card" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.04); overflow: hidden; margin-bottom: 24px;">
+			<div class="clicksync-card-table" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.04); overflow: hidden; margin-bottom: 24px;">
 				<table class="wp-list-table widefat fixed striped" style="width: 100%; border: none; margin: 0; border-collapse: collapse; box-shadow: none;">
 					<thead>
 						<tr>
@@ -75,7 +75,7 @@ class LogsPage {
 					<tbody id="full-sync-logs-tbody">
 						<tr>
 							<td colSpan="4" style="padding: 30px 24px; text-align: center; color: #64748b;">
-								<?php esc_html_e( 'Loading audit log history...', 'clicksync-wordpress' ); ?>
+								<?php esc_html_e( 'Loading sync log history...', 'clicksync-wordpress' ); ?>
 							</td>
 						</tr>
 					</tbody>
@@ -83,7 +83,7 @@ class LogsPage {
 
 				<!-- Pagination controls -->
 				<div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #e2e8f0; padding: 16px 24px; background: #ffffff;">
-					<div style="display: flex; align-items: center; gap: 4px; font-size: 13px; color: #64748b;">
+					<div style="display: flex; align-items: center; gap: 4px; font-size: 13px; color: #64748b; white-space: nowrap;">
 						<span><?php esc_html_e( 'Show', 'clicksync-wordpress' ); ?></span>
 						<select id="logs-per-page" class="clicksync-select" style="width: 70px; height: 32px; padding: 4px; margin: 0 4px; font-size: 12px; display: inline-block; vertical-align: middle;">
 							<option value="10">10</option>

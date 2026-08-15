@@ -43,6 +43,11 @@ class ErrorsPage {
 				<div style="display: flex; gap: 12px; flex: 1; min-width: 280px;">
 					<input type="text" id="errors-search" class="clicksync-select" style="margin: 0; flex: 1;" placeholder="<?php esc_attr_e( 'Search by event or error description...', 'clicksync-wordpress' ); ?>" />
 				</div>
+				<div>
+					<button type="button" class="clicksync-btn-secondary" style="height: 36px; padding: 0 16px; display: inline-flex; align-items: center; gap: 6px; font-weight: 600;" id="btn-export-errors">
+						<svg style="width: 14px; height: 14px; fill: currentColor;" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></svg> <?php esc_html_e( 'Export CSV', 'clicksync-wordpress' ); ?>
+					</button>
+				</div>
 			</div>
 
 			<!-- Status Banner -->
@@ -57,7 +62,7 @@ class ErrorsPage {
 			</div>
 
 			<!-- Error Logs Table -->
-			<div class="clicksync-card" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.04); overflow: hidden; margin-bottom: 24px;">
+			<div class="clicksync-card-table" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.04); overflow: hidden; margin-bottom: 24px;">
 				<div style="padding: 16px 24px; border-bottom: 1px solid #e2e8f0; background: #ffffff;">
 					<h3 style="margin: 0; font-size: 15px; font-weight: 700; color: #0f172a;">
 						<?php esc_html_e( 'Failed Event Traces & Retries', 'clicksync-wordpress' ); ?>
@@ -83,7 +88,7 @@ class ErrorsPage {
 
 				<!-- Pagination controls -->
 				<div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #e2e8f0; padding: 16px 24px; background: #ffffff;">
-					<div style="display: flex; align-items: center; gap: 4px; font-size: 13px; color: #64748b;">
+					<div style="display: flex; align-items: center; gap: 4px; font-size: 13px; color: #64748b; white-space: nowrap;">
 						<span><?php esc_html_e( 'Show', 'clicksync-wordpress' ); ?></span>
 						<select id="errors-per-page" class="clicksync-select" style="width: 70px; height: 32px; padding: 4px; margin: 0 4px; font-size: 12px; display: inline-block; vertical-align: middle;">
 							<option value="10">10</option>

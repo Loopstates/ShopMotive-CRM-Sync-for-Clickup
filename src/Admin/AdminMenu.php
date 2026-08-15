@@ -76,11 +76,11 @@ class AdminMenu {
 			array( SettingsPage::class, 'render' )
 		);
 
-		// Submenu 2: Sync Audit Logs
+		// Submenu 2: Sync Logs
 		add_submenu_page(
 			'clicksync',
-			__( 'Sync Audit Logs', 'clicksync-wordpress' ),
-			__( 'Sync Audit Logs', 'clicksync-wordpress' ),
+			__( 'Sync Logs', 'clicksync-wordpress' ),
+			__( 'Sync Logs', 'clicksync-wordpress' ),
 			'manage_options',
 			'clicksync-logs',
 			array( LogsPage::class, 'render' )
