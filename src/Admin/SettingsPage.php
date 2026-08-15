@@ -56,6 +56,21 @@ class SettingsPage {
 		?>
 		<div class="wrap clicksync-wrap" style="max-width: 1050px; margin: 20px auto;">
 			
+			<!-- Page Header -->
+			<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #e2e8f0;">
+				<div style="display: flex; align-items: center; gap: 14px;">
+					<img src="<?php echo esc_url( CLICKSYNC_URL . 'assets/images/logo.png' ); ?>" alt="ClickSync" style="width: 42px; height: 42px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.12);" />
+					<div>
+						<h1 style="font-weight: 700; font-size: 24px; margin: 0; color: #0f172a; line-height: 1.2;">
+							<?php esc_html_e( 'ClickSync Settings', 'clicksync-wordpress' ); ?>
+						</h1>
+						<p style="margin: 4px 0 0 0; font-size: 13px; color: #64748b;">
+							<?php esc_html_e( 'Configure automated CRM syncing, custom fields routing, status mappings, and subscription settings.', 'clicksync-wordpress' ); ?>
+						</p>
+					</div>
+				</div>
+			</div>
+			
 			<!-- Header Status Banner -->
 			<div id="clicksync-connection-status-block" data-connect-url="<?php echo esc_url( $connect_url ); ?>">
 				<div class="clicksync-card" style="background: #ffffff; border: 1px solid #e1e3e5; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">

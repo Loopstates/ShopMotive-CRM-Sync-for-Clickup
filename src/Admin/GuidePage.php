@@ -27,7 +27,7 @@ class GuidePage {
 					<img src="<?php echo esc_url( $logo_url ); ?>" alt="ClickSync" style="width: 42px; height: 42px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.12);" />
 					<div>
 						<h1 style="font-weight: 700; font-size: 24px; margin: 0; color: #0f172a; line-height: 1.2;">
-							<svg class="clicksync-title-icon" viewBox="0 0 24 24" style="fill: #7c3aed; width: 22px; height: 22px;"><path d="M12 11.55C9.64 9.35 6.48 8 3 8v11c3.48 0 6.64 1.35 9 3.55 2.36-2.2 5.52-3.55 9-3.55V8c-3.48 0-6.64 1.35-9 3.55zM12 8c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3z"/></svg> <?php esc_html_e( 'User Guide & Documentation', 'clicksync-wordpress' ); ?>
+							<?php esc_html_e( 'User Guide & Documentation', 'clicksync-wordpress' ); ?>
 						</h1>
 						<p style="margin: 4px 0 0 0; font-size: 13px; color: #64748b;">
 							<?php esc_html_e( 'Complete documentation, ClickUp rate limit explanations, and troubleshooting instructions.', 'clicksync-wordpress' ); ?>
@@ -84,6 +84,51 @@ class GuidePage {
 						<p style="margin: 4px 0 0 0; font-size: 13px; color: #64748b; line-height: 1.5;"><?php esc_html_e( 'Yes! Under Settings -> Custom Field Mapping Engine, you can map any order, customer, or shipping property to your ClickUp fields.', 'clicksync-wordpress' ); ?></p>
 					</div>
 				</div>
+			</div>
+
+			<!-- 4. Contact & Customization Support Form -->
+			<div class="clicksync-card" id="clicksync-contact-form-card" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 24px; margin-top: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+				<h3 style="margin: 0 0 8px 0; font-size: 17px; font-weight: 700; color: #0f172a;">
+					<?php esc_html_e( 'Contact Support & Customization Requests', 'clicksync-wordpress' ); ?>
+				</h3>
+				<p style="font-size: 13px; color: #64748b; margin-bottom: 20px; line-height: 1.5;">
+					<?php esc_html_e( 'Have technical questions, run into issues, or require a bespoke integration customization? Send us a message, and our team will get back to you directly.', 'clicksync-wordpress' ); ?>
+				</p>
+
+				<form id="clicksync-support-contact-form" style="display: flex; flex-direction: column; gap: 14px; max-width: 600px;">
+					<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+						<div>
+							<label style="display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 6px;"><?php esc_html_e( 'Your Name:', 'clicksync-wordpress' ); ?></label>
+							<input type="text" name="contact_name" class="clicksync-select" style="margin: 0; width: 100%; height: 38px;" required placeholder="e.g. John Doe" />
+						</div>
+						<div>
+							<label style="display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 6px;"><?php esc_html_e( 'Your Email:', 'clicksync-wordpress' ); ?></label>
+							<input type="email" name="contact_email" class="clicksync-select" style="margin: 0; width: 100%; height: 38px;" required placeholder="e.g. john@example.com" />
+						</div>
+					</div>
+
+					<div>
+						<label style="display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 6px;"><?php esc_html_e( 'Inquiry Subject:', 'clicksync-wordpress' ); ?></label>
+						<select name="contact_subject" class="clicksync-select" style="margin: 0; width: 100%; height: 38px;" required>
+							<option value="Technical Support"><?php esc_html_e( 'Technical Support / Help', 'clicksync-wordpress' ); ?></option>
+							<option value="Bespoke Requirement"><?php esc_html_e( 'Bespoke Customization / Custom Request', 'clicksync-wordpress' ); ?></option>
+							<option value="Billing"><?php esc_html_e( 'Billing Inquiry', 'clicksync-wordpress' ); ?></option>
+							<option value="General feedback"><?php esc_html_e( 'General Feedback', 'clicksync-wordpress' ); ?></option>
+						</select>
+					</div>
+
+					<div>
+						<label style="display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 6px;"><?php esc_html_e( 'Your Message:', 'clicksync-wordpress' ); ?></label>
+						<textarea name="contact_message" class="clicksync-select" style="margin: 0; width: 100%; height: 120px; padding: 10px; resize: vertical;" required placeholder="<?php esc_attr_e( 'Describe your requirements or request in detail...', 'clicksync-wordpress' ); ?>"></textarea>
+					</div>
+
+					<div>
+						<button type="submit" class="clicksync-btn-primary" style="height: 40px; padding: 0 24px; font-weight: 700; background: #7c3aed; color: #ffffff; border: none; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
+							<svg style="width: 16px; height: 16px; fill: currentColor;" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+							<span><?php esc_html_e( 'Send Message', 'clicksync-wordpress' ); ?></span>
+						</button>
+					</div>
+				</form>
 			</div>
 
 		</div>

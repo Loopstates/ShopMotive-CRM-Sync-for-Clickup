@@ -29,6 +29,7 @@ class AdminMenu {
 		add_action( 'wp_ajax_clicksync_widget_get_task_details', array( __CLASS__, 'ajax_widget_get_task_details' ) );
 		add_action( 'wp_ajax_clicksync_widget_update_task', array( __CLASS__, 'ajax_widget_update_task' ) );
 		add_action( 'wp_ajax_clicksync_widget_force_sync', array( __CLASS__, 'ajax_widget_force_sync' ) );
+		add_action( 'wp_ajax_clicksync_contact_submit', array( __CLASS__, 'ajax_contact_submit' ) );
 
 		// Register Sidebar Widgets (Meta Boxes)
 		add_action( 'add_meta_boxes', array( __CLASS__, 'register_metaboxes' ) );
@@ -572,5 +573,58 @@ class AdminMenu {
 			'message'  => 'Synchronization completed successfully.',
 			'task_ids' => $body['task_ids']
 		) );
+	}
+
+	/**
+	 * AJAX handler to process user contact submissions and post to Pumble.
+	 */
+	public static function ajax_contact_submit() {
+		if ( ! is_user_logged_in() ) {
+			wp_send_json_error( 'Unauthorized', 403 );
+		}
+
+		$name    = isset( $_POST['contact_name'] ) ? sanitize_text_field( $_POST['contact_name'] ) : '';
+		$email   = isset( $_POST['contact_email'] ) ? sanitize_email( $_POST['contact_email'] ) : '';
+		$subject = isset( $_POST['contact_subject'] ) ? sanitize_text_field( $_POST['contact_subject'] ) : '';
+		$message = isset( $_POST['contact_message'] ) ? sanitize_textarea_field( $_POST['contact_message'] ) : '';
+
+		if ( empty( $name ) || empty( $email ) || empty( $message ) ) {
+			wp_send_json_error( 'Please fill out all required fields.', 400 );
+		}
+
+		$host = parse_url( site_url(), PHP_URL_HOST );
+
+		$pumble_text = sprintf(
+			"📢 *New ClickSync WordPress Support Submission*\n👤 *Name*: %s\n✉️ *Email*: %s\n🌐 *Site*: %s\n🏷️ *Subject*: %s\n📝 *Message*:\n%s",
+			$name,
+			$email,
+			$host,
+			$subject,
+			$message
+		);
+
+		$webhook_url = 'https://api.pumble.com/workspaces/696f8de24c7308d728d91f4b/incomingWebhooks/postMessage/AVecqdpqD3rDMNTUxhR6XMPF';
+		
+		$args = array(
+			'method'      => 'POST',
+			'timeout'     => 10,
+			'headers'     => array(
+				'Content-Type' => 'application/json',
+			),
+			'body'        => wp_json_encode( array( 'text' => $pumble_text ) ),
+		);
+
+		$response = wp_remote_post( $webhook_url, $args );
+
+		if ( is_wp_error( $response ) ) {
+			wp_send_json_error( $response->get_error_message(), 500 );
+		}
+
+		$code = wp_remote_retrieve_response_code( $response );
+		if ( $code < 200 || $code >= 300 ) {
+			wp_send_json_error( 'Failed to dispatch submission to support server.', 502 );
+		}
+
+		wp_send_json_success( array( 'message' => 'Your message has been sent to our support desk. Thank you!' ) );
 	}
 }

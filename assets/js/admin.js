@@ -1231,45 +1231,307 @@
             });
         });
 
-        function renderFullLogs(logs) {
-            if ($('#full-sync-logs-tbody').length === 0) return;
-            if (!logs || logs.length === 0) {
-                $('#full-sync-logs-tbody').html('<tr><td colSpan="4" style="padding: 30px; text-align: center; color: #64748b;">No recent sync logs recorded yet.</td></tr>');
-                return;
+        window.clicksyncAllLogs = [];
+        window.currentLogsPage = 1;
+        window.currentErrorsPage = 1;
+
+        function applyLogsFiltersAndRender() {
+            var searchVal = ($('#logs-search').val() || '').toLowerCase().trim();
+            var statusFilter = $('#logs-status-filter').val() || '';
+            var perPage = parseInt($('#logs-per-page').val() || '25', 10);
+            
+            var logs = window.clicksyncAllLogs || [];
+            var filtered = $.grep(logs, function(log) {
+                var matchesSearch = true;
+                var matchesStatus = true;
+
+                if (searchVal) {
+                    var event = (log.event || '').toLowerCase();
+                    var taskId = (log.clickupTaskId || '').toLowerCase();
+                    var details = (log.details || '').toLowerCase();
+                    var error = (log.error || '').toLowerCase();
+                    matchesSearch = event.indexOf(searchVal) !== -1 || 
+                                    taskId.indexOf(searchVal) !== -1 || 
+                                    details.indexOf(searchVal) !== -1 || 
+                                    error.indexOf(searchVal) !== -1;
+                }
+
+                if (statusFilter) {
+                    matchesStatus = log.status === statusFilter;
+                }
+
+                return matchesSearch && matchesStatus;
+            });
+
+            var totalItems = filtered.length;
+            var totalPages = Math.ceil(totalItems / perPage) || 1;
+            if (window.currentLogsPage > totalPages) {
+                window.currentLogsPage = totalPages;
+            }
+            if (window.currentLogsPage < 1) {
+                window.currentLogsPage = 1;
             }
 
-            var html = '';
-            $.each(logs, function (i, log) {
-                var badgeStyle = log.status === 'Success' ? 'background: #dcfce7; color: #15803d;' : 'background: #fee2e2; color: #b91c1c;';
-                var taskLink = log.clickupTaskId ? '<a href="' + log.clickupTaskId + '" target="_blank" style="color: #7c3aed; font-weight: 600; text-decoration: underline;">View ClickUp Task</a>' : '-';
-                html += '<tr>' +
-                    '<td style="padding: 12px; border-bottom: 1px solid #e2e8f0;"><strong>' + (log.event || 'Sync Event') + '</strong></td>' +
-                    '<td style="padding: 12px; border-bottom: 1px solid #e2e8f0;"><span class="clicksync-badge" style="' + badgeStyle + ' padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600;">' + log.status + '</span></td>' +
-                    '<td style="padding: 12px; border-bottom: 1px solid #e2e8f0;">' + taskLink + '</td>' +
-                    '<td style="padding: 12px; border-bottom: 1px solid #e2e8f0; text-align: right; font-size: 12px; color: #64748b;">' + (log.createdAt || '') + '</td>' +
-                    '</tr>';
+            var start = (window.currentLogsPage - 1) * perPage;
+            var end = start + perPage;
+            var pageItems = filtered.slice(start, end);
+
+            var tbody = $('#full-sync-logs-tbody');
+            if (tbody.length === 0) return;
+
+            if (pageItems.length === 0) {
+                tbody.html('<tr><td colSpan="4" style="padding: 30px; text-align: center; color: #64748b;">No matching sync logs found.</td></tr>');
+            } else {
+                var html = '';
+                $.each(pageItems, function (i, log) {
+                    var badgeStyle = log.status === 'Success' ? 'background: #dcfce7; color: #15803d;' : 'background: #fee2e2; color: #b91c1c;';
+                    var taskLink = log.clickupTaskId ? '<a href="' + log.clickupTaskId + '" target="_blank" style="color: #7c3aed; font-weight: 600; text-decoration: underline;">View ClickUp Task</a>' : '-';
+                    html += '<tr>' +
+                        '<td style="padding: 12px; border-bottom: 1px solid #e2e8f0;"><strong>' + (log.event || 'Sync Event') + '</strong></td>' +
+                        '<td style="padding: 12px; border-bottom: 1px solid #e2e8f0;"><span class="clicksync-badge" style="' + badgeStyle + ' padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600;">' + log.status + '</span></td>' +
+                        '<td style="padding: 12px; border-bottom: 1px solid #e2e8f0;">' + taskLink + '</td>' +
+                        '<td style="padding: 12px; border-bottom: 1px solid #e2e8f0; text-align: right; font-size: 12px; color: #64748b;">' + (log.createdAt || '') + '</td>' +
+                        '</tr>';
+                });
+                tbody.html(html);
+            }
+
+            var controlsDiv = $('#logs-pagination-controls');
+            if (controlsDiv.length > 0) {
+                var paginationHtml = '';
+                var itemStart = totalItems ? start + 1 : 0;
+                var itemEnd = Math.min(end, totalItems);
+                paginationHtml += '<span style="font-size: 12px; color: #64748b; margin-right: 8px;">' + itemStart + '-' + itemEnd + ' of ' + totalItems + '</span>';
+
+                var backDisabled = window.currentLogsPage === 1 ? 'disabled="disabled" style="opacity: 0.5; cursor: not-allowed;"' : '';
+                paginationHtml += '<button type="button" class="clicksync-btn-secondary logs-page-prev" ' + backDisabled + ' style="padding: 4px 10px; height: 28px; font-size: 12px; font-weight: 600;">&laquo; Prev</button>';
+
+                var nextDisabled = window.currentLogsPage === totalPages ? 'disabled="disabled" style="opacity: 0.5; cursor: not-allowed;"' : '';
+                paginationHtml += '<button type="button" class="clicksync-btn-secondary logs-page-next" ' + nextDisabled + ' style="padding: 4px 10px; height: 28px; font-size: 12px; font-weight: 600; margin-left: 4px;">Next &raquo;</button>';
+
+                controlsDiv.html(paginationHtml);
+            }
+        }
+
+        function applyErrorsFiltersAndRender() {
+            var searchVal = ($('#errors-search').val() || '').toLowerCase().trim();
+            var perPage = parseInt($('#errors-per-page').val() || '25', 10);
+            
+            var logs = window.clicksyncAllLogs || [];
+            var errorLogs = $.grep(logs, function (l) { return l.status !== 'Success'; });
+            
+            var filtered = $.grep(errorLogs, function(log) {
+                if (searchVal) {
+                    var event = (log.event || '').toLowerCase();
+                    var error = (log.error || '').toLowerCase();
+                    return event.indexOf(searchVal) !== -1 || error.indexOf(searchVal) !== -1;
+                }
+                return true;
             });
-            $('#full-sync-logs-tbody').html(html);
+
+            var totalItems = filtered.length;
+            var totalPages = Math.ceil(totalItems / perPage) || 1;
+            if (window.currentErrorsPage > totalPages) {
+                window.currentErrorsPage = totalPages;
+            }
+            if (window.currentErrorsPage < 1) {
+                window.currentErrorsPage = 1;
+            }
+
+            var start = (window.currentErrorsPage - 1) * perPage;
+            var end = start + perPage;
+            var pageItems = filtered.slice(start, end);
+
+            var tbody = $('#sync-errors-tbody');
+            if (tbody.length === 0) return;
+
+            if (pageItems.length === 0) {
+                tbody.html('<tr><td colSpan="3" style="padding: 30px; text-align: center; color: #64748b;">No matching error traces found.</td></tr>');
+            } else {
+                var html = '';
+                $.each(pageItems, function (i, log) {
+                    var retryBtn = '<button type="button" class="clicksync-btn-secondary clicksync-retry-event-btn" data-topic="' + log.event + '" data-payload=\'' + JSON.stringify(log.payload || {}) + '\' style="padding: 4px 10px; height: 28px; font-size: 12px; font-weight: 600;">Retry Now</button>';
+                    html += '<tr>' +
+                        '<td style="padding: 12px; border-bottom: 1px solid #e2e8f0;"><strong>' + (log.event || 'Sync Event') + '</strong></td>' +
+                        '<td style="padding: 12px; border-bottom: 1px solid #e2e8f0; color: #ef4444; font-family: monospace; font-size: 11px;">' + (log.error || 'Unknown Error') + '</td>' +
+                        '<td style="padding: 12px; border-bottom: 1px solid #e2e8f0; text-align: right;">' + retryBtn + '</td>' +
+                        '</tr>';
+                });
+                tbody.html(html);
+            }
+
+            var controlsDiv = $('#errors-pagination-controls');
+            if (controlsDiv.length > 0) {
+                var paginationHtml = '';
+                var itemStart = totalItems ? start + 1 : 0;
+                var itemEnd = Math.min(end, totalItems);
+                paginationHtml += '<span style="font-size: 12px; color: #64748b; margin-right: 8px;">' + itemStart + '-' + itemEnd + ' of ' + totalItems + '</span>';
+
+                var backDisabled = window.currentErrorsPage === 1 ? 'disabled="disabled" style="opacity: 0.5; cursor: not-allowed;"' : '';
+                paginationHtml += '<button type="button" class="clicksync-btn-secondary errors-page-prev" ' + backDisabled + ' style="padding: 4px 10px; height: 28px; font-size: 12px; font-weight: 600;">&laquo; Prev</button>';
+
+                var nextDisabled = window.currentErrorsPage === totalPages ? 'disabled="disabled" style="opacity: 0.5; cursor: not-allowed;"' : '';
+                paginationHtml += '<button type="button" class="clicksync-btn-secondary errors-page-next" ' + nextDisabled + ' style="padding: 4px 10px; height: 28px; font-size: 12px; font-weight: 600; margin-left: 4px;">Next &raquo;</button>';
+
+                controlsDiv.html(paginationHtml);
+            }
+        }
+
+        function renderFullLogs(logs) {
+            window.clicksyncAllLogs = logs || [];
+            
+            if ($('#full-sync-logs-tbody').length > 0 && $('#logs-search').length === 0) {
+                var miniLogs = window.clicksyncAllLogs.slice(0, 5);
+                var html = '';
+                $.each(miniLogs, function (i, log) {
+                    var badgeStyle = log.status === 'Success' ? 'background: #dcfce7; color: #15803d;' : 'background: #fee2e2; color: #b91c1c;';
+                    var taskLink = log.clickupTaskId ? '<a href="' + log.clickupTaskId + '" target="_blank" style="color: #7c3aed; font-weight: 600; text-decoration: underline;">View Task</a>' : '-';
+                    html += '<tr>' +
+                        '<td style="padding: 12px; border-bottom: 1px solid #e2e8f0;"><strong>' + (log.event || 'Sync Event') + '</strong></td>' +
+                        '<td style="padding: 12px; border-bottom: 1px solid #e2e8f0;"><span class="clicksync-badge" style="' + badgeStyle + ' padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600;">' + log.status + '</span></td>' +
+                        '<td style="padding: 12px; border-bottom: 1px solid #e2e8f0;">' + taskLink + '</td>' +
+                        '<td style="padding: 12px; border-bottom: 1px solid #e2e8f0; text-align: right; font-size: 12px; color: #64748b;">' + (log.createdAt || '') + '</td>' +
+                        '</tr>';
+                });
+                $('#full-sync-logs-tbody').html(html || '<tr><td colspan="4" style="padding: 20px; text-align: center;">No sync logs yet.</td></tr>');
+            }
+
+            if ($('#logs-search').length > 0) {
+                applyLogsFiltersAndRender();
+            }
         }
 
         function renderErrorLogs(logs) {
-            if ($('#error-sync-logs-tbody').length === 0) return;
-            var errorLogs = $.grep(logs, function (l) { return l.status !== 'Success'; });
-            if (errorLogs.length === 0) {
-                $('#error-sync-logs-tbody').html('<tr><td colSpan="3" style="padding: 30px; text-align: center; color: #64748b;">No error logs recorded. Great job!</td></tr>');
-                return;
+            window.clicksyncAllLogs = logs || [];
+            
+            if ($('#error-sync-logs-tbody').length > 0) {
+                var errorLogs = $.grep(window.clicksyncAllLogs, function (l) { return l.status !== 'Success'; });
+                var miniErrors = errorLogs.slice(0, 5);
+                if (miniErrors.length === 0) {
+                    $('#error-sync-logs-tbody').html('<tr><td colSpan="3" style="padding: 30px; text-align: center; color: #64748b;">No error logs recorded. Great job!</td></tr>');
+                } else {
+                    var html = '';
+                    $.each(miniErrors, function (i, log) {
+                        html += '<tr>' +
+                            '<td style="padding: 12px; border-bottom: 1px solid #e2e8f0;"><strong>' + (log.event || 'Sync Event') + '</strong></td>' +
+                            '<td style="padding: 12px; border-bottom: 1px solid #e2e8f0; color: #ef4444;">' + (log.error || 'Unknown Error') + '</td>' +
+                            '<td style="padding: 12px; border-bottom: 1px solid #e2e8f0; text-align: right; font-size: 12px; color: #64748b;">' + (log.createdAt || '') + '</td>' +
+                            '</tr>';
+                    });
+                    $('#error-sync-logs-tbody').html(html);
+                }
             }
 
-            var html = '';
-            $.each(errorLogs, function (i, log) {
-                html += '<tr>' +
-                    '<td style="padding: 12px; border-bottom: 1px solid #e2e8f0;"><strong>' + (log.event || 'Sync Event') + '</strong></td>' +
-                    '<td style="padding: 12px; border-bottom: 1px solid #e2e8f0; color: #ef4444;">' + (log.error || 'Unknown Error') + '</td>' +
-                    '<td style="padding: 12px; border-bottom: 1px solid #e2e8f0; text-align: right; font-size: 12px; color: #64748b;">' + (log.createdAt || '') + '</td>' +
-                    '</tr>';
-            });
-            $('#error-sync-logs-tbody').html(html);
+            if ($('#errors-search').length > 0 || $('#sync-errors-tbody').length > 0) {
+                applyErrorsFiltersAndRender();
+            }
         }
+
+        // Attach pagination click and filter event handlers
+        $(document).on('click', '.logs-page-prev', function() {
+            if (window.currentLogsPage > 1) {
+                window.currentLogsPage--;
+                applyLogsFiltersAndRender();
+            }
+        });
+        $(document).on('click', '.logs-page-next', function() {
+            window.currentLogsPage++;
+            applyLogsFiltersAndRender();
+        });
+        $(document).on('click', '.errors-page-prev', function() {
+            if (window.currentErrorsPage > 1) {
+                window.currentErrorsPage--;
+                applyErrorsFiltersAndRender();
+            }
+        });
+        $(document).on('click', '.errors-page-next', function() {
+            window.currentErrorsPage++;
+            applyErrorsFiltersAndRender();
+        });
+
+        $(document).on('input', '#logs-search', function() {
+            window.currentLogsPage = 1;
+            applyLogsFiltersAndRender();
+        });
+        $(document).on('change', '#logs-status-filter', function() {
+            window.currentLogsPage = 1;
+            applyLogsFiltersAndRender();
+        });
+        $(document).on('change', '#logs-per-page', function() {
+            window.currentLogsPage = 1;
+            applyLogsFiltersAndRender();
+        });
+
+        $(document).on('input', '#errors-search', function() {
+            window.currentErrorsPage = 1;
+            applyErrorsFiltersAndRender();
+        });
+        $(document).on('change', '#errors-per-page', function() {
+            window.currentErrorsPage = 1;
+            applyErrorsFiltersAndRender();
+        });
+
+        // Support Form Submission
+        $(document).on('submit', '#clicksync-support-contact-form', function(e) {
+            e.preventDefault();
+            var form = $(this);
+            var btn = form.find('button[type="submit"]');
+            var originalText = btn.html();
+            btn.html('Sending...').prop('disabled', true);
+
+            $.ajax({
+                url: clicksyncData.ajaxUrl,
+                type: 'POST',
+                data: form.serialize() + '&action=clicksync_contact_submit',
+                success: function(res) {
+                    if (res.success) {
+                        alert(res.data.message);
+                        form[0].reset();
+                    } else {
+                        alert('Failed to send message: ' + res.data);
+                    }
+                    btn.html(originalText).prop('disabled', false);
+                },
+                error: function(xhr) {
+                    alert('Error sending message: ' + (xhr.responseJSON?.data || 'Server error.'));
+                    btn.html(originalText).prop('disabled', false);
+                }
+            });
+        });
+
+        // Error Center - Retry Event Click Handler
+        $(document).on('click', '.clicksync-retry-event-btn', function(e) {
+            e.preventDefault();
+            var btn = $(this);
+            var originalText = btn.text();
+            btn.text('Retrying...').prop('disabled', true);
+
+            var topic = btn.attr('data-topic');
+            var payload = JSON.parse(btn.attr('data-payload') || '{}');
+
+            $.ajax({
+                url: clicksyncData.ajaxUrl,
+                type: 'POST',
+                data: {
+                    action: 'clicksync_widget_force_sync',
+                    order_id: payload.id || payload.order_id || 0,
+                    customer_id: payload.customer_id || 0
+                },
+                success: function(res) {
+                    if (res.success) {
+                        alert('Event retried and synced successfully!');
+                        window.location.reload();
+                    } else {
+                        alert('Retry failed: ' + res.data);
+                        btn.text(originalText).prop('disabled', false);
+                    }
+                },
+                error: function(xhr) {
+                    alert('Error retrying event: ' + (xhr.responseJSON?.data || 'Server error.'));
+                    btn.text(originalText).prop('disabled', false);
+                }
+            });
+        });
 
         // ClickSync Sidebar Meta Boxes (Widgets) Controller
         var widgetWrapper = $('.clicksync-widget-wrapper');

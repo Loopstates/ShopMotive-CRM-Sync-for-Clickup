@@ -29,12 +29,19 @@ class ErrorsPage {
 					<img src="<?php echo esc_url( $logo_url ); ?>" alt="ClickSync" style="width: 42px; height: 42px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.12);" />
 					<div>
 						<h1 style="font-weight: 700; font-size: 24px; margin: 0; color: #0f172a; line-height: 1.2;">
-							<svg class="clicksync-title-icon" viewBox="0 0 24 24" style="fill: #ef4444; width: 22px; height: 22px;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg> <?php esc_html_e( 'Sync Error Center', 'clicksync-wordpress' ); ?>
+							<?php esc_html_e( 'Sync Error Center', 'clicksync-wordpress' ); ?>
 						</h1>
 						<p style="margin: 4px 0 0 0; font-size: 13px; color: #64748b;">
 							<?php esc_html_e( 'Diagnostic trace logs and retry controls for any failed API requests or rate-limited ClickUp calls.', 'clicksync-wordpress' ); ?>
 						</p>
 					</div>
+				</div>
+			</div>
+
+			<!-- Filter & Action Controls -->
+			<div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 16px; margin-bottom: 20px; display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+				<div style="display: flex; gap: 12px; flex: 1; min-width: 280px;">
+					<input type="text" id="errors-search" class="clicksync-select" style="margin: 0; flex: 1;" placeholder="<?php esc_attr_e( 'Search by event or error description...', 'clicksync-wordpress' ); ?>" />
 				</div>
 			</div>
 
@@ -71,6 +78,21 @@ class ErrorsPage {
 						</tr>
 					</tbody>
 				</table>
+
+				<!-- Pagination controls -->
+				<div style="display: flex; align-items: center; justify-content: space-between; margin-top: 16px; border-top: 1px solid #e2e8f0; padding-top: 16px;">
+					<div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #64748b;">
+						<span><?php esc_html_e( 'Show:', 'clicksync-wordpress' ); ?></span>
+						<select id="errors-per-page" class="clicksync-select" style="width: 70px; height: 32px; padding: 4px; margin: 0; font-size: 12px;">
+							<option value="10">10</option>
+							<option value="25" selected>25</option>
+							<option value="50">50</option>
+							<option value="100">100</option>
+						</select>
+						<span><?php esc_html_e( 'per page', 'clicksync-wordpress' ); ?></span>
+					</div>
+					<div style="display: flex; align-items: center; gap: 6px;" id="errors-pagination-controls"></div>
+				</div>
 			</div>
 
 		</div>
