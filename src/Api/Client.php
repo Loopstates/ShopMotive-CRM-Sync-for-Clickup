@@ -73,4 +73,54 @@ class Client {
 			'data'        => $data,
 		);
 	}
+
+	/**
+	 * Send arbitrary signed request to ClickSync Cloud middleware.
+	 *
+	 * @param string $endpoint_path Endpoint path (e.g. '/api/get-task-details').
+	 * @param array  $payload Payload array.
+	 * @return array|bool Response array or false on failure.
+	 */
+	public static function request( $endpoint_path, $payload ) {
+		$endpoint = CLICKSYNC_CLOUD_URL . $endpoint_path;
+		$json_body = wp_json_encode( $payload );
+
+		// Sign request using secret key for security validation
+		$timestamp   = time();
+		$host        = parse_url( site_url(), PHP_URL_HOST );
+		$secret_key  = Options::get_secret_key();
+		$signing_key = ! empty( $secret_key ) ? $secret_key : $host;
+		$signature   = hash_hmac( 'sha256', $json_body, $signing_key . ':' . $timestamp );
+
+		$args = array(
+			'method'      => 'POST',
+			'timeout'     => 15,
+			'redirection' => 5,
+			'httpversion' => '1.1',
+			'blocking'    => true,
+			'headers'     => array(
+				'Content-Type'         => 'application/json',
+				'X-ClickSync-Shop'     => sanitize_text_field( $host ),
+				'X-ClickSync-Timestamp'=> $timestamp,
+				'X-ClickSync-Hmac'     => $signature,
+				'User-Agent'           => 'ClickSync-WordPress-Plugin/' . CLICKSYNC_VERSION,
+			),
+			'body'        => $json_body,
+		);
+
+		$response = wp_remote_post( $endpoint, $args );
+
+		if ( is_wp_error( $response ) ) {
+			error_log( 'ClickSync Cloud API Request Error: ' . $response->get_error_message() );
+			return false;
+		}
+
+		$status_code = wp_remote_retrieve_response_code( $response );
+		$body        = wp_remote_retrieve_body( $response );
+		
+		return array(
+			'status_code' => $status_code,
+			'data'        => json_decode( $body, true ),
+		);
+	}
 }

@@ -34,6 +34,17 @@ class SettingsPage {
 
 		$settings   = Options::get_settings();
 		$account    = Options::get_account();
+		$user_mappings_data = Options::get_user_mappings();
+		$saved_mappings = $user_mappings_data['mappings'] ?? array();
+		$fallback_clickup_id = $user_mappings_data['fallback_clickup_user_id'] ?? '';
+
+		$user_query = new \WP_User_Query( array(
+			'role__in' => array( 'administrator', 'shop_manager' ),
+			'orderby'  => 'display_name',
+			'order'    => 'ASC'
+		) );
+		$wp_users = $user_query->get_results();
+
 		$host       = parse_url( site_url(), PHP_URL_HOST );
 		$is_ssl      = is_ssl() ? 'https' : 'http';
 		$connect_url= CLICKSYNC_CLOUD_URL . '/auth/clickup?shop=' . urlencode( $host ) . '&protocol=' . $is_ssl;
@@ -220,7 +231,7 @@ class SettingsPage {
 									</div>
 								</div>
 								<label class="clicksync-switch">
-									<input type="checkbox" id="orders-sync-refunds" checked>
+									<input type="checkbox" id="orders-sync-refunds" <?php checked( ! empty( $settings['refunds_enabled'] ) ); ?>>
 									<span class="clicksync-slider"></span>
 								</label>
 							</div>
@@ -237,7 +248,7 @@ class SettingsPage {
 									</div>
 								</div>
 								<label class="clicksync-switch">
-									<input type="checkbox" id="orders-sync-fulfillment" checked>
+									<input type="checkbox" id="orders-sync-fulfillment" <?php checked( isset( $settings['fulfillment_enabled'] ) ? ! empty( $settings['fulfillment_enabled'] ) : true ); ?>>
 									<span class="clicksync-slider"></span>
 								</label>
 							</div>
@@ -531,6 +542,65 @@ class SettingsPage {
 							</select>
 							<button type="button" class="clicksync-add-field-mapping-btn clicksync-btn-secondary" style="height: 36px; white-space: nowrap;" data-event="customers/create"><?php esc_html_e( 'Add Mapping', 'clicksync-wordpress' ); ?></button>
 						</div>
+					</div>
+				</div>
+
+				<!-- User Identity Mappings Card -->
+				<div class="clicksync-card" id="clicksync-user-mappings-card" style="background: #ffffff; border: 1px solid #e1e3e5; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+					<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+						<svg class="clicksync-title-icon" style="fill: #7c3aed; width: 20px; height: 20px;" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+						<h3 style="margin: 0; font-size: 16px; font-weight: 600;"><?php esc_html_e( 'User Identity Mappings (Bi-directional)', 'clicksync-wordpress' ); ?></h3>
+					</div>
+					<p style="font-size: 13px; color: #64748b; margin-bottom: 16px; line-height: 1.5;">
+						Map your WordPress administrators and shop managers to their respective ClickUp workspace accounts. This ensures that WooCommerce order updates and notes made by these users show their names in ClickUp, and comments created by them in ClickUp sync back to WooCommerce correctly.
+					</p>
+
+					<!-- User Mappings Table -->
+					<div style="margin-bottom: 16px;">
+						<table class="wp-list-table widefat fixed striped" style="border: 1px solid #e2e8f0; border-radius: 6px; box-shadow: none;">
+							<thead>
+								<tr>
+									<th style="font-weight: 600; padding: 10px 14px; font-size: 12px; color: #475569;"><?php esc_html_e( 'WordPress User (Admin / Shop Manager)', 'clicksync-wordpress' ); ?></th>
+									<th style="font-weight: 600; padding: 10px 14px; font-size: 12px; color: #475569;"><?php esc_html_e( 'Mapped ClickUp Workspace Member', 'clicksync-wordpress' ); ?></th>
+								</tr>
+							</thead>
+							<tbody>
+								<?php if ( ! empty( $wp_users ) ) : ?>
+									<?php foreach ( $wp_users as $user ) : ?>
+										<?php 
+										$current_mapped = $saved_mappings[ $user->ID ] ?? '';
+										?>
+										<tr class="clicksync-user-mapping-row" data-wp-user-id="<?php echo esc_attr( $user->ID ); ?>">
+											<td style="padding: 10px 14px; font-size: 13px; font-weight: 500; vertical-align: middle;">
+												<strong><?php echo esc_html( $user->display_name ); ?></strong> 
+												<span style="font-size: 11px; color: #64748b; font-weight: normal; margin-left: 4px;">(<?php echo esc_html( $user->user_email ); ?>)</span>
+											</td>
+											<td style="padding: 6px 14px;">
+												<select class="clicksync-member-mapping-select clicksync-select" style="margin: 0; width: 100%; height: 32px;" data-selected="<?php echo esc_attr( $current_mapped ); ?>">
+													<option value=""><?php esc_html_e( '-- Choose Workspace Member --', 'clicksync-wordpress' ); ?></option>
+												</select>
+											</td>
+										</tr>
+									<?php endforeach; ?>
+								<?php else : ?>
+									<tr>
+										<td colspan="2" style="padding: 14px; text-align: center; color: #64748b;"><?php esc_html_e( 'No administrators or shop managers found.', 'clicksync-wordpress' ); ?></td>
+									</tr>
+								<?php endif; ?>
+								<!-- Fallback user row -->
+								<tr class="clicksync-fallback-mapping-row">
+									<td style="padding: 10px 14px; font-size: 13px; font-weight: 600; vertical-align: middle; background: #fafafa;">
+										<span><?php esc_html_e( 'Fallback / Unmapped Users', 'clicksync-wordpress' ); ?></span>
+										<span style="font-size: 11px; color: #b45309; background: #fffbeb; font-weight: 600; padding: 1px 6px; border-radius: 4px; margin-left: 8px;">REQUIRED</span>
+									</td>
+									<td style="padding: 6px 14px; background: #fafafa;">
+										<select id="clicksync-fallback-member-select" class="clicksync-select" style="margin: 0; width: 100%; height: 32px;" data-selected="<?php echo esc_attr( $fallback_clickup_id ); ?>">
+											<option value=""><?php esc_html_e( '-- Choose Workspace Member --', 'clicksync-wordpress' ); ?></option>
+										</select>
+									</td>
+								</tr>
+							</tbody>
+						</table>
 					</div>
 				</div>
 

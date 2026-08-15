@@ -1,0 +1,128 @@
+<?php
+
+namespace ClickSync\Admin;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+class Widget {
+
+	/**
+	 * Render WooCommerce Edit Order ClickSync Meta Box.
+	 *
+	 * @param \WP_Post|\WC_Order $post Post or Order object.
+	 */
+	public static function render_order_metabox( $post ) {
+		$order_id = $post instanceof \WC_Order ? $post->get_id() : $post->ID;
+		$task_id   = get_post_meta( $order_id, '_clicksync_task_id', true );
+		$task_url  = get_post_meta( $order_id, '_clicksync_task_url', true );
+		$last_sync = get_post_meta( $order_id, '_clicksync_last_sync', true );
+		
+		$last_sync_formatted = $last_sync ? date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $last_sync ) : __( 'Never', 'clicksync-wordpress' );
+		?>
+		<div class="clicksync-widget-wrapper" data-order-id="<?php echo esc_attr( $order_id ); ?>" data-task-id="<?php echo esc_attr( $task_id ); ?>" style="font-size: 13px; color: #475569; line-height: 1.5;">
+			<?php if ( empty( $task_id ) ) : ?>
+				<div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px; margin-bottom: 12px; text-align: center;">
+					<svg style="width: 24px; height: 24px; fill: #64748b; margin-bottom: 6px;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+					<p style="margin: 0; font-weight: 500;"><?php esc_html_e( 'Order not synchronized to ClickUp.', 'clicksync-wordpress' ); ?></p>
+				</div>
+				<button type="button" class="clicksync-manual-sync-btn button button-primary button-large" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px; background: #7c3aed; border-color: #6d28d9;">
+					<svg style="width: 14px; height: 14px; fill: currentColor;" viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm-6 8c0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v-3l4 4-4-4v3c-3.31 0-6-2.69-6-6z"/></svg>
+					<span><?php esc_html_e( 'Sync to ClickUp Now', 'clicksync-wordpress' ); ?></span>
+				</button>
+			<?php else : ?>
+				<div style="margin-bottom: 12px;">
+					<a href="<?php echo esc_url( $task_url ); ?>" target="_blank" style="font-weight: 700; text-decoration: none; color: #7c3aed; display: inline-flex; align-items: center; gap: 4px;">
+						<svg style="width: 14px; height: 14px; fill: currentColor;" viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>
+						<span><?php esc_html_e( 'Open ClickUp Task', 'clicksync-wordpress' ); ?></span>
+					</a>
+					<span style="display: block; font-size: 11px; color: #64748b; margin-top: 4px;">
+						<?php printf( esc_html__( 'Last Sync: %s', 'clicksync-wordpress' ), $last_sync_formatted ); ?>
+					</span>
+				</div>
+				
+				<!-- Status Select -->
+				<div style="margin-bottom: 10px;">
+					<label style="font-weight: 600; display: block; margin-bottom: 4px; font-size: 11px; color: #475569;"><?php esc_html_e( 'ClickUp Status:', 'clicksync-wordpress' ); ?></label>
+					<select class="clicksync-widget-status-select clicksync-select" style="width: 100%;">
+						<option value=""><?php esc_html_e( 'Loading task statuses...', 'clicksync-wordpress' ); ?></option>
+					</select>
+				</div>
+
+				<!-- Priority Select -->
+				<div style="margin-bottom: 10px;">
+					<label style="font-weight: 600; display: block; margin-bottom: 4px; font-size: 11px; color: #475569;"><?php esc_html_e( 'ClickUp Priority:', 'clicksync-wordpress' ); ?></label>
+					<select class="clicksync-widget-priority-select clicksync-select" style="width: 100%;">
+						<option value=""><?php esc_html_e( 'Loading priorities...', 'clicksync-wordpress' ); ?></option>
+					</select>
+				</div>
+
+				<!-- Assignee List Checkboxes -->
+				<div style="margin-bottom: 14px;">
+					<label style="font-weight: 600; display: block; margin-bottom: 4px; font-size: 11px; color: #475569;"><?php esc_html_e( 'ClickUp Assignees:', 'clicksync-wordpress' ); ?></label>
+					<div class="clicksync-widget-assignees-list" style="background: #fafafa; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px; max-height: 120px; overflow-y: auto;">
+						<span style="font-size: 11px; color: #64748b;"><?php esc_html_e( 'Loading members...', 'clicksync-wordpress' ); ?></span>
+					</div>
+				</div>
+
+				<button type="button" class="clicksync-manual-sync-btn button button-secondary" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px;">
+					<svg style="width: 13px; height: 13px; fill: currentColor;" viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm-6 8c0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v-3l4 4-4-4v3c-3.31 0-6-2.69-6-6z"/></svg>
+					<span><?php esc_html_e( 'Force Sync Now', 'clicksync-wordpress' ); ?></span>
+				</button>
+			<?php endif; ?>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Render WooCommerce Edit Customer ClickSync Meta Box.
+	 *
+	 * @param \WP_User $user User object.
+	 */
+	public static function render_customer_metabox( $user ) {
+		$customer_id = $user->ID;
+		$task_id   = get_user_meta( $customer_id, '_clicksync_task_id', true );
+		$task_url  = get_user_meta( $customer_id, '_clicksync_task_url', true );
+		$last_sync = get_user_meta( $customer_id, '_clicksync_last_sync', true );
+		
+		$last_sync_formatted = $last_sync ? date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $last_sync ) : __( 'Never', 'clicksync-wordpress' );
+		?>
+		<div class="clicksync-widget-wrapper" data-customer-id="<?php echo esc_attr( $customer_id ); ?>" data-task-id="<?php echo esc_attr( $task_id ); ?>" style="font-size: 13px; color: #475569; line-height: 1.5;">
+			<?php if ( empty( $task_id ) ) : ?>
+				<div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px; margin-bottom: 12px; text-align: center;">
+					<svg style="width: 24px; height: 24px; fill: #64748b; margin-bottom: 6px;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+					<p style="margin: 0; font-weight: 500;"><?php esc_html_e( 'Customer not synchronized to ClickUp.', 'clicksync-wordpress' ); ?></p>
+				</div>
+				<button type="button" class="clicksync-manual-sync-btn button button-primary button-large" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px; background: #7c3aed; border-color: #6d28d9;">
+					<svg style="width: 14px; height: 14px; fill: currentColor;" viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm-6 8c0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v-3l4 4-4-4v3c-3.31 0-6-2.69-6-6z"/></svg>
+					<span><?php esc_html_e( 'Sync to ClickUp Now', 'clicksync-wordpress' ); ?></span>
+				</button>
+			<?php else : ?>
+				<div style="margin-bottom: 12px;">
+					<a href="<?php echo esc_url( $task_url ); ?>" target="_blank" style="font-weight: 700; text-decoration: none; color: #7c3aed; display: inline-flex; align-items: center; gap: 4px;">
+						<svg style="width: 14px; height: 14px; fill: currentColor;" viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>
+						<span><?php esc_html_e( 'Open ClickUp Task', 'clicksync-wordpress' ); ?></span>
+					</a>
+					<span style="display: block; font-size: 11px; color: #64748b; margin-top: 4px;">
+						<?php printf( esc_html__( 'Last Sync: %s', 'clicksync-wordpress' ), $last_sync_formatted ); ?>
+					</span>
+				</div>
+				
+				<!-- Status Select -->
+				<div style="margin-bottom: 10px;">
+					<label style="font-weight: 600; display: block; margin-bottom: 4px; font-size: 11px; color: #475569;"><?php esc_html_e( 'ClickUp Status:', 'clicksync-wordpress' ); ?></label>
+					<select class="clicksync-widget-status-select clicksync-select" style="width: 100%;">
+						<option value=""><?php esc_html_e( 'Loading task statuses...', 'clicksync-wordpress' ); ?></option>
+					</select>
+				</div>
+
+				<button type="button" class="clicksync-manual-sync-btn button button-secondary" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px;">
+					<svg style="width: 13px; height: 13px; fill: currentColor;" viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm-6 8c0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v-3l4 4-4-4v3c-3.31 0-6-2.69-6-6z"/></svg>
+					<span><?php esc_html_e( 'Force Sync Now', 'clicksync-wordpress' ); ?></span>
+				</button>
+			<?php endif; ?>
+		</div>
+		<?php
+	}
+}

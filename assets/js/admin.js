@@ -299,13 +299,59 @@
                                     payload: { ruleId: customersRuleId, active: customersActive }
                                 }),
                                 success: function () {
-                                    // Save toggles (pills) for both rules
-                                    saveOptionTogglesForEvent('orders/create');
-                                    saveOptionTogglesForEvent('customers/create');
+                                    // Save local WordPress settings (Refunds & Fulfillment toggles) via WP AJAX
+                                    var refundsEnabled = $('#orders-sync-refunds').is(':checked') ? '1' : '0';
+                                    var fulfillmentEnabled = $('#orders-sync-fulfillment').is(':checked') ? '1' : '0';
 
-                                    alert('Configurations saved successfully.');
-                                    btn.html(originalHtml).prop('disabled', false);
-                                    fetchCloudConfig();
+                                    $.ajax({
+                                        url: clicksyncData.ajaxUrl,
+                                        type: 'POST',
+                                        data: {
+                                            action: 'clicksync_save_local_settings',
+                                            refunds_enabled: refundsEnabled,
+                                            fulfillment_enabled: fulfillmentEnabled
+                                        },
+                                        success: function (wpRes) {
+                                            // Collect and save User Identity Mappings
+                                            var userMappings = {};
+                                            $('.clicksync-user-mapping-row').each(function() {
+                                                var row = $(this);
+                                                var wpId = row.attr('data-wp-user-id');
+                                                var cuId = row.find('.clicksync-member-mapping-select').val();
+                                                if (wpId && cuId) {
+                                                    userMappings[wpId] = cuId;
+                                                }
+                                            });
+                                            var fallbackCuId = $('#clicksync-fallback-member-select').val();
+
+                                            $.ajax({
+                                                url: clicksyncData.ajaxUrl,
+                                                type: 'POST',
+                                                data: {
+                                                    action: 'clicksync_save_user_mappings',
+                                                    mappings: userMappings,
+                                                    fallback_clickup_user_id: fallbackCuId
+                                                },
+                                                success: function() {
+                                                    // Save toggles (pills) for both rules
+                                                    saveOptionTogglesForEvent('orders/create');
+                                                    saveOptionTogglesForEvent('customers/create');
+
+                                                    alert('Configurations saved successfully.');
+                                                    btn.html(originalHtml).prop('disabled', false);
+                                                    fetchCloudConfig();
+                                                },
+                                                error: function() {
+                                                    alert('Failed to save user identity mappings.');
+                                                    btn.html(originalHtml).prop('disabled', false);
+                                                }
+                                            });
+                                        },
+                                        error: function () {
+                                            alert('Failed to save local WordPress settings.');
+                                            btn.html(originalHtml).prop('disabled', false);
+                                        }
+                                    });
                                 },
                                 error: function (err) {
                                     alert('Failed to save customer rule active status.');
@@ -965,8 +1011,25 @@
                             });
                         }
                         $('.clicksync-assignees-dropdown').html(assigneesHtml);
+
+                        // Populate member identity mapping dropdowns inside mapping card
+                        var memberMappingHtml = '<option value="">-- Choose Workspace Member --</option>';
+                        if (activeTeam && activeTeam.members) {
+                            $.each(activeTeam.members, function (i, m) {
+                                if (m.user) {
+                                    memberMappingHtml += '<option value="' + m.user.id + '">' + m.user.username + ' (' + m.user.email + ')</option>';
+                                }
+                            });
+                        }
+                        
+                        $('.clicksync-member-mapping-select, #clicksync-fallback-member-select').each(function() {
+                            var select = $(this);
+                            var selectedVal = select.attr('data-selected');
+                            select.html(memberMappingHtml).val(selectedVal);
+                        });
                     } else {
                         $('.clicksync-assignees-dropdown').html('<option value="">No members available</option>');
+                        $('.clicksync-member-mapping-select, #clicksync-fallback-member-select').html('<option value="">No members available</option>');
                     }
 
                     // Fetch dynamic WooCommerce fields from WP
@@ -1206,6 +1269,136 @@
                     '</tr>';
             });
             $('#error-sync-logs-tbody').html(html);
+        }
+
+        // ClickSync Sidebar Meta Boxes (Widgets) Controller
+        var widgetWrapper = $('.clicksync-widget-wrapper');
+        if (widgetWrapper.length > 0) {
+            var taskId = widgetWrapper.attr('data-task-id');
+            var orderId = widgetWrapper.attr('data-order-id') || 0;
+            var customerId = widgetWrapper.attr('data-customer-id') || 0;
+
+            if (taskId) {
+                // Fetch latest task details dynamically from ClickUp via signed API request
+                $.ajax({
+                    url: clicksyncData.ajaxUrl,
+                    type: 'POST',
+                    data: {
+                        action: 'clicksync_widget_get_task_details',
+                        task_id: taskId
+                    },
+                    success: function (res) {
+                        if (res.success && res.data) {
+                            var task = res.data.task;
+                            var statuses = res.data.statuses;
+                            var priorities = res.data.priorities;
+                            var members = res.data.members;
+
+                            // 1. Populate statuses select
+                            var statusSelect = widgetWrapper.find('.clicksync-widget-status-select');
+                            var statusHtml = '';
+                            $.each(statuses, function (i, s) {
+                                statusHtml += '<option value="' + s + '">' + s.toUpperCase() + '</option>';
+                            });
+                            statusSelect.html(statusHtml).val(task.status);
+
+                            // 2. Populate priorities select
+                            var prioritySelect = widgetWrapper.find('.clicksync-widget-priority-select');
+                            if (prioritySelect.length > 0) {
+                                var priorityHtml = '';
+                                $.each(priorities, function (i, p) {
+                                    priorityHtml += '<option value="' + p.score + '">' + p.name + '</option>';
+                                });
+                                prioritySelect.html(priorityHtml).val(task.priority);
+                            }
+
+                            // 3. Populate assignees list
+                            var assigneesList = widgetWrapper.find('.clicksync-widget-assignees-list');
+                            if (assigneesList.length > 0) {
+                                var assigneesHtml = '';
+                                $.each(members, function (i, m) {
+                                    var isChecked = task.assignees.indexOf(m.id) !== -1 ? 'checked' : '';
+                                    assigneesHtml += '<label style="display: block; margin-bottom: 6px; font-weight: normal; cursor: pointer;">';
+                                    assigneesHtml += '<input type="checkbox" class="clicksync-widget-assignee-checkbox" value="' + m.id + '" ' + isChecked + ' /> ';
+                                    assigneesHtml += m.username;
+                                    assigneesHtml += '</label>';
+                                });
+                                assigneesList.html(assigneesHtml || 'No members available');
+                            }
+
+                            // Attach change listeners to save updates dynamically
+                            widgetWrapper.on('change', '.clicksync-widget-status-select, .clicksync-widget-priority-select, .clicksync-widget-assignee-checkbox', function () {
+                                widgetWrapper.css({ opacity: 0.6, 'pointer-events': 'none' });
+
+                                var updatedStatus = widgetWrapper.find('.clicksync-widget-status-select').val();
+                                var updatedPriority = widgetWrapper.find('.clicksync-widget-priority-select').val() || '';
+                                var updatedAssignees = [];
+                                widgetWrapper.find('.clicksync-widget-assignee-checkbox:checked').each(function () {
+                                    updatedAssignees.push($(this).val());
+                                });
+
+                                $.ajax({
+                                    url: clicksyncData.ajaxUrl,
+                                    type: 'POST',
+                                    data: {
+                                        action: 'clicksync_widget_update_task',
+                                        task_id: taskId,
+                                        order_id: orderId,
+                                        customer_id: customerId,
+                                        status: updatedStatus,
+                                        priority: updatedPriority,
+                                        assignees: updatedAssignees
+                                    },
+                                    success: function (updateRes) {
+                                        widgetWrapper.css({ opacity: 1, 'pointer-events': 'auto' });
+                                    },
+                                    error: function (xhr) {
+                                        alert('Failed to save changes to ClickUp: ' + (xhr.responseJSON?.data || 'Unknown error'));
+                                        widgetWrapper.css({ opacity: 1, 'pointer-events': 'auto' });
+                                    }
+                                });
+                            });
+
+                        } else {
+                            widgetWrapper.html('<p style="color: #ef4444; margin: 0; font-size: 11px;">Error loading task details.</p>');
+                        }
+                    },
+                    error: function () {
+                        widgetWrapper.html('<p style="color: #ef4444; margin: 0; font-size: 11px;">Failed to fetch task details.</p>');
+                    }
+                });
+            }
+
+            // Sync Now Click Handler
+            widgetWrapper.on('click', '.clicksync-manual-sync-btn', function (e) {
+                e.preventDefault();
+                var btn = $(this);
+                var originalHtml = btn.html();
+                btn.html('Syncing...').prop('disabled', true);
+
+                $.ajax({
+                    url: clicksyncData.ajaxUrl,
+                    type: 'POST',
+                    data: {
+                        action: 'clicksync_widget_force_sync',
+                        order_id: orderId,
+                        customer_id: customerId
+                    },
+                    success: function (res) {
+                        if (res.success) {
+                            alert('Successfully synchronized with ClickUp!');
+                            window.location.reload();
+                        } else {
+                            alert('Sync failure: ' + res.data);
+                            btn.html(originalHtml).prop('disabled', false);
+                        }
+                    },
+                    error: function (xhr) {
+                        alert('Sync error: ' + (xhr.responseJSON?.data || 'Server error occurred during sync.'));
+                        btn.html(originalHtml).prop('disabled', false);
+                    }
+                });
+            });
         }
 
         // Initialize Fetch

@@ -31,6 +31,7 @@ class WooCommerce {
 
 		// Refunds
 		add_action( 'woocommerce_order_refunded', array( __CLASS__, 'on_order_refunded' ), 10, 2 );
+		add_action( 'woocommerce_new_order_note', array( __CLASS__, 'on_new_order_note' ), 10, 2 );
 
 		// Customer Creation
 		add_action( 'woocommerce_created_customer', array( __CLASS__, 'on_created_customer' ), 10, 3 );
@@ -73,7 +74,7 @@ class WooCommerce {
 	 */
 	public static function on_order_status_changed( $order_id, $old_status, $new_status, $order = null ) {
 		$settings = Options::get_settings();
-		if ( empty( $settings['orders_enabled'] ) ) {
+		if ( empty( $settings['orders_enabled'] ) || empty( $settings['fulfillment_enabled'] ) ) {
 			return;
 		}
 
@@ -130,6 +131,55 @@ class WooCommerce {
 		);
 
 		Client::dispatch_event( 'refunds/create', $payload );
+	}
+
+	/**
+	 * Handle WooCommerce new order note creation.
+	 *
+	 * @param int       $note_id Note ID.
+	 * @param \WC_Order $order   WooCommerce Order Object.
+	 */
+	public static function on_new_order_note( $note_id, $order ) {
+		$settings = Options::get_settings();
+		if ( empty( $settings['orders_enabled'] ) ) {
+			return;
+		}
+
+		if ( ! function_exists( 'wc_get_order_note' ) ) {
+			return;
+		}
+
+		$note = wc_get_order_note( $note_id );
+		if ( ! $note ) {
+			return;
+		}
+
+		// Prevent sync feedback loops
+		if ( strpos( $note->content, 'via ClickUp' ) !== false || strpos( $note->content, '[ClickUp]' ) !== false ) {
+			return;
+		}
+
+		// Resolve current admin identity mapping
+		$user_mappings_data = Options::get_user_mappings();
+		$saved_mappings = $user_mappings_data['mappings'] ?? array();
+		$fallback_clickup_id = $user_mappings_data['fallback_clickup_user_id'] ?? '';
+
+		$current_user_id = get_current_user_id();
+		$action_maker_clickup_id = $saved_mappings[ $current_user_id ] ?? $fallback_clickup_id;
+		$wp_user = wp_get_current_user();
+		$action_maker_name = $wp_user && $wp_user->ID ? $wp_user->display_name : 'System';
+
+		$payload = array(
+			'order_id'                => $order->get_id(),
+			'note_id'                 => $note_id,
+			'content'                 => $note->content,
+			'customer_note'           => $note->customer_note,
+			'added_by'                => $note->added_by,
+			'action_maker_clickup_id' => $action_maker_clickup_id,
+			'action_maker_name'       => $action_maker_name,
+		);
+
+		Client::dispatch_event( 'orders/note_created', $payload );
 	}
 
 	/**
@@ -207,6 +257,15 @@ class WooCommerce {
 	 * @return array
 	 */
 	public static function normalize_order( $order ) {
+		$user_mappings_data = Options::get_user_mappings();
+		$saved_mappings = $user_mappings_data['mappings'] ?? array();
+		$fallback_clickup_id = $user_mappings_data['fallback_clickup_user_id'] ?? '';
+
+		$current_user_id = get_current_user_id();
+		$action_maker_clickup_id = $saved_mappings[ $current_user_id ] ?? $fallback_clickup_id;
+		$wp_user = wp_get_current_user();
+		$action_maker_name = $wp_user && $wp_user->ID ? $wp_user->display_name : 'System';
+
 		$meta_data = array();
 		foreach ( $order->get_meta_data() as $meta ) {
 			if ( strpos( $meta->key, '_' ) !== 0 ) {
@@ -287,6 +346,10 @@ class WooCommerce {
 				'country'    => $order->get_shipping_country(),
 				'zip'        => $order->get_shipping_postcode(),
 			),
+			'payment_method'          => $order->get_payment_method(),
+			'payment_method_title'    => $order->get_payment_method_title(),
+			'action_maker_clickup_id' => $action_maker_clickup_id,
+			'action_maker_name'       => $action_maker_name,
 			'meta'               => $meta_data,
 		);
 	}

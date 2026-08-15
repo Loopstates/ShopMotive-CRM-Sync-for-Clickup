@@ -24,6 +24,16 @@ class AdminMenu {
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_assets' ) );
 		add_action( 'admin_notices', array( __CLASS__, 'render_quota_notice' ) );
 		add_action( 'wp_ajax_clicksync_get_wc_fields', array( __CLASS__, 'ajax_get_wc_fields' ) );
+		add_action( 'wp_ajax_clicksync_save_local_settings', array( __CLASS__, 'ajax_save_local_settings' ) );
+		add_action( 'wp_ajax_clicksync_save_user_mappings', array( __CLASS__, 'ajax_save_user_mappings' ) );
+		add_action( 'wp_ajax_clicksync_widget_get_task_details', array( __CLASS__, 'ajax_widget_get_task_details' ) );
+		add_action( 'wp_ajax_clicksync_widget_update_task', array( __CLASS__, 'ajax_widget_update_task' ) );
+		add_action( 'wp_ajax_clicksync_widget_force_sync', array( __CLASS__, 'ajax_widget_force_sync' ) );
+
+		// Register Sidebar Widgets (Meta Boxes)
+		add_action( 'add_meta_boxes', array( __CLASS__, 'register_metaboxes' ) );
+		add_action( 'show_user_profile', array( __CLASS__, 'register_customer_metabox' ) );
+		add_action( 'edit_user_profile', array( __CLASS__, 'register_customer_metabox' ) );
 	}
 
 	/**
@@ -100,7 +110,24 @@ class AdminMenu {
 	 * Enqueue assets on ClickSync admin pages only.
 	 */
 	public static function enqueue_assets( $hook ) {
-		if ( strpos( $hook, 'clicksync' ) === false ) {
+		$allowed_pages = array( 'post.php', 'post-new.php', 'user-edit.php', 'profile.php' );
+		$is_allowed = false;
+		if ( strpos( $hook, 'clicksync' ) !== false ) {
+			$is_allowed = true;
+		} elseif ( in_array( $hook, $allowed_pages ) ) {
+			if ( isset( $_GET['post'] ) && get_post_type( $_GET['post'] ) === 'shop_order' ) {
+				$is_allowed = true;
+			} elseif ( isset( $_GET['page'] ) && $_GET['page'] === 'wc-orders' ) {
+				$is_allowed = true;
+			} else {
+				$screen = get_current_screen();
+				if ( $screen && ( $screen->id === 'user-edit' || $screen->id === 'profile' || $screen->id === 'shop_order' ) ) {
+					$is_allowed = true;
+				}
+			}
+		}
+
+		if ( ! $is_allowed ) {
 			return;
 		}
 
@@ -137,6 +164,52 @@ class AdminMenu {
 			</div>
 			<?php
 		}
+	}
+
+	/**
+	 * AJAX endpoint to save local WordPress plugin settings (e.g. Refunds, Fulfillment).
+	 */
+	public static function ajax_save_local_settings() {
+		// Verify caller has administrative privileges
+		if ( ! is_user_logged_in() || ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( 'Unauthorized', 403 );
+		}
+
+		$refunds_enabled = isset( $_POST['refunds_enabled'] ) ? '1' === $_POST['refunds_enabled'] : true;
+		$fulfillment_enabled = isset( $_POST['fulfillment_enabled'] ) ? '1' === $_POST['fulfillment_enabled'] : true;
+
+		Options::update_settings( array(
+			'refunds_enabled'     => $refunds_enabled,
+			'fulfillment_enabled' => $fulfillment_enabled,
+		) );
+
+		wp_send_json_success( array( 'message' => 'Local settings updated successfully.' ) );
+	}
+
+	/**
+	 * AJAX endpoint to save user identity mappings (WP to ClickUp).
+	 */
+	public static function ajax_save_user_mappings() {
+		// Verify caller has administrative privileges
+		if ( ! is_user_logged_in() || ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( 'Unauthorized', 403 );
+		}
+
+		$mappings = isset( $_POST['mappings'] ) ? (array) $_POST['mappings'] : array();
+		$fallback = isset( $_POST['fallback_clickup_user_id'] ) ? sanitize_text_field( $_POST['fallback_clickup_user_id'] ) : '';
+
+		// Clean keys and values
+		$cleaned_mappings = array();
+		foreach ( $mappings as $wp_id => $cu_id ) {
+			$cleaned_mappings[ intval( $wp_id ) ] = sanitize_text_field( $cu_id );
+		}
+
+		Options::update_user_mappings( array(
+			'mappings'                 => $cleaned_mappings,
+			'fallback_clickup_user_id' => $fallback,
+		) );
+
+		wp_send_json_success( array( 'message' => 'User identity mappings saved successfully.' ) );
 	}
 
 	/**
@@ -263,5 +336,241 @@ class AdminMenu {
 		);
 
 		wp_send_json_success( $data );
+	}
+
+	/**
+	 * Register meta box for WooCommerce Edit Order screen.
+	 */
+	public static function register_metaboxes() {
+		// Legacy orders page
+		add_meta_box(
+			'clicksync_order_details_metabox',
+			__( 'ClickSync Integration', 'clicksync-wordpress' ),
+			array( \ClickSync\Admin\Widget::class, 'render_order_metabox' ),
+			'shop_order',
+			'side',
+			'high'
+		);
+		// HPOS support
+		add_meta_box(
+			'clicksync_order_details_metabox',
+			__( 'ClickSync Integration', 'clicksync-wordpress' ),
+			array( \ClickSync\Admin\Widget::class, 'render_order_metabox' ),
+			'woocommerce_page_wc-orders',
+			'side',
+			'high'
+		);
+	}
+
+	/**
+	 * Register meta box container for Edit User profile pages.
+	 *
+	 * @param \WP_User $user User object.
+	 */
+	public static function register_customer_metabox( $user ) {
+		?>
+		<h2><?php esc_html_e( 'ClickSync Integration', 'clicksync-wordpress' ); ?></h2>
+		<table class="form-table">
+			<tr>
+				<th><label><?php esc_html_e( 'ClickUp Task Link', 'clicksync-wordpress' ); ?></label></th>
+				<td>
+					<?php \ClickSync\Admin\Widget::render_customer_metabox( $user ); ?>
+				</td>
+			</tr>
+		</table>
+		<?php
+	}
+
+	/**
+	 * AJAX handler to retrieve ClickUp task details.
+	 */
+	public static function ajax_widget_get_task_details() {
+		if ( ! is_user_logged_in() ) {
+			wp_send_json_error( 'Unauthorized', 403 );
+		}
+
+		$task_id = isset( $_POST['task_id'] ) ? sanitize_text_field( $_POST['task_id'] ) : '';
+		if ( empty( $task_id ) ) {
+			wp_send_json_error( 'Missing task_id', 400 );
+		}
+
+		$response = \ClickSync\Api\Client::request( '/api/get-task-details', array( 'task_id' => $task_id ) );
+
+		if ( ! $response || $response['status_code'] !== 200 ) {
+			$error = isset( $response['data']['error'] ) ? $response['data']['error'] : 'Failed to fetch task details from ClickUp.';
+			wp_send_json_error( $error, $response ? $response['status_code'] : 500 );
+		}
+
+		wp_send_json_success( $response['data'] );
+	}
+
+	/**
+	 * AJAX handler to update ClickUp task attributes.
+	 */
+	public static function ajax_widget_update_task() {
+		if ( ! is_user_logged_in() ) {
+			wp_send_json_error( 'Unauthorized', 403 );
+		}
+
+		$task_id = isset( $_POST['task_id'] ) ? sanitize_text_field( $_POST['task_id'] ) : '';
+		if ( empty( $task_id ) ) {
+			wp_send_json_error( 'Missing task_id', 400 );
+		}
+
+		$payload = array( 'task_id' => $task_id );
+		if ( isset( $_POST['status'] ) ) {
+			$payload['status'] = sanitize_text_field( $_POST['status'] );
+		}
+		if ( isset( $_POST['priority'] ) ) {
+			$payload['priority'] = sanitize_text_field( $_POST['priority'] );
+		}
+		if ( isset( $_POST['assignees'] ) ) {
+			$payload['assignees'] = (array) $_POST['assignees'];
+		}
+
+		$response = \ClickSync\Api\Client::request( '/api/update-task', $payload );
+
+		if ( ! $response || $response['status_code'] !== 200 ) {
+			$error = isset( $response['data']['error'] ) ? $response['data']['error'] : 'Failed to update task details.';
+			wp_send_json_error( $error, $response ? $response['status_code'] : 500 );
+		}
+
+		// Update local WordPress cache
+		$order_id = isset( $_POST['order_id'] ) ? intval( $_POST['order_id'] ) : 0;
+		$customer_id = isset( $_POST['customer_id'] ) ? intval( $_POST['customer_id'] ) : 0;
+		$data = $response['data']['task'];
+
+		if ( $order_id ) {
+			update_post_meta( $order_id, '_clicksync_task_status', $data['status'] );
+			update_post_meta( $order_id, '_clicksync_task_priority', $data['priority'] );
+			update_post_meta( $order_id, '_clicksync_task_assignees', $data['assignees'] );
+			update_post_meta( $order_id, '_clicksync_last_sync', time() );
+		} elseif ( $customer_id ) {
+			update_user_meta( $customer_id, '_clicksync_task_status', $data['status'] );
+			update_user_meta( $customer_id, '_clicksync_task_priority', $data['priority'] );
+			update_user_meta( $customer_id, '_clicksync_task_assignees', $data['assignees'] );
+			update_user_meta( $customer_id, '_clicksync_last_sync', time() );
+		}
+
+		wp_send_json_success( $response['data'] );
+	}
+
+	/**
+	 * AJAX handler to manually force a sync for orders or customers.
+	 */
+	public static function ajax_widget_force_sync() {
+		if ( ! is_user_logged_in() ) {
+			wp_send_json_error( 'Unauthorized', 403 );
+		}
+
+		$order_id = isset( $_POST['order_id'] ) ? intval( $_POST['order_id'] ) : 0;
+		$customer_id = isset( $_POST['customer_id'] ) ? intval( $_POST['customer_id'] ) : 0;
+
+		if ( ! $order_id && ! $customer_id ) {
+			wp_send_json_error( 'Missing parameters.', 400 );
+		}
+
+		if ( $order_id ) {
+			if ( ! function_exists( 'wc_get_order' ) ) {
+				wp_send_json_error( 'WooCommerce is not active.', 500 );
+			}
+			$order = wc_get_order( $order_id );
+			if ( ! $order ) {
+				wp_send_json_error( 'Order not found.', 404 );
+			}
+
+			$payload = \ClickSync\Integrations\WooCommerce::normalize_order( $order );
+
+			$endpoint = '/api/sync-event';
+			$json_body = wp_json_encode( $payload );
+
+			$timestamp   = time();
+			$host        = parse_url( site_url(), PHP_URL_HOST );
+			$secret_key  = Options::get_secret_key();
+			$signing_key = ! empty( $secret_key ) ? $secret_key : $host;
+			$signature   = hash_hmac( 'sha256', $json_body, $signing_key . ':' . $timestamp );
+
+			$args = array(
+				'method'      => 'POST',
+				'timeout'     => 30,
+				'blocking'    => true,
+				'headers'     => array(
+					'Content-Type'         => 'application/json',
+					'X-ClickSync-Topic'    => 'orders/create',
+					'X-ClickSync-Shop'     => sanitize_text_field( $host ),
+					'X-ClickSync-Timestamp'=> $timestamp,
+					'X-ClickSync-Hmac'     => $signature,
+					'X-ClickSync-Sync'     => 'true',
+					'User-Agent'           => 'ClickSync-WordPress-Plugin/' . CLICKSYNC_VERSION,
+				),
+				'body'        => $json_body,
+			);
+
+			$response = wp_remote_post( CLICKSYNC_CLOUD_URL . $endpoint, $args );
+		} else {
+			$user = get_userdata( $customer_id );
+			if ( ! $user ) {
+				wp_send_json_error( 'Customer user not found.', 404 );
+			}
+
+			$orders_count = 0;
+			$total_spent = '0.00';
+			if ( function_exists( 'wc_get_customer_order_count' ) ) {
+				$orders_count = wc_get_customer_order_count( $customer_id );
+				$total_spent = wc_get_customer_total_spent( $customer_id );
+			}
+
+			$payload = array(
+				'id'           => $customer_id,
+				'email'        => $user->user_email,
+				'first_name'   => $user->first_name,
+				'last_name'    => $user->last_name,
+				'orders_count' => intval( $orders_count ),
+				'total_spent'  => (string) $total_spent,
+				'created_at'   => date( 'c', strtotime( $user->user_registered ) )
+			);
+
+			$endpoint = '/api/sync-event';
+			$json_body = wp_json_encode( $payload );
+
+			$timestamp   = time();
+			$host        = parse_url( site_url(), PHP_URL_HOST );
+			$secret_key  = Options::get_secret_key();
+			$signing_key = ! empty( $secret_key ) ? $secret_key : $host;
+			$signature   = hash_hmac( 'sha256', $json_body, $signing_key . ':' . $timestamp );
+
+			$args = array(
+				'method'      => 'POST',
+				'timeout'     => 30,
+				'blocking'    => true,
+				'headers'     => array(
+					'Content-Type'         => 'application/json',
+					'X-ClickSync-Topic'    => 'customers/create',
+					'X-ClickSync-Shop'     => sanitize_text_field( $host ),
+					'X-ClickSync-Timestamp'=> $timestamp,
+					'X-ClickSync-Hmac'     => $signature,
+					'X-ClickSync-Sync'     => 'true',
+					'User-Agent'           => 'ClickSync-WordPress-Plugin/' . CLICKSYNC_VERSION,
+				),
+				'body'        => $json_body,
+			);
+
+			$response = wp_remote_post( CLICKSYNC_CLOUD_URL . $endpoint, $args );
+		}
+
+		if ( is_wp_error( $response ) ) {
+			wp_send_json_error( $response->get_error_message(), 500 );
+		}
+
+		$body = json_decode( wp_remote_retrieve_body( $response ), true );
+		
+		if ( empty( $body['task_ids'] ) ) {
+			wp_send_json_error( isset( $body['message'] ) ? $body['message'] : 'Manual sync queued successfully. Refreshed cached values will load shortly.', 202 );
+		}
+
+		wp_send_json_success( array(
+			'message'  => 'Synchronization completed successfully.',
+			'task_ids' => $body['task_ids']
+		) );
 	}
 }

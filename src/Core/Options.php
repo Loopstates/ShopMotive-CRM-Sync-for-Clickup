@@ -15,6 +15,7 @@ class Options {
 
 	const OPTION_SETTINGS = 'clicksync_settings';
 	const OPTION_ACCOUNT  = 'clicksync_account';
+	const OPTION_USER_MAPPINGS = 'clicksync_user_mappings';
 
 	/**
 	 * Get default plugin settings.
@@ -106,6 +107,30 @@ class Options {
 	}
 
 	/**
+	 * Retrieve saved user mappings.
+	 *
+	 * @return array
+	 */
+	public static function get_user_mappings() {
+		$defaults = array(
+			'mappings'                 => array(),
+			'fallback_clickup_user_id' => '',
+		);
+		$saved = get_option( self::OPTION_USER_MAPPINGS, array() );
+		return wp_parse_args( (array) $saved, $defaults );
+	}
+
+	/**
+	 * Update user mappings.
+	 *
+	 * @param array $mappings Mappings array.
+	 * @return bool
+	 */
+	public static function update_user_mappings( $mappings ) {
+		return update_option( self::OPTION_USER_MAPPINGS, $mappings );
+	}
+
+	/**
 	 * Reset all stored plugin data.
 	 *
 	 * @return bool
@@ -113,6 +138,7 @@ class Options {
 	public static function clear_all() {
 		delete_option( self::OPTION_SETTINGS );
 		delete_option( self::OPTION_ACCOUNT );
+		delete_option( self::OPTION_USER_MAPPINGS );
 		return true;
 	}
 }
