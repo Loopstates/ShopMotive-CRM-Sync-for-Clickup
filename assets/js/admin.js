@@ -798,7 +798,7 @@
                             '<span class="clicksync-badge badge-warning" style="background: #fffbeb; color: #b45309; border: 1px solid #fde68a;">Not Connected</span>' +
                             '</div>' +
                             '<p style="font-size: 13px; color: #64748b; margin-bottom: 16px; line-height: 1.5;">ClickSync is not connected to your ClickUp workspace yet. Authorize ClickSync to connect your store with ClickUp spaces.</p>' +
-                            '<a href="' + connectUrl + '" target="_blank" class="clicksync-btn-primary" style="background: #7c3aed; color: white; border: none; text-decoration: none; display: inline-flex; align-items: center;">Connect ClickUp Workspace</a>' +
+                            '<a href="' + connectUrl + '" target="_blank" class="clicksync-btn-primary" style="background: #008060; color: white; border: none; text-decoration: none; display: inline-flex; align-items: center;">Connect ClickUp Workspace</a>' +
                             '</div>';
                         $('#clicksync-connection-status-block').html(statusHtml);
                         $('#clicksync-onboarding-container').hide();
