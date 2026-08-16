@@ -300,7 +300,6 @@ class SettingsPage {
 								</label>
 							</div>
 						</div>
-						</div>
 					</div>
 
 					<!-- Option Pills Toolbar -->

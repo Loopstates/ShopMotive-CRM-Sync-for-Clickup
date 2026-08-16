@@ -213,21 +213,24 @@
             var targetId = $(this).data('target');
             var isCurrentlyActive = $(this).hasClass('active');
 
-            // 5. Gating rules: Assignee Routing (requires Growth) and Regional List Routing (requires Pro)
+            // Gating rules to match features matrix:
+            // - Regional List Routing: Pro only
+            // - Assignee Routing (Conditional Tags & Assignees): Pro only
+            // - Custom Fields (Custom Field Mapping): Growth or Pro
             if (activePlanName === 'Free Plan') {
-                if (targetId.indexOf('assignee') !== -1 || targetId.indexOf('list-routing') !== -1) {
-                    var tierRequired = targetId.indexOf('list-routing') !== -1 ? 'Pro Plan' : 'Growth Plan';
+                if (targetId.indexOf('list-routing') !== -1 || targetId.indexOf('assignee') !== -1 || targetId.indexOf('customfields') !== -1) {
+                    var tierRequired = targetId.indexOf('customfields') !== -1 ? 'Growth Plan' : 'Pro Plan';
                     showClickSyncToast(
                         $(this).text() + ' Locked',
-                        $(this).text() + ' is a ' + tierRequired + ' feature. Upgrade your subscription to enable advanced conditional matching and routing rules.'
+                        $(this).text() + ' is a ' + tierRequired + ' feature. Please upgrade your plan to unlock this advanced sync capability.'
                     );
                     return;
                 }
             } else if (activePlanName === 'Growth Plan') {
-                if (targetId.indexOf('list-routing') !== -1) {
+                if (targetId.indexOf('list-routing') !== -1 || targetId.indexOf('assignee') !== -1) {
                     showClickSyncToast(
-                        'Regional List Routing Locked',
-                        'Regional List Routing is a Pro Plan feature. Upgrade your subscription to enable dynamic lists dispatch routing rules.'
+                        $(this).text() + ' Locked',
+                        $(this).text() + ' is a Pro Plan feature. Upgrade your subscription to enable conditional tags and assignees routing rules.'
                     );
                     return;
                 }
@@ -1854,21 +1857,21 @@
                 $('#refunds-lock-notice').remove();
             }
 
-            // 3. Gating Status Mapping: Free Plan locks status mapping block inputs only
+            // 3. Gating Status Mapping: Free Plan locks status mapping block inputs (Bi-directional Status Updates is locked on Free)
             var statusSection = $('.clicksync-add-status-mapping-btn').closest('div[style*="background: #f9fafb"]');
             if (activePlanName === 'Free Plan') {
                 if (statusSection.length > 0) {
-                    statusSection.css('opacity', '1');
-                    statusSection.find('input, select, button').prop('disabled', false);
+                    statusSection.css('opacity', '0.65');
+                    statusSection.find('input, select, button').prop('disabled', true);
                     
                     if ($('#status-mapping-lock-notice').length === 0) {
                         statusSection.prepend(
-                            '<div id="status-mapping-lock-notice" style="background: #f8fafc; border: 1px solid #e2e8f0; color: #475569; padding: 10px 14px; border-radius: 6px; font-size: 12px; font-weight: 500; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; pointer-events: auto;">' +
-                            '<span style="display: flex; align-items: center; gap: 8px;">' +
-                                '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>' +
-                                'Status mapping operates in unidirectional mode (WooCommerce &rarr; ClickUp) on your current plan.' +
+                            '<div id="status-mapping-lock-notice" style="background: #fdf2f8; border: 1px solid #fbcfe8; color: #db2777; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; pointer-events: auto;">' +
+                            '<span style="display: flex; align-items: center; gap: 6px;">' +
+                                '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle;"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>' +
+                                'Bi-directional status writebacks require Growth or Pro plan.' +
                             '</span>' +
-                            '<a href="#" class="clicksync-open-upgrade-btn" style="color: #db2777; font-weight: 600; text-decoration: underline; font-size: 11px; cursor: pointer;">Enable bidirectional sync</a>' +
+                            '<a href="#" class="clicksync-open-upgrade-btn" style="color: #db2777; text-decoration: underline; font-size: 11px; cursor: pointer;">Upgrade now</a>' +
                             '</div>'
                         );
                     }
