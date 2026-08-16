@@ -113,10 +113,35 @@
 }
 
 .clicksync-wrap .clicksync-option-pill.active {
+    background: #10b981 !important;
+    color: #ffffff !important;
+    border-color: #10b981 !important;
+}
+
+.clicksync-wrap .clicksync-option-pill.clicksync-pill-unlocked {
     background: #ecfdf5 !important;
     color: #047857 !important;
     border-color: #a7f3d0 !important;
 }
+
+.clicksync-wrap .clicksync-option-pill.clicksync-pill-unlocked:hover:not(.active) {
+    background: #d1fae5 !important;
+    border-color: #6ee7b7 !important;
+}
+
+.clicksync-wrap .clicksync-option-pill.clicksync-pill-locked {
+    background: #fee2e2 !important;
+    color: #ef4444 !important;
+    border-color: #fca5a5 !important;
+    cursor: not-allowed !important;
+    opacity: 0.8 !important;
+}
+
+.clicksync-wrap .clicksync-option-pill.clicksync-pill-locked:hover {
+    background: #fee2e2 !important;
+    border-color: #fca5a5 !important;
+}
+
 
 /* Toggle Switch */
 .clicksync-wrap .clicksync-switch {
@@ -310,3 +335,59 @@
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
 }
+
+/* Premium Tooltip Styling */
+.clicksync-unidirectional-tooltip {
+    position: relative !important;
+    cursor: help !important;
+    outline: none !important;
+}
+
+.clicksync-unidirectional-tooltip::before {
+    content: attr(data-tooltip) !important;
+    position: absolute !important;
+    bottom: 140% !important;
+    left: 50% !important;
+    transform: translate(-50%, 10px) scale(0.95) !important;
+    background: #0f172a !important;
+    color: #ffffff !important;
+    padding: 10px 14px !important;
+    border-radius: 8px !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    line-height: 1.4 !important;
+    width: 240px !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.15) !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    z-index: 999999 !important;
+    text-align: center !important;
+    white-space: normal !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
+.clicksync-unidirectional-tooltip::after {
+    content: "" !important;
+    position: absolute !important;
+    bottom: 120% !important;
+    left: 50% !important;
+    transform: translate(-50%, 10px) scale(0.95) !important;
+    border-width: 6px !important;
+    border-style: solid !important;
+    border-color: #0f172a transparent transparent transparent !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    z-index: 999999 !important;
+}
+
+.clicksync-unidirectional-tooltip:hover::before,
+.clicksync-unidirectional-tooltip:focus::before,
+.clicksync-unidirectional-tooltip:hover::after,
+.clicksync-unidirectional-tooltip:focus::after {
+    opacity: 1 !important;
+    transform: translate(-50%, 0) scale(1) !important;
+    pointer-events: auto !important;
+}
+

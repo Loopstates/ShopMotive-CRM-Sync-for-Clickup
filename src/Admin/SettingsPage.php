@@ -87,33 +87,6 @@ class SettingsPage {
 				</div>
 			</div>
 
-			<!-- Multi-Store Network Connections Card (Pro Only) -->
-			<div class="clicksync-card" id="clicksync-multistore-card" style="display: none; background: #ffffff; border: 1px solid #e1e3e5; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-				<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-					<h3 style="margin: 0; font-size: 16px; font-weight: 600; color: #202223; display: flex; align-items: center; gap: 8px;">
-						<svg style="width: 18px; height: 18px; fill: #6A2B8F;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.53c-.26-.81-1-1.4-1.9-1.4h-1v-3c0-.55-.45-1-1-1h-6v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
-						<?php esc_html_e( 'Multi-Store Network Sync', 'clicksync-wordpress' ); ?>
-					</h3>
-					<span class="clicksync-badge badge-multistore" style="background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;"><?php esc_html_e( 'Pro Enabled', 'clicksync-wordpress' ); ?></span>
-				</div>
-				<p style="font-size: 13px; color: #6d7175; margin-bottom: 12px; line-height: 1.5;">
-					<?php esc_html_e( 'The Pro Plan allows connecting up to 5 stores or WordPress Multisite nodes to the same ClickUp workspace. Below are the connected stores sharing this subscription:', 'clicksync-wordpress' ); ?>
-				</p>
-				<div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px; max-height: 250px; overflow-y: auto;">
-					<table style="width: 100%; border-collapse: collapse; font-size: 13px;">
-						<thead>
-							<tr style="border-bottom: 1px solid #e2e8f0; text-align: left; color: #64748b;">
-								<th style="padding: 6px 12px 6px 0; font-weight: 600;">Store Domain</th>
-								<th style="padding: 6px 12px; font-weight: 600;">Status</th>
-								<th style="padding: 6px 0 6px 12px; font-weight: 600; text-align: right;">Connection Role</th>
-							</tr>
-						</thead>
-						<tbody id="clicksync-multistore-list">
-							<!-- Populated dynamically via AJAX -->
-						</tbody>
-					</table>
-				</div>
-			</div>
 
 			<!-- Info / Speed Note Card -->
 			<div class="clicksync-card" style="background: #f5f3f9; border: 1px solid #e2dff0; border-radius: 8px; padding: 16px 20px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); font-size: 13px; color: #475569; line-height: 1.6;">
@@ -267,8 +240,8 @@ class SettingsPage {
 								<div>
 									<div style="font-size: 13px; font-weight: 600; color: #202223; display: flex; align-items: center; gap: 6px;">
 										<svg class="clicksync-title-icon" style="width: 14px; height: 14px;" viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg> <?php esc_html_e( 'Sync Refund Updates', 'clicksync-wordpress' ); ?>
-										<span class="clicksync-unidirectional-tooltip" style="display: inline-flex; align-items: center; color: #64748b; cursor: help; margin-left: 4px;" title="<?php esc_attr_e( 'Unidirectional mapping: WooCommerce to ClickUp sync only.', 'clicksync-wordpress' ); ?>">
-											<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+										<span class="clicksync-unidirectional-tooltip" tabindex="0" style="display: inline-flex; align-items: center; color: #ef4444; cursor: help; margin-left: 4px;" data-tooltip="<?php esc_attr_e( 'This feature is locked on the Free Plan. Upgrade to a Growth or Pro Plan to enable refund syncing.', 'clicksync-wordpress' ); ?>">
+											<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
 										</span>
 									</div>
 									<div style="font-size: 12px; color: #6d7175; margin-top: 2px;">
@@ -286,8 +259,8 @@ class SettingsPage {
 								<div>
 									<div style="font-size: 13px; font-weight: 600; color: #202223; display: flex; align-items: center; gap: 6px;">
 										<svg class="clicksync-title-icon" style="width: 14px; height: 14px;" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.89-1.99 2L2 18c0 1.1.89 2 2 2h16c1.1 0 2-.89 2-2V6c0-1.1-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg> <?php esc_html_e( 'Split Order Routing', 'clicksync-wordpress' ); ?>
-										<span class="clicksync-unidirectional-tooltip" style="display: inline-flex; align-items: center; color: #64748b; cursor: help; margin-left: 4px;" title="<?php esc_attr_e( 'Unidirectional mapping: WooCommerce to ClickUp sync only.', 'clicksync-wordpress' ); ?>">
-											<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+										<span class="clicksync-unidirectional-tooltip" tabindex="0" style="display: inline-flex; align-items: center; color: #ef4444; cursor: help; margin-left: 4px;" data-tooltip="<?php esc_attr_e( 'This feature is locked on the Free Plan. Upgrade to the Pro Plan to enable line-item split routing.', 'clicksync-wordpress' ); ?>">
+											<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
 										</span>
 									</div>
 									<div style="font-size: 12px; color: #6d7175; margin-top: 2px;">
@@ -620,7 +593,7 @@ class SettingsPage {
 				<div class="clicksync-card" id="clicksync-user-mappings-card" style="background: #ffffff; border: 1px solid #e1e3e5; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
 					<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
 						<svg class="clicksync-title-icon" style="fill: #7c3aed; width: 20px; height: 20px;" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-						<h3 style="margin: 0; font-size: 16px; font-weight: 600;"><?php esc_html_e( 'User Identity Mappings (Bi-directional)', 'clicksync-wordpress' ); ?></h3>
+						<h3 style="margin: 0; font-size: 16px; font-weight: 600;"><?php esc_html_e( 'User Identity Mappings', 'clicksync-wordpress' ); ?></h3>
 					</div>
 					<p style="font-size: 13px; color: #64748b; margin-bottom: 16px; line-height: 1.5;">
 						Map your WordPress administrators and shop managers to their respective ClickUp workspace accounts. This ensures that WooCommerce order updates and notes made by these users show their names in ClickUp, and comments created by them in ClickUp sync back to WooCommerce correctly.
@@ -670,6 +643,34 @@ class SettingsPage {
 										</select>
 									</td>
 								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+				<!-- Multi-Store Network Connections Card (Pro Only) -->
+				<div class="clicksync-card" id="clicksync-multistore-card" style="display: none; background: #ffffff; border: 1px solid #e1e3e5; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+					<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+						<h3 style="margin: 0; font-size: 16px; font-weight: 600; color: #202223; display: flex; align-items: center; gap: 8px;">
+							<svg style="width: 18px; height: 18px; fill: #6A2B8F;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.53c-.26-.81-1-1.4-1.9-1.4h-1v-3c0-.55-.45-1-1-1h-6v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+							<?php esc_html_e( 'Multi-Store Network Sync', 'clicksync-wordpress' ); ?>
+						</h3>
+						<span class="clicksync-badge badge-multistore" style="background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;"><?php esc_html_e( 'Pro Enabled', 'clicksync-wordpress' ); ?></span>
+					</div>
+					<p style="font-size: 13px; color: #6d7175; margin-bottom: 12px; line-height: 1.5;">
+						<?php esc_html_e( 'The Pro Plan allows connecting up to 5 stores or WordPress Multisite nodes to the same ClickUp workspace. Below are the connected stores sharing this subscription:', 'clicksync-wordpress' ); ?>
+					</p>
+					<div id="clicksync-multistore-list-container" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px; max-height: 250px; overflow-y: auto;">
+						<table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+							<thead>
+								<tr style="border-bottom: 1px solid #e2e8f0; text-align: left; color: #64748b;">
+									<th style="padding: 6px 12px 6px 0; font-weight: 600;">Store Domain</th>
+									<th style="padding: 6px 12px; font-weight: 600;">Status</th>
+									<th style="padding: 6px 0 6px 12px; font-weight: 600; text-align: right;">Connection Role</th>
+								</tr>
+							</thead>
+							<tbody id="clicksync-multistore-list">
+								<!-- Populated dynamically via AJAX -->
 							</tbody>
 						</table>
 					</div>

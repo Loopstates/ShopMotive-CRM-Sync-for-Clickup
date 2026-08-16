@@ -216,24 +216,30 @@
             // Gating rules to match features matrix:
             // - Regional List Routing: Pro only
             // - Assignee Routing (Conditional Tags & Assignees): Pro only
+            // - Priority Rules: Pro only
+            // - Tagging Rules: Pro only
             // - Custom Fields (Custom Field Mapping): Growth or Pro
-            if (activePlanName === 'Free Plan') {
-                if (targetId.indexOf('list-routing') !== -1 || targetId.indexOf('assignee') !== -1 || targetId.indexOf('customfields') !== -1) {
-                    var tierRequired = targetId.indexOf('customfields') !== -1 ? 'Growth Plan' : 'Pro Plan';
-                    showClickSyncToast(
-                        $(this).text() + ' Locked',
-                        $(this).text() + ' is a ' + tierRequired + ' feature. Please upgrade your plan to unlock this advanced sync capability.'
-                    );
-                    return;
+            var isGated = false;
+            var tierRequired = '';
+
+            if (targetId.indexOf('list-routing') !== -1 || targetId.indexOf('assignee') !== -1 || targetId.indexOf('priority') !== -1 || targetId.indexOf('tagging') !== -1) {
+                if (activePlanName !== 'Pro Plan') {
+                    isGated = true;
+                    tierRequired = 'Pro Plan';
                 }
-            } else if (activePlanName === 'Growth Plan') {
-                if (targetId.indexOf('list-routing') !== -1 || targetId.indexOf('assignee') !== -1) {
-                    showClickSyncToast(
-                        $(this).text() + ' Locked',
-                        $(this).text() + ' is a Pro Plan feature. Upgrade your subscription to enable conditional tags and assignees routing rules.'
-                    );
-                    return;
+            } else if (targetId.indexOf('customfields') !== -1) {
+                if (activePlanName === 'Free Plan') {
+                    isGated = true;
+                    tierRequired = 'Growth Plan';
                 }
+            }
+
+            if (isGated) {
+                showClickSyncToast(
+                    $(this).text() + ' Locked',
+                    $(this).text() + ' is a ' + tierRequired + ' feature. Please upgrade your plan to unlock this advanced sync capability.'
+                );
+                return;
             }
 
             if (isCurrentlyActive) {
@@ -1826,12 +1832,6 @@
                 $('#orders-split-routing').prop('checked', false).prop('disabled', true);
                 $('#orders-split-routing').closest('.clicksync-switch').css({ opacity: '0.55', 'pointer-events': 'none' });
                 $('#orders-split-routing').closest('label').addClass('clicksync-switch-disabled');
-                
-                if ($('#split-routing-lock-notice').length === 0) {
-                    $('#orders-split-routing').closest('div').prev('div').append(
-                        '<span id="split-routing-lock-notice" style="background: #fee2e2; color: #ef4444; font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 4px; margin-left: 8px;">PRO PLAN ONLY</span>'
-                    );
-                }
             } else {
                 $('#orders-split-routing').prop('disabled', false);
                 $('#orders-split-routing').closest('.clicksync-switch').css({ opacity: '1', 'pointer-events': 'auto' });
@@ -1844,12 +1844,6 @@
                 $('#orders-sync-refunds').prop('checked', false).prop('disabled', true);
                 $('#orders-sync-refunds').closest('.clicksync-switch').css({ opacity: '0.55', 'pointer-events': 'none' });
                 $('#orders-sync-refunds').closest('label').addClass('clicksync-switch-disabled-refunds');
-                
-                if ($('#refunds-lock-notice').length === 0) {
-                    $('#orders-sync-refunds').closest('div').prev('div').append(
-                        '<span id="refunds-lock-notice" class="clicksync-badge clicksync-badge-critical" style="background: #fee2e2; color: #ef4444; border: 1px solid #fca5a5; font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 4px; margin-left: 8px;">GROWTH OR PRO</span>'
-                    );
-                }
             } else {
                 $('#orders-sync-refunds').prop('disabled', false);
                 $('#orders-sync-refunds').closest('.clicksync-switch').css({ opacity: '1', 'pointer-events': 'auto' });
@@ -1868,8 +1862,8 @@
                 if (activePlanName === 'Free Plan') {
                     if (headerTitle.find('.clicksync-unidirectional-tooltip').length === 0) {
                         headerTitle.append(
-                            '<span class="clicksync-unidirectional-tooltip" style="display: inline-flex; align-items: center; color: #64748b; cursor: help; margin-left: 6px;" title="Unidirectional mapping: WooCommerce to ClickUp sync only. Upgrade to Growth/Pro to enable bi-directional writeback to WooCommerce.">' +
-                                '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>' +
+                            '<span class="clicksync-unidirectional-tooltip" tabindex="0" style="display: inline-flex; align-items: center; color: #3b82f6; cursor: help; margin-left: 6px;" data-tooltip="This currently syncs from your store to ClickUp. To enable bidirectional sync you need a paid plan.">' +
+                                '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>' +
                             '</span>'
                         );
                     }
@@ -1878,30 +1872,29 @@
                 }
             }
 
-            // Option Pills Locking styling:
+            // Option Pills Locking styling: Removed dynamic prepend overlays to maintain clean layout styling.
             $('.clicksync-option-pill').each(function() {
                 var pill = $(this);
                 var targetId = pill.data('target');
                 pill.find('.clicksync-pill-lock-icon').remove();
-                pill.removeClass('clicksync-pill-locked').css({ opacity: '1' });
+                pill.removeClass('clicksync-pill-locked clicksync-pill-unlocked').css({ opacity: '' });
 
                 var isLocked = false;
-
                 if (activePlanName === 'Free Plan') {
-                    if (targetId.indexOf('list-routing') !== -1 || targetId.indexOf('assignee') !== -1 || targetId.indexOf('customfields') !== -1 || targetId.indexOf('tagging') !== -1) {
+                    if (targetId.indexOf('list-routing') !== -1 || targetId.indexOf('assignee') !== -1 || targetId.indexOf('priority') !== -1 || targetId.indexOf('tagging') !== -1 || targetId.indexOf('customfields') !== -1) {
                         isLocked = true;
                     }
                 } else if (activePlanName === 'Growth Plan') {
-                    if (targetId.indexOf('list-routing') !== -1 || targetId.indexOf('assignee') !== -1 || targetId.indexOf('tagging') !== -1) {
+                    if (targetId.indexOf('list-routing') !== -1 || targetId.indexOf('assignee') !== -1 || targetId.indexOf('priority') !== -1 || targetId.indexOf('tagging') !== -1) {
                         isLocked = true;
                     }
                 }
 
                 if (isLocked) {
-                    pill.addClass('clicksync-pill-locked').css({ opacity: '0.6' });
-                    pill.prepend(
-                        '<svg class="clicksync-pill-lock-icon" width="10" height="10" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 4px; vertical-align: middle; color: #64748b;"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>'
-                    );
+                    pill.addClass('clicksync-pill-locked').removeClass('active');
+                    $('#' + targetId).hide(); // strictly closed
+                } else {
+                    pill.addClass('clicksync-pill-unlocked');
                 }
             });
 
@@ -1942,13 +1935,13 @@
                     '</tr>';
                 $('#clicksync-multistore-list').html(currentStoreHtml);
 
-                $('#clicksync-multistore-card').prepend(
-                    '<div class="clicksync-multistore-lock-overlay" style="background: #fdf2f8; border: 1px solid #fbcfe8; border-radius: 6px; padding: 12px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; pointer-events: auto;">' +
-                        '<span style="font-size: 12px; font-weight: 600; color: #db2777; display: flex; align-items: center; gap: 6px;">' +
-                            '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle;"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>' +
+                $('#clicksync-multistore-list-container').before(
+                    '<div class="clicksync-multistore-lock-overlay" style="background: #fee2e2; border: 1px solid #fca5a5; border-radius: 6px; padding: 12px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; pointer-events: auto;">' +
+                        '<span style="font-size: 12px; font-weight: 600; color: #ef4444; display: flex; align-items: center; gap: 6px;">' +
+                            '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>' +
                             'Multi-Store network syncing requires Pro Plan.' +
                         '</span>' +
-                        '<a href="#" class="clicksync-open-upgrade-btn" style="color: #db2777; text-decoration: underline; font-size: 11px; font-weight: 700; cursor: pointer;">Upgrade now</a>' +
+                        '<a href="#" class="clicksync-open-upgrade-btn" style="color: #ef4444; text-decoration: underline; font-size: 11px; font-weight: 700; cursor: pointer;">Upgrade now</a>' +
                     '</div>'
                 );
             }
