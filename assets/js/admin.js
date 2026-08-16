@@ -1878,25 +1878,79 @@
                 }
             }
 
-            // 4. Render Multi-Store Connections Card for Pro Plan
-            if (activePlanName === 'Pro Plan' && resSiblings && resSiblings.length > 0) {
-                $('#clicksync-multistore-card').show();
+            // Option Pills Locking styling:
+            $('.clicksync-option-pill').each(function() {
+                var pill = $(this);
+                var targetId = pill.data('target');
+                pill.find('.clicksync-pill-lock-icon').remove();
+                pill.removeClass('clicksync-pill-locked').css({ opacity: '1' });
+
+                var isLocked = false;
+
+                if (activePlanName === 'Free Plan') {
+                    if (targetId.indexOf('list-routing') !== -1 || targetId.indexOf('assignee') !== -1 || targetId.indexOf('customfields') !== -1 || targetId.indexOf('tagging') !== -1) {
+                        isLocked = true;
+                    }
+                } else if (activePlanName === 'Growth Plan') {
+                    if (targetId.indexOf('list-routing') !== -1 || targetId.indexOf('assignee') !== -1 || targetId.indexOf('tagging') !== -1) {
+                        isLocked = true;
+                    }
+                }
+
+                if (isLocked) {
+                    pill.addClass('clicksync-pill-locked').css({ opacity: '0.6' });
+                    pill.prepend(
+                        '<svg class="clicksync-pill-lock-icon" width="10" height="10" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 4px; vertical-align: middle; color: #64748b;"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>'
+                    );
+                }
+            });
+
+            // 4. Render Multi-Store Connections Card
+            $('#clicksync-multistore-card').show();
+            $('#clicksync-multistore-card').find('.clicksync-multistore-lock-overlay').remove();
+
+            if (activePlanName === 'Pro Plan') {
+                $('#clicksync-multistore-card').css('opacity', '1');
+                $('#clicksync-multistore-card .badge-multistore').text('Pro Enabled').css({ background: '#e0f2fe', color: '#0369a1' });
+                
                 var multistoreHtml = '';
-                $.each(resSiblings, function(i, sib) {
-                    var isCurrent = sib.shop === host;
-                    var domainLabel = isCurrent ? '<strong>' + sib.shop + ' (This Store)</strong>' : sib.shop;
-                    var statusBadge = '<span class="clicksync-badge" style="background: #ecfdf5; color: #047857; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">Active</span>';
-                    var roleLabel = isCurrent ? 'Primary Node' : 'Linked Store';
-                    
-                    multistoreHtml += '<tr style="border-bottom: 1px solid #f1f5f9;">' +
-                        '<td style="padding: 10px 12px 10px 0; color: #0f172a;">' + domainLabel + '</td>' +
-                        '<td style="padding: 10px 12px;">' + statusBadge + '</td>' +
-                        '<td style="padding: 10px 0 10px 12px; text-align: right; color: #64748b; font-weight: 500;">' + roleLabel + '</td>' +
-                        '</tr>';
-                });
+                if (resSiblings && resSiblings.length > 0) {
+                    $.each(resSiblings, function(i, sib) {
+                        var isCurrent = sib.shop === host;
+                        var domainLabel = isCurrent ? '<strong>' + sib.shop + ' (This Store)</strong>' : sib.shop;
+                        var statusBadge = '<span class="clicksync-badge" style="background: #ecfdf5; color: #047857; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">Active</span>';
+                        var roleLabel = isCurrent ? 'Primary Node' : 'Linked Store';
+                        
+                        multistoreHtml += '<tr style="border-bottom: 1px solid #f1f5f9;">' +
+                            '<td style="padding: 10px 12px 10px 0; color: #0f172a;">' + domainLabel + '</td>' +
+                            '<td style="padding: 10px 12px;">' + statusBadge + '</td>' +
+                            '<td style="padding: 10px 0 10px 12px; text-align: right; color: #64748b; font-weight: 500;">' + roleLabel + '</td>' +
+                            '</tr>';
+                    });
+                } else {
+                    multistoreHtml = '<tr><td colspan="3" style="padding: 10px 0; color: #6d7175; font-style: italic;">No sibling connections detected.</td></tr>';
+                }
                 $('#clicksync-multistore-list').html(multistoreHtml);
             } else {
-                $('#clicksync-multistore-card').hide();
+                $('#clicksync-multistore-card').css('opacity', '0.8');
+                $('#clicksync-multistore-card .badge-multistore').text('Pro Feature').css({ background: '#fee2e2', color: '#ef4444' });
+                
+                var currentStoreHtml = '<tr style="border-bottom: 1px solid #f1f5f9;">' +
+                    '<td style="padding: 10px 12px 10px 0; color: #0f172a;"><strong>' + host + ' (This Store)</strong></td>' +
+                    '<td style="padding: 10px 12px;"><span class="clicksync-badge" style="background: #ecfdf5; color: #047857; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">Active</span></td>' +
+                    '<td style="padding: 10px 0 10px 12px; text-align: right; color: #64748b; font-weight: 500;">Single Store Mode</td>' +
+                    '</tr>';
+                $('#clicksync-multistore-list').html(currentStoreHtml);
+
+                $('#clicksync-multistore-card').prepend(
+                    '<div class="clicksync-multistore-lock-overlay" style="background: #fdf2f8; border: 1px solid #fbcfe8; border-radius: 6px; padding: 12px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; pointer-events: auto;">' +
+                        '<span style="font-size: 12px; font-weight: 600; color: #db2777; display: flex; align-items: center; gap: 6px;">' +
+                            '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle;"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>' +
+                            'Multi-Store network syncing requires Pro Plan.' +
+                        '</span>' +
+                        '<a href="#" class="clicksync-open-upgrade-btn" style="color: #db2777; text-decoration: underline; font-size: 11px; font-weight: 700; cursor: pointer;">Upgrade now</a>' +
+                    '</div>'
+                );
             }
         }
 
