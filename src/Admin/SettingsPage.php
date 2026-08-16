@@ -87,6 +87,34 @@ class SettingsPage {
 				</div>
 			</div>
 
+			<!-- Multi-Store Network Connections Card (Pro Only) -->
+			<div class="clicksync-card" id="clicksync-multistore-card" style="display: none; background: #ffffff; border: 1px solid #e1e3e5; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+				<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+					<h3 style="margin: 0; font-size: 16px; font-weight: 600; color: #202223; display: flex; align-items: center; gap: 8px;">
+						<svg style="width: 18px; height: 18px; fill: #6A2B8F;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.53c-.26-.81-1-1.4-1.9-1.4h-1v-3c0-.55-.45-1-1-1h-6v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+						<?php esc_html_e( 'Multi-Store Network Sync', 'clicksync-wordpress' ); ?>
+					</h3>
+					<span class="clicksync-badge badge-multistore" style="background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;"><?php esc_html_e( 'Pro Enabled', 'clicksync-wordpress' ); ?></span>
+				</div>
+				<p style="font-size: 13px; color: #6d7175; margin-bottom: 12px; line-height: 1.5;">
+					<?php esc_html_e( 'The Pro Plan allows connecting up to 5 stores or WordPress Multisite nodes to the same ClickUp workspace. Below are the connected stores sharing this subscription:', 'clicksync-wordpress' ); ?>
+				</p>
+				<div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px; max-height: 250px; overflow-y: auto;">
+					<table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+						<thead>
+							<tr style="border-bottom: 1px solid #e2e8f0; text-align: left; color: #64748b;">
+								<th style="padding: 6px 12px 6px 0; font-weight: 600;">Store Domain</th>
+								<th style="padding: 6px 12px; font-weight: 600;">Status</th>
+								<th style="padding: 6px 0 6px 12px; font-weight: 600; text-align: right;">Connection Role</th>
+							</tr>
+						</thead>
+						<tbody id="clicksync-multistore-list">
+							<!-- Populated dynamically via AJAX -->
+						</tbody>
+					</table>
+				</div>
+			</div>
+
 			<!-- Info / Speed Note Card -->
 			<div class="clicksync-card" style="background: #f5f3f9; border: 1px solid #e2dff0; border-radius: 8px; padding: 16px 20px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); font-size: 13px; color: #475569; line-height: 1.6;">
 				<div style="display: flex; gap: 12px; margin-bottom: 12px; align-items: flex-start;">
@@ -239,7 +267,10 @@ class SettingsPage {
 								<div>
 									<div style="font-size: 13px; font-weight: 600; color: #202223; display: flex; align-items: center; gap: 6px;">
 										<svg class="clicksync-title-icon" style="width: 14px; height: 14px;" viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg> <?php esc_html_e( 'Sync Refund Updates', 'clicksync-wordpress' ); ?>
-										<span style="background: #e1e3e5; color: #202223; font-size: 10px; font-weight: 600; padding: 1px 5px; border-radius: 4px;">ONE-WAY</span>
+										<span class="clicksync-badge" style="background: #f1f5f9; color: #475569; font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px; cursor: help;" title="<?php esc_attr_e( 'This feature operates in unidirectional mode (WordPress &rarr; ClickUp) on your current plan. Upgrade to Growth or Pro to enable bidirectional status and comment writebacks.', 'clicksync-wordpress' ); ?>">
+											<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+											ONE-WAY
+										</span>
 									</div>
 									<div style="font-size: 12px; color: #6d7175; margin-top: 2px;">
 										<?php esc_html_e( 'Post detailed refund comments and line items to ClickUp order tasks when orders are refunded in WooCommerce.', 'clicksync-wordpress' ); ?>
@@ -273,7 +304,10 @@ class SettingsPage {
 								<div>
 									<div style="font-size: 13px; font-weight: 600; color: #202223; display: flex; align-items: center; gap: 6px;">
 										<svg class="clicksync-title-icon" style="width: 14px; height: 14px;" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.89-1.99 2L2 18c0 1.1.89 2 2 2h16c1.1 0 2-.89 2-2V6c0-1.1-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg> <?php esc_html_e( 'Split Order Routing', 'clicksync-wordpress' ); ?>
-										<span style="background: #e1e3e5; color: #202223; font-size: 10px; font-weight: 600; padding: 1px 5px; border-radius: 4px;">ONE-WAY</span>
+										<span class="clicksync-badge" style="background: #f1f5f9; color: #475569; font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px; cursor: help;" title="<?php esc_attr_e( 'This feature operates in unidirectional mode (WordPress &rarr; ClickUp) on your current plan. Upgrade to Growth or Pro to enable bidirectional status and comment writebacks.', 'clicksync-wordpress' ); ?>">
+											<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+											ONE-WAY
+										</span>
 									</div>
 									<div style="font-size: 12px; color: #6d7175; margin-top: 2px;">
 										<?php esc_html_e( 'Create separate ClickUp tasks for individual line items inside a single order rather than creating one unified task.', 'clicksync-wordpress' ); ?>
@@ -290,10 +324,51 @@ class SettingsPage {
 					<!-- Option Pills Toolbar -->
 					<div style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; background: #f4f6f8; padding: 8px 12px; border-radius: 6px; border: 1px solid #e1e3e5; align-items: center;">
 						<span style="font-size: 12px; font-weight: 600; color: #6d7175; margin-right: 4px;"><?php esc_html_e( 'Configure Options:', 'clicksync-wordpress' ); ?></span>
+						<button type="button" class="clicksync-option-pill" data-target="orders-list-routing-block" data-field="listRulesEnabled"><?php esc_html_e( 'Regional List Routing', 'clicksync-wordpress' ); ?></button>
 						<button type="button" class="clicksync-option-pill" data-target="orders-assignee-block" data-field="assigneeRulesEnabled"><?php esc_html_e( 'Assignee Routing', 'clicksync-wordpress' ); ?></button>
 						<button type="button" class="clicksync-option-pill" data-target="orders-priority-block" data-field="priorityRulesEnabled"><?php esc_html_e( 'Priority Rules', 'clicksync-wordpress' ); ?></button>
 						<button type="button" class="clicksync-option-pill" data-target="orders-tagging-block" data-field="tagRulesEnabled"><?php esc_html_e( 'Tagging Rules', 'clicksync-wordpress' ); ?></button>
 						<button type="button" class="clicksync-option-pill" data-target="orders-customfields-block" data-field="fieldMappingsEnabled"><?php esc_html_e( 'Custom Fields', 'clicksync-wordpress' ); ?></button>
+					</div>
+
+					<!-- Regional List Routing Rules Sub-section -->
+					<div id="orders-list-routing-block" style="display: none; margin-bottom: 16px; padding: 16px; background: #f9fafb; border-radius: 6px; border: 1px solid #edeeef;">
+						<div style="font-size: 14px; font-weight: 600; color: #202223; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+							<svg class="clicksync-title-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.53c-.26-.81-1-1.4-1.9-1.4h-1v-3c0-.55-.45-1-1-1h-6v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg> <?php esc_html_e( 'Regional List Routing Rules', 'clicksync-wordpress' ); ?>
+						</div>
+						
+						<div id="orders-list-routing-rules-list" style="margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px;"></div>
+
+						<div style="display: grid; grid-template-columns: 1.2fr 1fr 1fr 1.2fr auto; gap: 10px; align-items: end; border-top: 1px solid #e2e8f0; padding-top: 12px;">
+							<div>
+								<label style="display: block; font-size: 11px; font-weight: 500; color: #6d7175; margin-bottom: 4px;"><?php esc_html_e( 'If WooCommerce Field:', 'clicksync-wordpress' ); ?></label>
+								<select class="clicksync-list-routing-field clicksync-select" style="margin: 0; height: 36px;">
+									<option value=""><?php esc_html_e( 'Loading fields...', 'clicksync-wordpress' ); ?></option>
+								</select>
+							</div>
+							<div>
+								<label style="display: block; font-size: 11px; font-weight: 500; color: #6d7175; margin-bottom: 4px;"><?php esc_html_e( 'Operator:', 'clicksync-wordpress' ); ?></label>
+								<select class="clicksync-list-routing-operator clicksync-select" style="margin: 0; height: 36px;">
+									<option value="equals">is equal to</option>
+									<option value="not_equals">is not equal to</option>
+									<option value="contains">contains</option>
+									<option value="not_contains">does not contain</option>
+									<option value="starts_with">starts with</option>
+									<option value="ends_with">ends with</option>
+								</select>
+							</div>
+							<div>
+								<label style="display: block; font-size: 11px; font-weight: 500; color: #6d7175; margin-bottom: 4px;"><?php esc_html_e( 'Compare Value:', 'clicksync-wordpress' ); ?></label>
+								<input type="text" class="clicksync-list-routing-value clicksync-select" style="margin: 0; height: 36px;" placeholder="e.g. US" />
+							</div>
+							<div>
+								<label style="display: block; font-size: 11px; font-weight: 500; color: #6d7175; margin-bottom: 4px;"><?php esc_html_e( 'Route to List:', 'clicksync-wordpress' ); ?></label>
+								<select class="clicksync-list-routing-list clicksync-select" style="margin: 0; height: 36px;">
+									<option value=""><?php esc_html_e( 'Loading lists...', 'clicksync-wordpress' ); ?></option>
+								</select>
+							</div>
+							<button type="button" class="clicksync-add-list-routing-rule-btn clicksync-btn-secondary" style="height: 36px; white-space: nowrap;" data-event="orders/create"><?php esc_html_e( 'Add Rule', 'clicksync-wordpress' ); ?></button>
+						</div>
 					</div>
 
 					<!-- 1. Assignee Routing Rules Sub-section -->

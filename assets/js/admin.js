@@ -169,6 +169,24 @@
             }
             $('#' + eventSuffix + '-customfields-rules-list').html(cfHtml);
 
+            // 4b. Regional List Routing rules (orders only)
+            if (rule.shopifyEvent === 'orders/create') {
+                var listRoutingHtml = '';
+                if (rule.listRules && rule.listRules.length > 0) {
+                    $.each(rule.listRules, function (i, r) {
+                        listRoutingHtml += '<div class="clicksync-rule-row" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 13px; margin-bottom: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">' +
+                            '<span>If <strong>' + getFriendlyFieldName(r.shopifyPropertyPath, false) + '</strong> ' + getFriendlyOperator(r.operator) + ' <strong>"' + r.value + '"</strong> then route to ClickUp list <strong>' + getListName(r.clickupListId) + '</strong></span>' +
+                            '<button type="button" class="clicksync-delete-rule-btn" data-rule-id="' + r.id + '" data-action="delete_list_rule" style="background: none; border: none; color: #ef4444; cursor: pointer; display: flex; align-items: center; padding: 4px; transition: color 0.15s ease;">' +
+                            '<svg style="width: 15px; height: 15px; fill: currentColor;" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>' +
+                            '</button>' +
+                            '</div>';
+                    });
+                } else {
+                    listRoutingHtml = '<p style="font-size: 12px; color: #6d7175; margin-bottom: 12px; font-style: italic;">No regional list routing rules configured yet. Tasks will route to the default ClickUp list.</p>';
+                }
+                $('#orders-list-routing-rules-list').html(listRoutingHtml);
+            }
+
             // 5. Status actions (orders only)
             if (rule.shopifyEvent === 'orders/create') {
                 var statusHtml = '';
@@ -744,7 +762,7 @@
                 });
                 ordersHtml += '</optgroup>';
             }
-            $('#clicksync-orders-rule-card .clicksync-assignee-field, #clicksync-orders-rule-card .clicksync-priority-field, #clicksync-orders-rule-card .clicksync-tag-field, #clicksync-orders-rule-card .clicksync-field-field').html(ordersHtml);
+            $('#clicksync-orders-rule-card .clicksync-assignee-field, #clicksync-orders-rule-card .clicksync-priority-field, #clicksync-orders-rule-card .clicksync-tag-field, #clicksync-orders-rule-card .clicksync-field-field, #clicksync-orders-rule-card .clicksync-list-routing-field').html(ordersHtml);
 
             // Customers Field Selectors
             var customersHtml = '';
@@ -997,9 +1015,9 @@
                         $.each(res.lists, function (i, l) {
                             optionsHtml += '<option value="' + l.id + '">' + l.name + '</option>';
                         });
-                        $('#clicksync-list-orders, #clicksync-list-customers').html(optionsHtml);
+                        $('#clicksync-list-orders, #clicksync-list-customers, .clicksync-list-routing-list').html(optionsHtml);
                     } else {
-                        $('#clicksync-list-orders, #clicksync-list-customers').html('<option value="">No lists available</option>');
+                        $('#clicksync-list-orders, #clicksync-list-customers, .clicksync-list-routing-list').html('<option value="">No lists available</option>');
                     }
 
                     // Populate Assignees dynamically from selected workspace members
@@ -1060,6 +1078,10 @@
 
                                     card.find('.clicksync-option-pill[data-field="fieldMappingsEnabled"]').toggleClass('active', rule.fieldMappingsEnabled);
                                     $('#orders-customfields-block').toggle(rule.fieldMappingsEnabled);
+                                    
+                                    var hasListRules = rule.listRules && rule.listRules.length > 0;
+                                    card.find('.clicksync-option-pill[data-target="orders-list-routing-block"]').toggleClass('active', hasListRules);
+                                    $('#orders-list-routing-block').toggle(hasListRules);
 
                                     // Load list-specific metadata (custom fields and statuses) for Order list
                                     fetchListMetadata(rule.clickupListId, 'clicksync-orders-rule-card', function () {
@@ -1838,7 +1860,103 @@
                 }
                 $('#status-mapping-lock-notice').remove();
             }
+
+            // 4. Render Multi-Store Connections Card for Pro Plan
+            if (activePlanName === 'Pro Plan' && resSiblings && resSiblings.length > 0) {
+                $('#clicksync-multistore-card').show();
+                var multistoreHtml = '';
+                $.each(resSiblings, function(i, sib) {
+                    var isCurrent = sib.shop === host;
+                    var domainLabel = isCurrent ? '<strong>' + sib.shop + ' (This Store)</strong>' : sib.shop;
+                    var statusBadge = '<span class="clicksync-badge" style="background: #ecfdf5; color: #047857; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">Active</span>';
+                    var roleLabel = isCurrent ? 'Primary Node' : 'Linked Store';
+                    
+                    multistoreHtml += '<tr style="border-bottom: 1px solid #f1f5f9;">' +
+                        '<td style="padding: 10px 12px 10px 0; color: #0f172a;">' + domainLabel + '</td>' +
+                        '<td style="padding: 10px 12px;">' + statusBadge + '</td>' +
+                        '<td style="padding: 10px 0 10px 12px; text-align: right; color: #64748b; font-weight: 500;">' + roleLabel + '</td>' +
+                        '</tr>';
+                });
+                $('#clicksync-multistore-list').html(multistoreHtml);
+            } else {
+                $('#clicksync-multistore-card').hide();
+            }
         }
+
+        var resSiblings = [];
+        // Inject siblings from fetch config response
+        var oldFetchCloudConfig = fetchCloudConfig;
+        fetchCloudConfig = function() {
+            var oldSuccess = null;
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    if (settings.url.indexOf('/api/get-config') !== -1) {
+                        oldSuccess = settings.success;
+                        settings.success = function(res) {
+                            resSiblings = res.siblings || [];
+                            if (oldSuccess) oldSuccess(res);
+                        };
+                    }
+                }
+            });
+            oldFetchCloudConfig();
+            // Restore default ajax setup
+            $.ajaxSetup({ beforeSend: null });
+        };
+
+        function getListName(id) {
+            var option = $('.clicksync-list-routing-list option[value="' + id + '"]');
+            if (option.length > 0) {
+                return option.text();
+            }
+            return 'List ID: ' + id;
+        }
+
+        // Add regional list routing rule
+        $(document).on('click', '.clicksync-add-list-routing-rule-btn', function (e) {
+            e.preventDefault();
+            var btn = $(this);
+            var eventType = btn.data('event');
+            var container = btn.closest('.clicksync-card');
+
+            var field = container.find('.clicksync-list-routing-field').val();
+            var operator = container.find('.clicksync-list-routing-operator').val();
+            var value = container.find('.clicksync-list-routing-value').val();
+            var targetList = container.find('.clicksync-list-routing-list').val();
+
+            if (!field || !value || !targetList) {
+                alert('Please fill out all rule fields and select a target ClickUp list.');
+                return;
+            }
+
+            btn.text('Adding...').prop('disabled', true);
+
+            $.ajax({
+                url: cloudUrl + '/api/save-config',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    shop: host,
+                    actionType: 'add_list_rule',
+                    payload: {
+                        event: eventType,
+                        shopifyPropertyPath: field,
+                        operator: operator,
+                        value: value,
+                        clickupListId: targetList
+                    }
+                }),
+                success: function (res) {
+                    container.find('.clicksync-list-routing-value').val('');
+                    btn.text('Add Rule').prop('disabled', false);
+                    fetchCloudConfig();
+                },
+                error: function (xhr) {
+                    alert('Failed to add list routing rule: ' + xhr.responseText);
+                    btn.text('Add Rule').prop('disabled', false);
+                }
+            });
+        });
 
         // Render premium Polaris-like toast notification drawer
         function showClickSyncToast(title, message) {
