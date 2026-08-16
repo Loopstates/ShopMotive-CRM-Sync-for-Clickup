@@ -1813,15 +1813,15 @@
                 $('.pill-lock-icon').remove();
             }
 
-            // 3. Gating Status Mapping: Free Plan locks status mapping card inputs
+            // 3. Gating Status Mapping: Free Plan locks status mapping block inputs only
+            var statusSection = $('.clicksync-add-status-mapping-btn').closest('div[style*="background: #f9fafb"]');
             if (activePlanName === 'Free Plan') {
-                var statusCard = $('.clicksync-add-status-mapping-btn').closest('.clicksync-card');
-                if (statusCard.length > 0) {
-                    statusCard.css('opacity', '0.65');
-                    statusCard.find('input, select, button').prop('disabled', true);
+                if (statusSection.length > 0) {
+                    statusSection.css('opacity', '0.65');
+                    statusSection.find('input, select, button').prop('disabled', true);
                     
                     if ($('#status-mapping-lock-notice').length === 0) {
-                        statusCard.prepend(
+                        statusSection.prepend(
                             '<div id="status-mapping-lock-notice" style="background: #fdf2f8; border: 1px solid #fbcfe8; color: #db2777; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; pointer-events: auto;">' +
                             '<span>🔒 Bi-directional status & notes sync requires Growth or Pro plan.</span>' +
                             '<a href="#" class="clicksync-open-upgrade-btn" style="color: #db2777; text-decoration: underline; font-size: 11px; cursor: pointer;">Upgrade now</a>' +
@@ -1830,9 +1830,10 @@
                     }
                 }
             } else {
-                var statusCard = $('.clicksync-add-status-mapping-btn').closest('.clicksync-card');
-                statusCard.css('opacity', '1');
-                statusCard.find('input, select, button').prop('disabled', false);
+                if (statusSection.length > 0) {
+                    statusSection.css('opacity', '1');
+                    statusSection.find('input, select, button').prop('disabled', false);
+                }
                 $('#status-mapping-lock-notice').remove();
             }
         }
