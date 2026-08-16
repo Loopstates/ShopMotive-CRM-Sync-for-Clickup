@@ -15,6 +15,9 @@
             customers: { default_fields: [], meta_fields: [] }
         };
 
+        // Append premium toast container
+        $('body').append('<div id="clicksync-toast-container" style="position: fixed; bottom: 24px; right: 24px; z-index: 100000; display: flex; flex-direction: column; gap: 12px; pointer-events: none;"></div>');
+
         // Onboarding Lock Helpers (WordPress Compliant Notice & Disabled Inputs)
         function lockSyncRules() {
             $('#clicksync-rules-lock-banner').slideDown(200);
@@ -186,16 +189,9 @@
             }
         }
 
+        // Option Pills Toggle Click Handlers
         $(document).on('click', '.clicksync-option-pill', function (e) {
             e.preventDefault();
-            if ($(this).hasClass('clicksync-pill-locked')) {
-                alert('This feature is locked on the Free Plan. Please upgrade your subscription to enable advanced sync mapping rules!');
-                $('#clicksync-upgrade-drawer').slideDown(200);
-                $('html, body').animate({
-                    scrollTop: $("#clicksync-usage-count").offset().top - 100
-                }, 500);
-                return;
-            }
             var targetId = $(this).data('target');
             var isCurrentlyActive = $(this).hasClass('active');
 
@@ -1798,19 +1794,22 @@
                 $('#split-routing-lock-notice').remove();
             }
 
-            // 2. Gating Option Pills: Free Plan restricts assignee, priority, tagging, custom fields
-            if (activePlanName === 'Free Plan') {
-                $('.clicksync-option-pill').each(function() {
-                    var pill = $(this);
-                    pill.addClass('clicksync-pill-locked').css({ opacity: '0.65' });
-                    
-                    if (pill.find('.pill-lock-icon').length === 0) {
-                        pill.append('<span class="pill-lock-icon" style="margin-left: 4px; font-size: 10px;">🔒</span>');
-                    }
-                });
+            // 2. Gating Sync Fulfillment Statuses: Pro only
+            if (activePlanName !== 'Pro Plan') {
+                $('#orders-sync-fulfillment').prop('checked', false).prop('disabled', true);
+                $('#orders-sync-fulfillment').closest('.clicksync-switch').css({ opacity: '0.55', 'pointer-events': 'none' });
+                $('#orders-sync-fulfillment').closest('label').addClass('clicksync-switch-disabled-fulfillment');
+                
+                if ($('#fulfillment-lock-notice').length === 0) {
+                    $('#orders-sync-fulfillment').closest('div').prev('div').append(
+                        '<span id="fulfillment-lock-notice" class="clicksync-badge clicksync-badge-critical" style="background: #fee2e2; color: #ef4444; border: 1px solid #fca5a5; font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 4px; margin-left: 8px;">PRO PLAN ONLY</span>'
+                    );
+                }
             } else {
-                $('.clicksync-option-pill').removeClass('clicksync-pill-locked').css({ opacity: '1' });
-                $('.pill-lock-icon').remove();
+                $('#orders-sync-fulfillment').prop('disabled', false);
+                $('#orders-sync-fulfillment').closest('.clicksync-switch').css({ opacity: '1', 'pointer-events': 'auto' });
+                $('#orders-sync-fulfillment').closest('label').removeClass('clicksync-switch-disabled-fulfillment');
+                $('#fulfillment-lock-notice').remove();
             }
 
             // 3. Gating Status Mapping: Free Plan locks status mapping block inputs only
@@ -1823,7 +1822,10 @@
                     if ($('#status-mapping-lock-notice').length === 0) {
                         statusSection.prepend(
                             '<div id="status-mapping-lock-notice" style="background: #fdf2f8; border: 1px solid #fbcfe8; color: #db2777; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; pointer-events: auto;">' +
-                            '<span>🔒 Bi-directional status & notes sync requires Growth or Pro plan.</span>' +
+                            '<span style="display: flex; align-items: center; gap: 6px;">' +
+                                '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle;"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>' +
+                                'Bi-directional status & notes sync requires Growth or Pro plan.' +
+                            '</span>' +
                             '<a href="#" class="clicksync-open-upgrade-btn" style="color: #db2777; text-decoration: underline; font-size: 11px; cursor: pointer;">Upgrade now</a>' +
                             '</div>'
                         );
@@ -1838,15 +1840,61 @@
             }
         }
 
+        // Render premium Polaris-like toast notification drawer
+        function showClickSyncToast(title, message) {
+            var toastId = 'cs-toast-' + Date.now();
+            var toastHtml = 
+                '<div id="' + toastId + '" class="clicksync-toast" style="pointer-events: auto; min-width: 320px; max-width: 400px; background: #ffffff; border: 1px solid #e1e3e5; border-left: 4px solid #db2777; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; transition: all 0.3s ease; transform: translateY(50px); opacity: 0; margin-top: 10px;">' +
+                    '<div style="display: flex; justify-content: space-between; align-items: flex-start;">' +
+                        '<span style="font-size: 13px; font-weight: 600; color: #202223; display: flex; align-items: center; gap: 6px;">' +
+                            '<svg width="14" height="14" viewBox="0 0 24 24" fill="#db2777" style="vertical-align: middle;"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>' +
+                            title +
+                        '</span>' +
+                        '<button type="button" class="clicksync-toast-close" style="background: none; border: none; font-size: 16px; color: #8c9196; cursor: pointer; padding: 0 4px; line-height: 1;">&times;</button>' +
+                    '</div>' +
+                    '<p style="font-size: 12px; color: #6d7175; margin: 0; line-height: 1.4;">' + message + '</p>' +
+                    '<div style="margin-top: 6px; display: flex; gap: 12px; align-items: center;">' +
+                        '<a href="#" class="clicksync-open-upgrade-btn" style="font-size: 12px; font-weight: 600; color: #db2777; text-decoration: none; cursor: pointer;">Upgrade subscription &rarr;</a>' +
+                    '</div>' +
+                '</div>';
+            
+            $('#clicksync-toast-container').append(toastHtml);
+            
+            setTimeout(function() {
+                $('#' + toastId).css({ transform: 'translateY(0)', opacity: '1' });
+            }, 10);
+
+            setTimeout(function() {
+                var toast = $('#' + toastId);
+                if (toast.length > 0) {
+                    toast.css({ transform: 'translateY(-20px)', opacity: '0' });
+                    setTimeout(function() {
+                        toast.remove();
+                    }, 300);
+                }
+            }, 6000);
+        }
+
         // Intercept locked toggle switches and billing prompts clicks
-        $(document).on('click', '.clicksync-switch-disabled', function (e) {
+        $(document).on('click', '.clicksync-switch-disabled, .clicksync-switch-disabled-fulfillment', function (e) {
             e.preventDefault();
             e.stopPropagation();
-            alert('Split Order Routing is a Pro Plan feature. Please upgrade your subscription to enable splitting multi-product orders into individual ClickUp tasks!');
-            $('#clicksync-upgrade-drawer').slideDown(200);
-            $('html, body').animate({
-                scrollTop: $("#clicksync-usage-count").offset().top - 100
-            }, 500);
+            
+            var isFulfillment = $(this).hasClass('clicksync-switch-disabled-fulfillment');
+            var featureTitle = isFulfillment ? 'Fulfillment Syncing' : 'Split Order Routing';
+            var featureMessage = isFulfillment 
+                ? 'Fulfillment synchronization is a Pro Plan feature. Upgrade to automatically update Shopify tracking details when tasks change status in ClickUp.' 
+                : 'Split Order Routing is a Pro Plan feature. Upgrade to automatically split multi-product orders into individual ClickUp tasks.';
+            
+            showClickSyncToast(featureTitle, featureMessage);
+        });
+
+        $(document).on('click', '.clicksync-toast-close', function() {
+            var toast = $(this).closest('.clicksync-toast');
+            toast.css({ transform: 'translateY(-20px)', opacity: '0' });
+            setTimeout(function() {
+                toast.remove();
+            }, 300);
         });
 
         $(document).on('click', '.clicksync-open-upgrade-btn', function (e) {
