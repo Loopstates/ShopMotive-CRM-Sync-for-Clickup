@@ -1838,17 +1838,17 @@
             var statusSection = $('.clicksync-add-status-mapping-btn').closest('div[style*="background: #f9fafb"]');
             if (activePlanName === 'Free Plan') {
                 if (statusSection.length > 0) {
-                    statusSection.css('opacity', '0.65');
-                    statusSection.find('input, select, button').prop('disabled', true);
+                    statusSection.css('opacity', '1');
+                    statusSection.find('input, select, button').prop('disabled', false);
                     
                     if ($('#status-mapping-lock-notice').length === 0) {
                         statusSection.prepend(
-                            '<div id="status-mapping-lock-notice" style="background: #fdf2f8; border: 1px solid #fbcfe8; color: #db2777; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; pointer-events: auto;">' +
-                            '<span style="display: flex; align-items: center; gap: 6px;">' +
-                                '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle;"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>' +
-                                'Bi-directional status & notes sync requires Growth or Pro plan.' +
+                            '<div id="status-mapping-lock-notice" style="background: #f8fafc; border: 1px solid #e2e8f0; color: #475569; padding: 10px 14px; border-radius: 6px; font-size: 12px; font-weight: 500; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; pointer-events: auto;">' +
+                            '<span style="display: flex; align-items: center; gap: 8px;">' +
+                                '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>' +
+                                'Status mapping operates in unidirectional mode (WooCommerce &rarr; ClickUp) on your current plan.' +
                             '</span>' +
-                            '<a href="#" class="clicksync-open-upgrade-btn" style="color: #db2777; text-decoration: underline; font-size: 11px; cursor: pointer;">Upgrade now</a>' +
+                            '<a href="#" class="clicksync-open-upgrade-btn" style="color: #db2777; font-weight: 600; text-decoration: underline; font-size: 11px; cursor: pointer;">Enable bidirectional sync</a>' +
                             '</div>'
                         );
                     }
