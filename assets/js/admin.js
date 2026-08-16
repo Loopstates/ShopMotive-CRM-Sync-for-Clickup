@@ -1857,31 +1857,25 @@
                 $('#refunds-lock-notice').remove();
             }
 
-            // 3. Gating Status Mapping: Free Plan locks status mapping block inputs (Bi-directional Status Updates is locked on Free)
+            // 3. Gating Status Mapping: Always enabled for configuration (runs in unidirectional mode on Free)
             var statusSection = $('.clicksync-add-status-mapping-btn').closest('div[style*="background: #f9fafb"]');
-            if (activePlanName === 'Free Plan') {
-                if (statusSection.length > 0) {
-                    statusSection.css('opacity', '0.65');
-                    statusSection.find('input, select, button').prop('disabled', true);
-                    
-                    if ($('#status-mapping-lock-notice').length === 0) {
-                        statusSection.prepend(
-                            '<div id="status-mapping-lock-notice" style="background: #fdf2f8; border: 1px solid #fbcfe8; color: #db2777; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; pointer-events: auto;">' +
-                            '<span style="display: flex; align-items: center; gap: 6px;">' +
-                                '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle;"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>' +
-                                'Bi-directional status writebacks require Growth or Pro plan.' +
-                            '</span>' +
-                            '<a href="#" class="clicksync-open-upgrade-btn" style="color: #db2777; text-decoration: underline; font-size: 11px; cursor: pointer;">Upgrade now</a>' +
-                            '</div>'
+            if (statusSection.length > 0) {
+                statusSection.css('opacity', '1');
+                statusSection.find('input, select, button').prop('disabled', false);
+                $('#status-mapping-lock-notice').remove();
+
+                var headerTitle = statusSection.find('div[style*="font-size: 14px"]').first();
+                if (activePlanName === 'Free Plan') {
+                    if (headerTitle.find('.clicksync-unidirectional-tooltip').length === 0) {
+                        headerTitle.append(
+                            '<span class="clicksync-unidirectional-tooltip" style="display: inline-flex; align-items: center; color: #64748b; cursor: help; margin-left: 6px;" title="Unidirectional mapping: WooCommerce to ClickUp sync only. Upgrade to Growth/Pro to enable bi-directional writeback to WooCommerce.">' +
+                                '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>' +
+                            '</span>'
                         );
                     }
+                } else {
+                    headerTitle.find('.clicksync-unidirectional-tooltip').remove();
                 }
-            } else {
-                if (statusSection.length > 0) {
-                    statusSection.css('opacity', '1');
-                    statusSection.find('input, select, button').prop('disabled', false);
-                }
-                $('#status-mapping-lock-notice').remove();
             }
 
             // 4. Render Multi-Store Connections Card for Pro Plan
