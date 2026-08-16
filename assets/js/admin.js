@@ -213,6 +213,26 @@
             var targetId = $(this).data('target');
             var isCurrentlyActive = $(this).hasClass('active');
 
+            // 5. Gating rules: Assignee Routing (requires Growth) and Regional List Routing (requires Pro)
+            if (activePlanName === 'Free Plan') {
+                if (targetId.indexOf('assignee') !== -1 || targetId.indexOf('list-routing') !== -1) {
+                    var tierRequired = targetId.indexOf('list-routing') !== -1 ? 'Pro Plan' : 'Growth Plan';
+                    showClickSyncToast(
+                        $(this).text() + ' Locked',
+                        $(this).text() + ' is a ' + tierRequired + ' feature. Upgrade your subscription to enable advanced conditional matching and routing rules.'
+                    );
+                    return;
+                }
+            } else if (activePlanName === 'Growth Plan') {
+                if (targetId.indexOf('list-routing') !== -1) {
+                    showClickSyncToast(
+                        'Regional List Routing Locked',
+                        'Regional List Routing is a Pro Plan feature. Upgrade your subscription to enable dynamic lists dispatch routing rules.'
+                    );
+                    return;
+                }
+            }
+
             if (isCurrentlyActive) {
                 $(this).removeClass('active');
                 $('#' + targetId).slideUp(200);
@@ -1816,22 +1836,22 @@
                 $('#split-routing-lock-notice').remove();
             }
 
-            // 2. Gating Sync Fulfillment Statuses: Pro only
-            if (activePlanName !== 'Pro Plan') {
-                $('#orders-sync-fulfillment').prop('checked', false).prop('disabled', true);
-                $('#orders-sync-fulfillment').closest('.clicksync-switch').css({ opacity: '0.55', 'pointer-events': 'none' });
-                $('#orders-sync-fulfillment').closest('label').addClass('clicksync-switch-disabled-fulfillment');
+            // 2. Gating Sync Refunds: Growth or Pro (requires Growth or Pro)
+            if (activePlanName === 'Free Plan') {
+                $('#orders-sync-refunds').prop('checked', false).prop('disabled', true);
+                $('#orders-sync-refunds').closest('.clicksync-switch').css({ opacity: '0.55', 'pointer-events': 'none' });
+                $('#orders-sync-refunds').closest('label').addClass('clicksync-switch-disabled-refunds');
                 
-                if ($('#fulfillment-lock-notice').length === 0) {
-                    $('#orders-sync-fulfillment').closest('div').prev('div').append(
-                        '<span id="fulfillment-lock-notice" class="clicksync-badge clicksync-badge-critical" style="background: #fee2e2; color: #ef4444; border: 1px solid #fca5a5; font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 4px; margin-left: 8px;">PRO PLAN ONLY</span>'
+                if ($('#refunds-lock-notice').length === 0) {
+                    $('#orders-sync-refunds').closest('div').prev('div').append(
+                        '<span id="refunds-lock-notice" class="clicksync-badge clicksync-badge-critical" style="background: #fee2e2; color: #ef4444; border: 1px solid #fca5a5; font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 4px; margin-left: 8px;">GROWTH OR PRO</span>'
                     );
                 }
             } else {
-                $('#orders-sync-fulfillment').prop('disabled', false);
-                $('#orders-sync-fulfillment').closest('.clicksync-switch').css({ opacity: '1', 'pointer-events': 'auto' });
-                $('#orders-sync-fulfillment').closest('label').removeClass('clicksync-switch-disabled-fulfillment');
-                $('#fulfillment-lock-notice').remove();
+                $('#orders-sync-refunds').prop('disabled', false);
+                $('#orders-sync-refunds').closest('.clicksync-switch').css({ opacity: '1', 'pointer-events': 'auto' });
+                $('#orders-sync-refunds').closest('label').removeClass('clicksync-switch-disabled-refunds');
+                $('#refunds-lock-notice').remove();
             }
 
             // 3. Gating Status Mapping: Free Plan locks status mapping block inputs only
@@ -1994,14 +2014,14 @@
         }
 
         // Intercept locked toggle switches and billing prompts clicks
-        $(document).on('click', '.clicksync-switch-disabled, .clicksync-switch-disabled-fulfillment', function (e) {
+        $(document).on('click', '.clicksync-switch-disabled, .clicksync-switch-disabled-refunds', function (e) {
             e.preventDefault();
             e.stopPropagation();
             
-            var isFulfillment = $(this).hasClass('clicksync-switch-disabled-fulfillment');
-            var featureTitle = isFulfillment ? 'Fulfillment Syncing' : 'Split Order Routing';
-            var featureMessage = isFulfillment 
-                ? 'Fulfillment synchronization is a Pro Plan feature. Upgrade to automatically update Shopify tracking details when tasks change status in ClickUp.' 
+            var isRefunds = $(this).hasClass('clicksync-switch-disabled-refunds');
+            var featureTitle = isRefunds ? 'Refund Syncing' : 'Split Order Routing';
+            var featureMessage = isRefunds 
+                ? 'Refund updates syncing is a Growth Plan feature. Upgrade to automatically post detailed refund comments and line items in ClickUp when refunds occur.' 
                 : 'Split Order Routing is a Pro Plan feature. Upgrade to automatically split multi-product orders into individual ClickUp tasks.';
             
             showClickSyncToast(featureTitle, featureMessage);

@@ -267,9 +267,8 @@ class SettingsPage {
 								<div>
 									<div style="font-size: 13px; font-weight: 600; color: #202223; display: flex; align-items: center; gap: 6px;">
 										<svg class="clicksync-title-icon" style="width: 14px; height: 14px;" viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg> <?php esc_html_e( 'Sync Refund Updates', 'clicksync-wordpress' ); ?>
-										<span class="clicksync-badge" style="background: #f1f5f9; color: #475569; font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px; cursor: help;" title="<?php esc_attr_e( 'This feature operates in unidirectional mode (WordPress &rarr; ClickUp) on your current plan. Upgrade to Growth or Pro to enable bidirectional status and comment writebacks.', 'clicksync-wordpress' ); ?>">
-											<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-											ONE-WAY
+										<span class="clicksync-unidirectional-tooltip" style="display: inline-flex; align-items: center; color: #64748b; cursor: help; margin-left: 4px;" title="<?php esc_attr_e( 'Unidirectional mapping: WooCommerce to ClickUp sync only.', 'clicksync-wordpress' ); ?>">
+											<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
 										</span>
 									</div>
 									<div style="font-size: 12px; color: #6d7175; margin-top: 2px;">
@@ -282,31 +281,13 @@ class SettingsPage {
 								</label>
 							</div>
 
-							<!-- Fulfillment Status Syncing -->
-							<div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #e1e3e5; padding-top: 12px;">
-								<div>
-									<div style="font-size: 13px; font-weight: 600; color: #202223; display: flex; align-items: center; gap: 6px;">
-										<svg class="clicksync-title-icon" style="width: 15px; height: 15px;" viewBox="0 0 24 24"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zm-14 9c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm0-3c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm11 3c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm0-3c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm2-2H8V6h9v6z"/></svg> <?php esc_html_e( 'Sync Fulfillment Statuses', 'clicksync-wordpress' ); ?>
-										<span style="background: #d4eed8; color: #108043; font-size: 10px; font-weight: 600; padding: 1px 5px; border-radius: 4px;">2-WAY SYNC</span>
-									</div>
-									<div style="font-size: 12px; color: #6d7175; margin-top: 2px;">
-										<?php esc_html_e( 'Automatically update ClickUp task statuses upon fulfillment, and fulfill orders in WooCommerce when a ClickUp task status is mapped.', 'clicksync-wordpress' ); ?>
-									</div>
-								</div>
-								<label class="clicksync-switch">
-									<input type="checkbox" id="orders-sync-fulfillment" <?php checked( isset( $settings['fulfillment_enabled'] ) ? ! empty( $settings['fulfillment_enabled'] ) : true ); ?>>
-									<span class="clicksync-slider"></span>
-								</label>
-							</div>
-
 							<!-- Split Order Routing -->
 							<div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #e1e3e5; padding-top: 12px;">
 								<div>
 									<div style="font-size: 13px; font-weight: 600; color: #202223; display: flex; align-items: center; gap: 6px;">
 										<svg class="clicksync-title-icon" style="width: 14px; height: 14px;" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.89-1.99 2L2 18c0 1.1.89 2 2 2h16c1.1 0 2-.89 2-2V6c0-1.1-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg> <?php esc_html_e( 'Split Order Routing', 'clicksync-wordpress' ); ?>
-										<span class="clicksync-badge" style="background: #f1f5f9; color: #475569; font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px; cursor: help;" title="<?php esc_attr_e( 'This feature operates in unidirectional mode (WordPress &rarr; ClickUp) on your current plan. Upgrade to Growth or Pro to enable bidirectional status and comment writebacks.', 'clicksync-wordpress' ); ?>">
-											<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-											ONE-WAY
+										<span class="clicksync-unidirectional-tooltip" style="display: inline-flex; align-items: center; color: #64748b; cursor: help; margin-left: 4px;" title="<?php esc_attr_e( 'Unidirectional mapping: WooCommerce to ClickUp sync only.', 'clicksync-wordpress' ); ?>">
+											<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
 										</span>
 									</div>
 									<div style="font-size: 12px; color: #6d7175; margin-top: 2px;">
@@ -318,6 +299,7 @@ class SettingsPage {
 									<span class="clicksync-slider"></span>
 								</label>
 							</div>
+						</div>
 						</div>
 					</div>
 
