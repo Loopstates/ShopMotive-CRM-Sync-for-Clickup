@@ -6,6 +6,7 @@
         var cloudUrl = typeof clicksyncData !== 'undefined' ? clicksyncData.cloudUrl : 'https://clicksync-connect.apps.loopstates.com';
         var host = typeof clicksyncData !== 'undefined' ? clicksyncData.host : window.location.hostname;
         var cachedLogs = [];
+        var activePlanName = 'Free Plan';
 
         // Global variables to store ClickUp members and statuses
         var workspacesData = [];
@@ -185,9 +186,16 @@
             }
         }
 
-        // Option Pills Toggle Click Handlers
         $(document).on('click', '.clicksync-option-pill', function (e) {
             e.preventDefault();
+            if ($(this).hasClass('clicksync-pill-locked')) {
+                alert('This feature is locked on the Free Plan. Please upgrade your subscription to enable advanced sync mapping rules!');
+                $('#clicksync-upgrade-drawer').slideDown(200);
+                $('html, body').animate({
+                    scrollTop: $("#clicksync-usage-count").offset().top - 100
+                }, 500);
+                return;
+            }
             var targetId = $(this).data('target');
             var isCurrentlyActive = $(this).hasClass('active');
 
@@ -942,9 +950,9 @@
                     $('#plan-card-growth a').text('Select Growth').removeClass('clicksync-btn-disabled').css('pointer-events', 'auto');
                     $('#plan-card-pro a').text('Select Pro').removeClass('clicksync-btn-disabled').css('pointer-events', 'auto');
 
-                    // Update Plan details & Lock notices
                     if (res && res.account) {
                         var plan = res.account.planName || 'None';
+                        activePlanName = plan;
                         var syncCount = res.account.monthlySyncCount || 0;
                         var quota = res.account.monthlyQuota || 100;
                         $('#clicksync-usage-count').text(syncCount);
@@ -1096,6 +1104,7 @@
                         renderFullLogs(cachedLogs);
                         renderErrorLogs(cachedLogs);
                     }
+                    enforcePlanLocks();
                 },
                 error: function (err) {
                     if (configRetryCount < 3) {
@@ -1766,6 +1775,86 @@
                 });
             });
         }
+
+        // Enforce cloud-controlled plan features and toggle locks in the WordPress UI
+        function enforcePlanLocks() {
+            if (activePlanName === 'None') return;
+
+            // 1. Gating Split Routing: Pro only
+            if (activePlanName !== 'Pro Plan') {
+                $('#orders-split-routing').prop('checked', false).prop('disabled', true);
+                $('#orders-split-routing').closest('.clicksync-switch').css({ opacity: '0.55', 'pointer-events': 'none' });
+                $('#orders-split-routing').closest('label').addClass('clicksync-switch-disabled');
+                
+                if ($('#split-routing-lock-notice').length === 0) {
+                    $('#orders-split-routing').closest('div').prev('div').append(
+                        '<span id="split-routing-lock-notice" style="background: #fee2e2; color: #ef4444; font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 4px; margin-left: 8px;">PRO PLAN ONLY</span>'
+                    );
+                }
+            } else {
+                $('#orders-split-routing').prop('disabled', false);
+                $('#orders-split-routing').closest('.clicksync-switch').css({ opacity: '1', 'pointer-events': 'auto' });
+                $('#orders-split-routing').closest('label').removeClass('clicksync-switch-disabled');
+                $('#split-routing-lock-notice').remove();
+            }
+
+            // 2. Gating Option Pills: Free Plan restricts assignee, priority, tagging, custom fields
+            if (activePlanName === 'Free Plan') {
+                $('.clicksync-option-pill').each(function() {
+                    var pill = $(this);
+                    pill.addClass('clicksync-pill-locked').css({ opacity: '0.65' });
+                    
+                    if (pill.find('.pill-lock-icon').length === 0) {
+                        pill.append('<span class="pill-lock-icon" style="margin-left: 4px; font-size: 10px;">🔒</span>');
+                    }
+                });
+            } else {
+                $('.clicksync-option-pill').removeClass('clicksync-pill-locked').css({ opacity: '1' });
+                $('.pill-lock-icon').remove();
+            }
+
+            // 3. Gating Status Mapping: Free Plan locks status mapping card inputs
+            if (activePlanName === 'Free Plan') {
+                var statusCard = $('.clicksync-add-status-mapping-btn').closest('.clicksync-card');
+                if (statusCard.length > 0) {
+                    statusCard.css('opacity', '0.65');
+                    statusCard.find('input, select, button').prop('disabled', true);
+                    
+                    if ($('#status-mapping-lock-notice').length === 0) {
+                        statusCard.prepend(
+                            '<div id="status-mapping-lock-notice" style="background: #fdf2f8; border: 1px solid #fbcfe8; color: #db2777; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; pointer-events: auto;">' +
+                            '<span>🔒 Bi-directional status & notes sync requires Growth or Pro plan.</span>' +
+                            '<a href="#" class="clicksync-open-upgrade-btn" style="color: #db2777; text-decoration: underline; font-size: 11px; cursor: pointer;">Upgrade now</a>' +
+                            '</div>'
+                        );
+                    }
+                }
+            } else {
+                var statusCard = $('.clicksync-add-status-mapping-btn').closest('.clicksync-card');
+                statusCard.css('opacity', '1');
+                statusCard.find('input, select, button').prop('disabled', false);
+                $('#status-mapping-lock-notice').remove();
+            }
+        }
+
+        // Intercept locked toggle switches and billing prompts clicks
+        $(document).on('click', '.clicksync-switch-disabled', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            alert('Split Order Routing is a Pro Plan feature. Please upgrade your subscription to enable splitting multi-product orders into individual ClickUp tasks!');
+            $('#clicksync-upgrade-drawer').slideDown(200);
+            $('html, body').animate({
+                scrollTop: $("#clicksync-usage-count").offset().top - 100
+            }, 500);
+        });
+
+        $(document).on('click', '.clicksync-open-upgrade-btn', function (e) {
+            e.preventDefault();
+            $('#clicksync-upgrade-drawer').slideDown(200);
+            $('html, body').animate({
+                scrollTop: $("#clicksync-usage-count").offset().top - 100
+            }, 500);
+        });
 
         // Initialize Fetch
         fetchCloudConfig();
