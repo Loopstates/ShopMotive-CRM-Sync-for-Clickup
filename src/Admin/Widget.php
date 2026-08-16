@@ -33,7 +33,7 @@ class Widget {
 				</button>
 			<?php else : ?>
 				<div style="margin-bottom: 12px;">
-					<a href="<?php echo esc_url( $task_url ); ?>" target="_blank" style="font-weight: 700; text-decoration: none; color: #7c3aed; display: inline-flex; align-items: center; gap: 4px;">
+					<a href="<?php echo esc_url( $task_url ); ?>" target="_blank" style="font-weight: 700; text-decoration: none; color: #008060; display: inline-flex; align-items: center; gap: 4px;">
 						<svg style="width: 14px; height: 14px; fill: currentColor;" viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>
 						<span><?php esc_html_e( 'Open ClickUp Task', 'clicksync-wordpress' ); ?></span>
 					</a>
@@ -76,7 +76,7 @@ class Widget {
 	}
 
 	/**
-	 * Render WooCommerce Edit Customer ClickSync Meta Box.
+	 * Render WooCommerce Edit User (Customer) ClickSync Meta Box.
 	 *
 	 * @param \WP_User $user User object.
 	 */
@@ -87,8 +87,62 @@ class Widget {
 		$last_sync = get_user_meta( $customer_id, '_clicksync_last_sync', true );
 		
 		$last_sync_formatted = $last_sync ? date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $last_sync ) : __( 'Never', 'clicksync-wordpress' );
+
+		// Fetch WooCommerce Customer Lifetime metrics
+		$total_spent = 0;
+		$order_count = 0;
+		if ( function_exists( 'wc_get_customer_total_spent' ) ) {
+			$total_spent = wc_get_customer_total_spent( $customer_id );
+		}
+		if ( function_exists( 'wc_get_customer_order_count' ) ) {
+			$order_count = wc_get_customer_order_count( $customer_id );
+		}
+
+		// Fetch 3 most recent orders
+		$recent_orders = array();
+		if ( function_exists( 'wc_get_orders' ) ) {
+			$recent_orders = wc_get_orders( array(
+				'customer_id' => $customer_id,
+				'limit'       => 3,
+				'orderby'     => 'date',
+				'order'       => 'DESC',
+			) );
+		}
 		?>
-		<div class="clicksync-widget-wrapper" data-customer-id="<?php echo esc_attr( $customer_id ); ?>" data-task-id="<?php echo esc_attr( $task_id ); ?>" style="font-size: 13px; color: #475569; line-height: 1.5;">
+		<div class="clicksync-widget-wrapper" data-customer-id="<?php echo esc_attr( $customer_id ); ?>" data-task-id="<?php echo esc_attr( $task_id ); ?>" style="font-size: 13px; color: #475569; line-height: 1.5; max-width: 320px;">
+			
+			<!-- WooCommerce Customer Stats Section -->
+			<div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px; margin-bottom: 12px; font-size: 12px;">
+				<div style="margin-bottom: 8px; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px;">
+					<span style="font-weight: 600; font-size: 11px; text-transform: uppercase; color: #64748b;"><?php esc_html_e( 'Customer Summary', 'clicksync-wordpress' ); ?></span>
+				</div>
+				<div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+					<span style="color: #64748b;"><?php esc_html_e( 'Total Spend:', 'clicksync-wordpress' ); ?></span>
+					<span style="font-weight: 700; color: #1e293b;"><?php echo function_exists( 'wc_price' ) ? wc_price( $total_spent ) : '$' . number_format( $total_spent, 2 ); ?></span>
+				</div>
+				<div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+					<span style="color: #64748b;"><?php esc_html_e( 'Total Orders:', 'clicksync-wordpress' ); ?></span>
+					<span style="font-weight: 700; color: #1e293b;"><?php echo esc_html( $order_count ); ?></span>
+				</div>
+				
+				<?php if ( ! empty( $recent_orders ) ) : ?>
+					<div style="margin-top: 10px; border-top: 1px dashed #cbd5e1; padding-top: 8px;">
+						<span style="font-weight: 600; font-size: 10px; text-transform: uppercase; color: #64748b; display: block; margin-bottom: 4px;"><?php esc_html_e( 'Recent Orders', 'clicksync-wordpress' ); ?></span>
+						<ul style="margin: 0; padding: 0; list-style: none;">
+							<?php foreach ( $recent_orders as $o ) : ?>
+								<li style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px;">
+									<a href="<?php echo esc_url( get_edit_post_link( $o->get_id() ) ); ?>" style="text-decoration: none; color: #008060; font-weight: 500;">
+										#<?php echo esc_html( $o->get_order_number() ); ?>
+									</a>
+									<span style="color: #64748b;"><?php echo esc_html( date_i18n( get_option( 'date_format' ), $o->get_date_created()->getTimestamp() ) ); ?></span>
+									<span style="font-weight: 600; color: #1e293b;"><?php echo function_exists( 'wc_price' ) ? wc_price( $o->get_total() ) : '$' . number_format( $o->get_total(), 2 ); ?></span>
+								</li>
+							<?php endforeach; ?>
+						</ul>
+					</div>
+				<?php endif; ?>
+			</div>
+
 			<?php if ( empty( $task_id ) ) : ?>
 				<div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px; margin-bottom: 12px; text-align: center;">
 					<svg style="width: 24px; height: 24px; fill: #64748b; margin-bottom: 6px;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
@@ -100,7 +154,7 @@ class Widget {
 				</button>
 			<?php else : ?>
 				<div style="margin-bottom: 12px;">
-					<a href="<?php echo esc_url( $task_url ); ?>" target="_blank" style="font-weight: 700; text-decoration: none; color: #7c3aed; display: inline-flex; align-items: center; gap: 4px;">
+					<a href="<?php echo esc_url( $task_url ); ?>" target="_blank" style="font-weight: 700; text-decoration: none; color: #008060; display: inline-flex; align-items: center; gap: 4px;">
 						<svg style="width: 14px; height: 14px; fill: currentColor;" viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>
 						<span><?php esc_html_e( 'Open ClickUp Task', 'clicksync-wordpress' ); ?></span>
 					</a>

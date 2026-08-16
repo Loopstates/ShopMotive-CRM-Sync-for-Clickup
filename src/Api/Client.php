@@ -22,7 +22,7 @@ class Client {
 	 * @param array  $payload Normalized Shopify-schema JSON array.
 	 * @return array|bool Response array or false on failure.
 	 */
-	public static function dispatch_event( $topic, $payload ) {
+	public static function dispatch_event( $topic, $payload, $is_retry = false ) {
 		$settings = Options::get_settings();
 		$endpoint = CLICKSYNC_CLOUD_URL . '/api/sync-event';
 
@@ -56,12 +56,23 @@ class Client {
 
 		if ( is_wp_error( $response ) ) {
 			error_log( 'ClickSync Cloud API Dispatch Error: ' . $response->get_error_message() );
+			if ( ! $is_retry ) {
+				self::schedule_retry( $topic, $payload );
+			}
 			return false;
 		}
 
 		$status_code = wp_remote_retrieve_response_code( $response );
 		$body        = wp_remote_retrieve_body( $response );
 		$data        = json_decode( $body, true );
+
+		if ( $status_code < 200 || $status_code >= 300 ) {
+			error_log( 'ClickSync Cloud API Dispatch HTTP Error: ' . $status_code );
+			if ( ! $is_retry ) {
+				self::schedule_retry( $topic, $payload );
+			}
+			return false;
+		}
 
 		// Update cached quota information if returned by server
 		if ( isset( $data['account'] ) && is_array( $data['account'] ) ) {
@@ -72,6 +83,30 @@ class Client {
 			'status_code' => $status_code,
 			'data'        => $data,
 		);
+	}
+
+	/**
+	 * Schedule background retry for failed webhook event dispatches.
+	 *
+	 * @param string $topic    Event topic.
+	 * @param array  $payload  Event payload.
+	 * @param int    $attempts Current attempt number.
+	 */
+	public static function schedule_retry( $topic, $payload, $attempts = 1 ) {
+		if ( function_exists( 'as_schedule_single_action' ) ) {
+			$delay = 5 * MINUTE_IN_SECONDS * $attempts;
+			as_schedule_single_action(
+				time() + $delay,
+				'clicksync_retry_event',
+				array(
+					'topic'    => $topic,
+					'payload'  => $payload,
+					'attempts' => $attempts,
+				),
+				'clicksync-wordpress'
+			);
+			error_log( sprintf( 'ClickSync scheduled retry attempt %d for topic "%s" in %d seconds.', $attempts, $topic, $delay ) );
+		}
 	}
 
 	/**

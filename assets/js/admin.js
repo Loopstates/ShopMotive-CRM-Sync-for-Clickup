@@ -1285,7 +1285,11 @@
                 var html = '';
                 $.each(pageItems, function (i, log) {
                     var badgeStyle = log.status === 'Success' ? 'background: #dcfce7; color: #15803d;' : 'background: #fee2e2; color: #b91c1c;';
-                    var taskLink = log.clickupTaskId ? '<a href="' + log.clickupTaskId + '" target="_blank" style="color: #7c3aed; font-weight: 600; text-decoration: underline;">View ClickUp Task</a>' : '-';
+                    var taskLink = '-';
+                    if (log.clickupTaskId) {
+                        var taskUrl = log.clickupTaskId.startsWith('http') ? log.clickupTaskId : 'https://app.clickup.com/t/' + log.clickupTaskId;
+                        taskLink = '<a href="' + taskUrl + '" target="_blank" style="color: #008060; font-weight: 600; text-decoration: underline;">View ClickUp Task</a>';
+                    }
                     html += '<tr>' +
                         '<td style="padding: 12px 24px; border-bottom: 1px solid #e2e8f0;"><strong>' + (log.event || 'Sync Event') + '</strong></td>' +
                         '<td style="padding: 12px 24px; border-bottom: 1px solid #e2e8f0;"><span class="clicksync-badge" style="' + badgeStyle + ' padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600;">' + log.status + '</span></td>' +

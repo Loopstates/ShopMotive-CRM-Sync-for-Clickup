@@ -38,6 +38,9 @@ class WooCommerce {
 
 		// Draft & Abandoned Checkout Tracking
 		add_action( 'woocommerce_checkout_order_processed', array( __CLASS__, 'on_checkout_processed' ), 10, 3 );
+
+		// Action Scheduler background retries
+		add_action( 'clicksync_retry_event', array( __CLASS__, 'handle_retry_event' ), 10, 3 );
 	}
 
 	/**
@@ -350,7 +353,29 @@ class WooCommerce {
 			'payment_method_title'    => $order->get_payment_method_title(),
 			'action_maker_clickup_id' => $action_maker_clickup_id,
 			'action_maker_name'       => $action_maker_name,
-			'meta'               => $meta_data,
 		);
+	}
+
+	/**
+	 * Background retry event callback executed by Action Scheduler.
+	 *
+	 * @param string $topic    Event topic.
+	 * @param array  $payload  Event payload.
+	 * @param int    $attempts Current attempt number.
+	 */
+	public static function handle_retry_event( $topic, $payload, $attempts ) {
+		error_log( sprintf( 'ClickSync executing background retry attempt %d for topic "%s".', $attempts, $topic ) );
+		
+		$result = \ClickSync\Api\Client::dispatch_event( $topic, $payload, true );
+
+		if ( ! $result ) {
+			if ( $attempts < 3 ) {
+				\ClickSync\Api\Client::schedule_retry( $topic, $payload, $attempts + 1 );
+			} else {
+				error_log( sprintf( 'ClickSync background retry failed after maximum attempts (3) for topic "%s".', $topic ) );
+			}
+		} else {
+			error_log( sprintf( 'ClickSync background retry succeeded on attempt %d for topic "%s".', $attempts, $topic ) );
+		}
 	}
 }

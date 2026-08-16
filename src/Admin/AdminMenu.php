@@ -369,6 +369,10 @@ class AdminMenu {
 	 * @param \WP_User $user User object.
 	 */
 	public static function register_customer_metabox( $user ) {
+		$roles = (array) $user->roles;
+		if ( ! in_array( 'customer', $roles ) ) {
+			return;
+		}
 		?>
 		<h2><?php esc_html_e( 'ClickSync Integration', 'clicksync-wordpress' ); ?></h2>
 		<table class="form-table">
@@ -570,6 +574,21 @@ class AdminMenu {
 				'message' => isset( $body['message'] ) ? $body['message'] : __( 'Manual sync queued successfully. Refreshed cached values will load shortly.', 'clicksync-wordpress' ),
 				'queued'  => true
 			) );
+		}
+
+		if ( ! empty( $body['task_ids'] ) && is_array( $body['task_ids'] ) ) {
+			$first_task_id = sanitize_text_field( $body['task_ids'][0] );
+			$task_url = 'https://app.clickup.com/t/' . $first_task_id;
+
+			if ( $order_id ) {
+				update_post_meta( $order_id, '_clicksync_task_id', $first_task_id );
+				update_post_meta( $order_id, '_clicksync_task_url', $task_url );
+				update_post_meta( $order_id, '_clicksync_last_sync', time() );
+			} elseif ( $customer_id ) {
+				update_user_meta( $customer_id, '_clicksync_task_id', $first_task_id );
+				update_user_meta( $customer_id, '_clicksync_task_url', $task_url );
+				update_user_meta( $customer_id, '_clicksync_last_sync', time() );
+			}
 		}
 
 		wp_send_json_success( array(
