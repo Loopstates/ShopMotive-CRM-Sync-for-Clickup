@@ -142,6 +142,38 @@
     border-color: #fca5a5 !important;
 }
 
+.clicksync-wrap .clicksync-option-pill.clicksync-pill-locked.active {
+    background: #ef4444 !important;
+    color: #ffffff !important;
+    border-color: #ef4444 !important;
+}
+
+/* Locked Option Blocks */
+.clicksync-wrap .clicksync-pill-locked-block {
+    position: relative !important;
+    opacity: 0.75 !important;
+}
+
+.clicksync-wrap .clicksync-pill-locked-block::after {
+    content: "" !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 99 !important;
+    background: transparent !important;
+    cursor: not-allowed !important;
+}
+
+.clicksync-wrap .clicksync-pill-locked-block input,
+.clicksync-wrap .clicksync-pill-locked-block select,
+.clicksync-wrap .clicksync-pill-locked-block button,
+.clicksync-wrap .clicksync-pill-locked-block .clicksync-delete-rule-btn {
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+}
+
 
 /* Toggle Switch */
 .clicksync-wrap .clicksync-switch {
@@ -211,6 +243,121 @@
     text-decoration: none !important;
     outline: none !important;
 }
+
+/* Premium Plan Upgrade Pills */
+.clicksync-wrap .clicksync-premium-pill {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex: 1 !important;
+    min-width: 280px !important;
+    padding: 16px 22px !important;
+    border-radius: 9999px !important;
+    background: #ffffff !important;
+    text-decoration: none !important;
+    box-sizing: border-box !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    position: relative !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02) !important;
+    cursor: pointer !important;
+    white-space: nowrap !important;
+}
+
+.clicksync-wrap .clicksync-premium-pill .plan-badge {
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    padding: 4px 10px !important;
+    border-radius: 9999px !important;
+    transition: all 0.3s ease !important;
+}
+
+.clicksync-wrap .clicksync-premium-pill .plan-details {
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    color: #475569 !important;
+    flex-grow: 1 !important;
+    text-align: center !important;
+    transition: all 0.3s ease !important;
+}
+
+.clicksync-wrap .clicksync-premium-pill .plan-action {
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Growth Pill Spec */
+.clicksync-wrap .clicksync-pill-growth {
+    border-color: #a7f3d0 !important;
+}
+.clicksync-wrap .clicksync-pill-growth .plan-badge {
+    background: #ecfdf5 !important;
+    color: #047857 !important;
+}
+.clicksync-wrap .clicksync-pill-growth .plan-action {
+    color: #008060 !important;
+}
+.clicksync-wrap .clicksync-pill-growth:hover {
+    border-color: #059669 !important;
+    background: #f0fdf4 !important;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.12) !important;
+    transform: translateY(-1px) !important;
+}
+.clicksync-wrap .clicksync-pill-growth:hover .plan-badge {
+    background: #008060 !important;
+    color: #ffffff !important;
+}
+.clicksync-wrap .clicksync-pill-growth:hover .plan-action {
+    transform: translateX(4px) !important;
+}
+
+/* Pro Pill Spec */
+.clicksync-wrap .clicksync-pill-pro {
+    border-color: #ddd6fe !important;
+}
+.clicksync-wrap .clicksync-pill-pro .plan-badge {
+    background: #f5f3ff !important;
+    color: #6d28d9 !important;
+}
+.clicksync-wrap .clicksync-pill-pro .plan-action {
+    color: #7c3aed !important;
+}
+.clicksync-wrap .clicksync-pill-pro:hover {
+    border-color: #7c3aed !important;
+    background: #f5f3ff !important;
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.12) !important;
+    transform: translateY(-1px) !important;
+}
+.clicksync-wrap .clicksync-pill-pro:hover .plan-badge {
+    background: #7c3aed !important;
+    color: #ffffff !important;
+}
+.clicksync-wrap .clicksync-pill-pro:hover .plan-action {
+    transform: translateX(4px) !important;
+}
+
+/* Active Plan Disabled States */
+.clicksync-wrap .clicksync-premium-pill.active {
+    border-color: #cbd5e1 !important;
+    background: #f8fafc !important;
+    box-shadow: none !important;
+    transform: none !important;
+    cursor: not-allowed !important;
+}
+.clicksync-wrap .clicksync-premium-pill.active .plan-badge {
+    background: #e2e8f0 !important;
+    color: #475569 !important;
+}
+.clicksync-wrap .clicksync-premium-pill.active .plan-details {
+    color: #94a3b8 !important;
+}
+.clicksync-wrap .clicksync-premium-pill.active .plan-action {
+    color: #94a3b8 !important;
+}
+
 
 .clicksync-wrap .clicksync-btn-primary:hover {
     background: #006e52 !important;

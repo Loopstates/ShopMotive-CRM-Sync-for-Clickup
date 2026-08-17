@@ -69,7 +69,7 @@ class Options {
 			'plan_name'          => 'Free Plan',
 			'monthly_sync_count' => 0,
 			'monthly_quota'      => 100,
-			'last_sync_reset'    => current_time( 'mysql' ),
+			'last_sync_reset'    => '',
 			'team_name'          => '',
 		);
 		$saved = get_option( self::OPTION_ACCOUNT, array() );

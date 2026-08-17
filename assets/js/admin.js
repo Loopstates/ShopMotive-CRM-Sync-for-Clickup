@@ -239,7 +239,6 @@
                     $(this).text() + ' Locked',
                     $(this).text() + ' is a ' + tierRequired + ' feature. Please upgrade your plan to unlock this advanced sync capability.'
                 );
-                return;
             }
 
             if (isCurrentlyActive) {
@@ -248,6 +247,10 @@
             } else {
                 $(this).addClass('active');
                 $('#' + targetId).slideDown(200);
+            }
+
+            if (isGated) {
+                return;
             }
 
             // Immediately save options status
@@ -989,9 +992,9 @@
 
                     // Reset plan active badges inside drawer & visual cards styles
                     $('.plan-active-badge').hide();
-                    $('#plan-card-growth, #plan-card-pro').css({ border: '1px solid #cbd5e1', background: '#ffffff' });
-                    $('#plan-card-growth a').text('Select Growth').removeClass('clicksync-btn-disabled').css('pointer-events', 'auto');
-                    $('#plan-card-pro a').text('Select Pro').removeClass('clicksync-btn-disabled').css('pointer-events', 'auto');
+                    $('#plan-card-growth, #plan-card-pro').removeClass('active clicksync-btn-disabled').css('pointer-events', 'auto');
+                    $('#plan-card-growth .plan-action').html('Upgrade &rarr;');
+                    $('#plan-card-pro .plan-action').html('Upgrade &rarr;');
 
                     if (res && res.account) {
                         var plan = res.account.planName || 'None';
@@ -1000,6 +1003,32 @@
                         var quota = res.account.monthlyQuota || 100;
                         $('#clicksync-usage-count').text(syncCount);
                         $('#clicksync-usage-quota').text(quota);
+
+                        var pct = quota > 0 ? Math.min(100, Math.max(0, (syncCount / quota) * 100)) : 0;
+                        var barColor = '#10b981';
+                        if (pct >= 80) {
+                            barColor = '#ef4444';
+                        } else if (pct >= 50) {
+                            barColor = '#f59e0b';
+                        }
+                        $('#clicksync-quota-progress-bar').css({
+                            'width': pct + '%',
+                            'background-color': barColor
+                        });
+
+                        if (res.account.lastSyncReset) {
+                            var resetDate = new Date(res.account.lastSyncReset);
+                            if (!isNaN(resetDate.getTime())) {
+                                var pad = function (num) { return (num < 10 ? '0' : '') + num; };
+                                var formattedReset = resetDate.getFullYear() + '-' + 
+                                    pad(resetDate.getMonth() + 1) + '-' + 
+                                    pad(resetDate.getDate()) + ' ' + 
+                                    pad(resetDate.getHours()) + ':' + 
+                                    pad(resetDate.getMinutes()) + ':' + 
+                                    pad(resetDate.getSeconds());
+                                $('#clicksync-usage-reset').text(formattedReset);
+                            }
+                        }
                         
                         // Hide all main billing bar action buttons by default
                         $('#clicksync-activate-free-btn, #clicksync-toggle-upgrade-btn, #clicksync-upgrade-to-pro-btn, #clicksync-custom-quota-btn').hide();
@@ -1018,8 +1047,8 @@
                             $('#clicksync-upgrade-to-pro-btn').show();
                             
                             // Highlight inside drawer just in case
-                            $('#plan-card-growth').css({ border: '2px solid #7c3aed', background: '#f5f3ff' }).find('.plan-active-badge').show();
-                            $('#plan-card-growth a').text('Active Plan').addClass('clicksync-btn-disabled').css('pointer-events', 'none');
+                            $('#plan-card-growth').addClass('active clicksync-btn-disabled').css('pointer-events', 'none').find('.plan-active-badge').show();
+                            $('#plan-card-growth .plan-action').html('Active');
                             unlockSyncRules();
                         } else if (plan === 'Pro Plan') {
                             $('.badge-info').text('Paid').css({ background: '#f3e8ff', color: '#7c3aed', border: '1px solid #d8b4fe' });
@@ -1029,8 +1058,8 @@
                             $('#clicksync-custom-quota-btn').attr('href', mailtoLink).show();
 
                             // Highlight inside drawer just in case
-                            $('#plan-card-pro').css({ border: '2px solid #7c3aed', background: '#f5f3ff' }).find('.plan-active-badge').show();
-                            $('#plan-card-pro a').text('Active Plan').addClass('clicksync-btn-disabled').css('pointer-events', 'none');
+                            $('#plan-card-pro').addClass('active clicksync-btn-disabled').css('pointer-events', 'none').find('.plan-active-badge').show();
+                            $('#plan-card-pro .plan-action').html('Active');
                             unlockSyncRules();
                         }
                     }
@@ -1830,11 +1859,11 @@
             // 1. Gating Split Routing: Pro only
             if (activePlanName !== 'Pro Plan') {
                 $('#orders-split-routing').prop('checked', false).prop('disabled', true);
-                $('#orders-split-routing').closest('.clicksync-switch').css({ opacity: '0.55', 'pointer-events': 'none' });
+                $('#orders-split-routing').closest('.clicksync-switch').css({ opacity: '0.55', 'pointer-events': 'auto', cursor: 'not-allowed' });
                 $('#orders-split-routing').closest('label').addClass('clicksync-switch-disabled');
             } else {
                 $('#orders-split-routing').prop('disabled', false);
-                $('#orders-split-routing').closest('.clicksync-switch').css({ opacity: '1', 'pointer-events': 'auto' });
+                $('#orders-split-routing').closest('.clicksync-switch').css({ opacity: '1', 'pointer-events': 'auto', cursor: '' });
                 $('#orders-split-routing').closest('label').removeClass('clicksync-switch-disabled');
                 $('#split-routing-lock-notice').remove();
             }
@@ -1842,11 +1871,11 @@
             // 2. Gating Sync Refunds: Growth or Pro (requires Growth or Pro)
             if (activePlanName === 'Free Plan') {
                 $('#orders-sync-refunds').prop('checked', false).prop('disabled', true);
-                $('#orders-sync-refunds').closest('.clicksync-switch').css({ opacity: '0.55', 'pointer-events': 'none' });
+                $('#orders-sync-refunds').closest('.clicksync-switch').css({ opacity: '0.55', 'pointer-events': 'auto', cursor: 'not-allowed' });
                 $('#orders-sync-refunds').closest('label').addClass('clicksync-switch-disabled-refunds');
             } else {
                 $('#orders-sync-refunds').prop('disabled', false);
-                $('#orders-sync-refunds').closest('.clicksync-switch').css({ opacity: '1', 'pointer-events': 'auto' });
+                $('#orders-sync-refunds').closest('.clicksync-switch').css({ opacity: '1', 'pointer-events': 'auto', cursor: '' });
                 $('#orders-sync-refunds').closest('label').removeClass('clicksync-switch-disabled-refunds');
                 $('#refunds-lock-notice').remove();
             }
@@ -1890,21 +1919,24 @@
                     }
                 }
 
+                var targetBlock = $('#' + targetId);
                 if (isLocked) {
                     pill.addClass('clicksync-pill-locked').removeClass('active');
-                    $('#' + targetId).hide(); // strictly closed
+                    targetBlock.addClass('clicksync-pill-locked-block').hide(); // Collapse on page load
+                    targetBlock.find('input, select, button').prop('disabled', true);
                 } else {
                     pill.addClass('clicksync-pill-unlocked');
+                    targetBlock.removeClass('clicksync-pill-locked-block');
+                    targetBlock.find('input, select, button').prop('disabled', false);
                 }
             });
 
-            // 4. Render Multi-Store Connections Card
+             // 4. Render Multi-Store Connections Card
             $('#clicksync-multistore-card').show();
             $('#clicksync-multistore-card').find('.clicksync-multistore-lock-overlay').remove();
 
             if (activePlanName === 'Pro Plan') {
-                $('#clicksync-multistore-card').css('opacity', '1');
-                $('#clicksync-multistore-card .badge-multistore').text('Pro Enabled').css({ background: '#e0f2fe', color: '#0369a1' });
+                $('#clicksync-multistore-lock-tooltip').hide();
                 
                 var multistoreHtml = '';
                 if (resSiblings && resSiblings.length > 0) {
@@ -1925,8 +1957,7 @@
                 }
                 $('#clicksync-multistore-list').html(multistoreHtml);
             } else {
-                $('#clicksync-multistore-card').css('opacity', '0.8');
-                $('#clicksync-multistore-card .badge-multistore').text('Pro Feature').css({ background: '#fee2e2', color: '#ef4444' });
+                $('#clicksync-multistore-lock-tooltip').css('display', 'inline-flex');
                 
                 var currentStoreHtml = '<tr style="border-bottom: 1px solid #f1f5f9;">' +
                     '<td style="padding: 10px 12px 10px 0; color: #0f172a;"><strong>' + host + ' (This Store)</strong></td>' +
@@ -1934,16 +1965,6 @@
                     '<td style="padding: 10px 0 10px 12px; text-align: right; color: #64748b; font-weight: 500;">Single Store Mode</td>' +
                     '</tr>';
                 $('#clicksync-multistore-list').html(currentStoreHtml);
-
-                $('#clicksync-multistore-list-container').before(
-                    '<div class="clicksync-multistore-lock-overlay" style="background: #fee2e2; border: 1px solid #fca5a5; border-radius: 6px; padding: 12px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; pointer-events: auto;">' +
-                        '<span style="font-size: 12px; font-weight: 600; color: #ef4444; display: flex; align-items: center; gap: 6px;">' +
-                            '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>' +
-                            'Multi-Store network syncing requires Pro Plan.' +
-                        '</span>' +
-                        '<a href="#" class="clicksync-open-upgrade-btn" style="color: #ef4444; text-decoration: underline; font-size: 11px; font-weight: 700; cursor: pointer;">Upgrade now</a>' +
-                    '</div>'
-                );
             }
         }
 
@@ -2069,6 +2090,37 @@
                 : 'Split Order Routing is a Pro Plan feature. Upgrade to automatically split multi-product orders into individual ClickUp tasks.';
             
             showClickSyncToast(featureTitle, featureMessage);
+        });
+
+        // Intercept clicks on locked configuration blocks to show the upgrade toast
+        $(document).on('click', '.clicksync-pill-locked-block', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            var blockId = $(this).attr('id');
+            var featureTitle = '';
+            var featureMessage = '';
+
+            if (blockId.indexOf('list-routing') !== -1) {
+                featureTitle = 'Regional List Routing';
+                featureMessage = 'Regional List Routing is a Pro Plan feature. Upgrade your subscription to enable routing rules for different lists.';
+            } else if (blockId.indexOf('assignee') !== -1) {
+                featureTitle = 'Assignee Routing';
+                featureMessage = 'Assignee Routing is a Pro Plan feature. Upgrade your subscription to enable conditional tags and assignees routing rules.';
+            } else if (blockId.indexOf('priority') !== -1) {
+                featureTitle = 'Priority Rules';
+                featureMessage = 'Priority Rules routing is a Pro Plan feature. Upgrade your subscription to enable dynamic priority assignment.';
+            } else if (blockId.indexOf('tagging') !== -1) {
+                featureTitle = 'Tagging Rules';
+                featureMessage = 'Tagging Rules is a Pro Plan feature. Upgrade your subscription to enable tag assignment rules.';
+            } else if (blockId.indexOf('customfields') !== -1) {
+                featureTitle = 'Custom Fields';
+                featureMessage = 'Custom Field Mapping is a Growth Plan feature. Upgrade your subscription to map WooCommerce custom fields to ClickUp fields.';
+            }
+
+            if (featureTitle) {
+                showClickSyncToast(featureTitle, featureMessage);
+            }
         });
 
         $(document).on('click', '.clicksync-toast-close', function() {

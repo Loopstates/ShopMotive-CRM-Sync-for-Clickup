@@ -622,31 +622,37 @@ class AdminMenu {
 		$usage     = isset( $account['monthly_sync_count'] ) ? $account['monthly_sync_count'] : 0;
 		$team_name = $account['team_name'] ?? 'Not Connected';
 
-		$pumble_text = sprintf(
-			"📢 *New ClickSync WordPress Support Submission*\n👤 *Name*: %s\n✉️ *Email*: %s\n🌐 *Site*: %s\n💳 *Plan*: %s (Usage: %d / %d runs)\n👥 *Workspace Team*: %s\n🏷️ *Subject*: %s\n📝 *Message*:\n%s",
-			$name,
-			$email,
-			$host,
-			$plan_name,
-			$usage,
-			$quota,
-			$team_name,
-			$subject,
-			$message
-		);
+		$json_body = wp_json_encode( array(
+			'name'     => $name,
+			'email'    => $email,
+			'subject'  => $subject,
+			'message'  => $message,
+			'planName' => $plan_name,
+			'usage'    => intval( $usage ),
+			'quota'    => intval( $quota ),
+			'teamName' => $team_name
+		) );
 
-		$webhook_url = 'https://api.pumble.com/workspaces/696f8de24c7308d728d91f4b/incomingWebhooks/postMessage/AVecqdpqD3rDMNTUxhR6XMPF';
-		
+		$timestamp   = time();
+		$secret_key  = Options::get_secret_key();
+		$signing_key = ! empty( $secret_key ) ? $secret_key : $host;
+		$signature   = hash_hmac( 'sha256', $json_body, $signing_key . ':' . $timestamp );
+
 		$args = array(
 			'method'      => 'POST',
-			'timeout'     => 10,
+			'timeout'     => 15,
+			'blocking'    => true,
 			'headers'     => array(
-				'Content-Type' => 'application/json',
+				'Content-Type'          => 'application/json',
+				'X-ClickSync-Shop'      => sanitize_text_field( $host ),
+				'X-ClickSync-Timestamp' => $timestamp,
+				'X-ClickSync-Hmac'      => $signature,
+				'User-Agent'            => 'ClickSync-WordPress-Plugin/' . CLICKSYNC_VERSION,
 			),
-			'body'        => wp_json_encode( array( 'text' => $pumble_text ) ),
+			'body'        => $json_body,
 		);
 
-		$response = wp_remote_post( $webhook_url, $args );
+		$response = wp_remote_post( CLICKSYNC_CLOUD_URL . '/api/submit-support', $args );
 
 		if ( is_wp_error( $response ) ) {
 			wp_send_json_error( $response->get_error_message(), 500 );
@@ -654,7 +660,9 @@ class AdminMenu {
 
 		$code = wp_remote_retrieve_response_code( $response );
 		if ( $code < 200 || $code >= 300 ) {
-			wp_send_json_error( 'Failed to dispatch submission to support server.', 502 );
+			$err_body = json_decode( wp_remote_retrieve_body( $response ), true );
+			$err_msg  = isset( $err_body['error'] ) ? $err_body['error'] : 'Failed to dispatch submission to support server.';
+			wp_send_json_error( $err_msg, $code );
 		}
 
 		wp_send_json_success( array( 'message' => 'Your message has been sent to our support desk. Thank you!' ) );

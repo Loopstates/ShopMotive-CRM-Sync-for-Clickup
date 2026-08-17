@@ -124,7 +124,7 @@ class SettingsPage {
 							</div>
 							<div style="font-size: 12px; color: #6d7175;">
 								<strong><?php esc_html_e( 'Usage Quota:', 'clicksync-wordpress' ); ?></strong> 
-								<span id="clicksync-usage-count"><?php echo esc_html( number_format( $sync_count ) ); ?></span> / <span id="clicksync-usage-quota"><?php echo esc_html( number_format( $quota ) ); ?></span> runs. (Reset: <?php echo esc_html( $reset_date ); ?>)
+								<span id="clicksync-usage-count"><?php echo esc_html( number_format( $sync_count ) ); ?></span> / <span id="clicksync-usage-quota"><?php echo esc_html( number_format( $quota ) ); ?></span> runs. (Reset: <span id="clicksync-usage-reset"><?php echo esc_html( ! empty( $reset_date ) ? date( 'Y-m-d H:i:s', strtotime( $reset_date ) ) : __( 'Pending Sync', 'clicksync-wordpress' ) ); ?></span>)
 							</div>
 						</div>
 						<div style="display: flex; align-items: center; gap: 10px;">
@@ -143,46 +143,40 @@ class SettingsPage {
 							</a>
 						</div>
 					</div>
+					<?php 
+					$progress_pct = $quota > 0 ? min( 100, max( 0, ( $sync_count / $quota ) * 100 ) ) : 0;
+					$bar_color = '#10b981';
+					if ( $progress_pct >= 80 ) {
+						$bar_color = '#ef4444';
+					} elseif ( $progress_pct >= 50 ) {
+						$bar_color = '#f59e0b';
+					}
+					?>
+					<div class="clicksync-quota-progress-container" style="width: 100%; height: 6px; background: #e2e8f0; border-radius: 3px; overflow: hidden; margin-top: 14px;">
+						<div id="clicksync-quota-progress-bar" style="width: <?php echo esc_attr( $progress_pct ); ?>%; height: 100%; background: <?php echo esc_attr( $bar_color ); ?>; border-radius: 3px; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.6s cubic-bezier(0.4, 0, 0.2, 1);"></div>
+					</div>
 
 					<!-- Paid Plans Drawer (Hidden by default, slides down on click) -->
 					<div id="clicksync-upgrade-drawer" style="display: none; border-top: 1px solid #e1e3e5; margin-top: 16px; padding-top: 16px;">
-						<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 12px;">
-							<!-- Growth Plan -->
-							<div id="plan-card-growth" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
-								<div>
-									<h4 style="margin: 0 0 4px 0; font-size: 14px; font-weight: 600; color: #1e293b; display: flex; align-items: center; gap: 6px;">
-										<?php esc_html_e( 'Growth Plan', 'clicksync-wordpress' ); ?>
-										<span class="clicksync-badge plan-active-badge" style="display: none !important; background: #efe6fc; color: #6d28d9; font-size: 9px; font-weight: 600; padding: 1px 4px; border-radius: 8px;"><?php esc_html_e( 'Active', 'clicksync-wordpress' ); ?></span>
-									</h4>
-									<div style="font-size: 16px; font-weight: 700; color: #0f172a;">
-										$19.99<span style="font-size: 11px; font-weight: 400; color: #64748b;"><?php esc_html_e( '/mo', 'clicksync-wordpress' ); ?></span>
-									</div>
-								</div>
-								<a href="<?php echo esc_url( CLICKSYNC_CLOUD_URL . '/account/billing?shop=' . urlencode( $host ) . '&plan=Growth%20Plan' ); ?>" target="_blank" class="clicksync-btn-primary" style="color: white; text-decoration: none; display: inline-flex; align-items: center; height: 32px; font-size: 11px; padding: 0 12px; border-radius: 6px; font-weight: 500; line-height: 32px; box-sizing: border-box;">
-									<?php esc_html_e( 'Select Growth', 'clicksync-wordpress' ); ?>
-								</a>
-							</div>
+						<div style="display: flex; gap: 16px; justify-content: space-between; width: 100%; box-sizing: border-box; margin-bottom: 12px;">
+							<!-- Growth Pill -->
+							<a href="<?php echo esc_url( CLICKSYNC_CLOUD_URL . '/account/billing?shop=' . urlencode( $host ) . '&plan=Growth%20Plan' ); ?>" target="_blank" id="plan-card-growth" class="clicksync-premium-pill clicksync-pill-growth">
+								<span class="plan-badge">Growth</span>
+								<span class="plan-details">1,000 tasks/mo at $19.99/mo</span>
+								<span class="plan-action">Upgrade &rarr;</span>
+							</a>
 
-							<!-- Pro Plan -->
-							<div id="plan-card-pro" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
-								<div>
-									<h4 style="margin: 0 0 4px 0; font-size: 14px; font-weight: 600; color: #1e293b; display: flex; align-items: center; gap: 6px;">
-										<?php esc_html_e( 'Pro Plan', 'clicksync-wordpress' ); ?>
-										<span class="clicksync-badge plan-active-badge" style="display: none !important; background: #efe6fc; color: #6d28d9; font-size: 9px; font-weight: 600; padding: 1px 4px; border-radius: 8px;"><?php esc_html_e( 'Active', 'clicksync-wordpress' ); ?></span>
-									</h4>
-									<div style="font-size: 16px; font-weight: 700; color: #0f172a;">
-										$49.99<span style="font-size: 11px; font-weight: 400; color: #64748b;"><?php esc_html_e( '/mo', 'clicksync-wordpress' ); ?></span>
-									</div>
-								</div>
-								<a href="<?php echo esc_url( CLICKSYNC_CLOUD_URL . '/account/billing?shop=' . urlencode( $host ) . '&plan=Pro%20Plan' ); ?>" target="_blank" class="clicksync-btn-primary" style="color: white; text-decoration: none; display: inline-flex; align-items: center; height: 32px; font-size: 11px; padding: 0 12px; border-radius: 6px; font-weight: 500; line-height: 32px; box-sizing: border-box;">
-									<?php esc_html_e( 'Select Pro', 'clicksync-wordpress' ); ?>
-								</a>
-							</div>
+							<!-- Pro Pill -->
+							<a href="<?php echo esc_url( CLICKSYNC_CLOUD_URL . '/account/billing?shop=' . urlencode( $host ) . '&plan=Pro%20Plan' ); ?>" target="_blank" id="plan-card-pro" class="clicksync-premium-pill clicksync-pill-pro">
+								<span class="plan-badge">Pro</span>
+								<span class="plan-details">10,000 tasks/mo at $49.99/mo</span>
+								<span class="plan-action">Upgrade &rarr;</span>
+							</a>
 						</div>
 						
-						<div style="text-align: right; font-size: 12px;">
-							<a href="https://clicksync-connect.apps.loopstates.com/pricing" target="_blank" style="color: #7c3aed; text-decoration: underline; font-weight: 500;">
-								<?php esc_html_e( 'View plan features and pricing comparison details on our website ->', 'clicksync-wordpress' ); ?>
+						<div style="text-align: center; font-size: 12px; margin-top: 12px;">
+							<a href="https://clicksync-connect.apps.loopstates.com/" target="_blank" style="color: #7c3aed; text-decoration: underline; font-weight: 500;">
+								<?php esc_html_e( 'Compare plan features &rarr;', 'clicksync-wordpress' ); ?>
 							</a>
 						</div>
 					</div>
@@ -653,9 +647,11 @@ class SettingsPage {
 					<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
 						<h3 style="margin: 0; font-size: 16px; font-weight: 600; color: #202223; display: flex; align-items: center; gap: 8px;">
 							<svg style="width: 18px; height: 18px; fill: #6A2B8F;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.53c-.26-.81-1-1.4-1.9-1.4h-1v-3c0-.55-.45-1-1-1h-6v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
-							<?php esc_html_e( 'Multi-Store Network Sync', 'clicksync-wordpress' ); ?>
+							<span><?php esc_html_e( 'Multi-Store Network Sync', 'clicksync-wordpress' ); ?></span>
+							<span id="clicksync-multistore-lock-tooltip" class="clicksync-unidirectional-tooltip" tabindex="0" style="display: none; align-items: center; color: #ef4444; cursor: help; margin-left: 4px;" data-tooltip="<?php esc_attr_e( 'This feature is locked on Free and Growth plans. Upgrade to the Pro Plan to enable multi-store network sync.', 'clicksync-wordpress' ); ?>">
+								<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+							</span>
 						</h3>
-						<span class="clicksync-badge badge-multistore" style="background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;"><?php esc_html_e( 'Pro Enabled', 'clicksync-wordpress' ); ?></span>
 					</div>
 					<p style="font-size: 13px; color: #6d7175; margin-bottom: 12px; line-height: 1.5;">
 						<?php esc_html_e( 'The Pro Plan allows connecting up to 5 stores or WordPress Multisite nodes to the same ClickUp workspace. Below are the connected stores sharing this subscription:', 'clicksync-wordpress' ); ?>
