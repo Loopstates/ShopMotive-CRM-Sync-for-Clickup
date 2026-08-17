@@ -26,6 +26,8 @@ class Client {
 		$settings = Options::get_settings();
 		$endpoint = CLICKSYNC_CLOUD_URL . '/api/sync-event';
 
+		$topic = apply_filters( 'clicksync_event_topic', $topic, $payload );
+
 		$json_body = wp_json_encode( $payload );
 
 		// Sign request using secret key for security validation
@@ -52,10 +54,14 @@ class Client {
 			'body'        => $json_body,
 		);
 
+		$args['headers'] = apply_filters( 'clicksync_api_request_headers', $args['headers'], $endpoint );
+		$args            = apply_filters( 'clicksync_api_request_args', $args, $endpoint );
+
 		$response = wp_remote_post( $endpoint, $args );
 
 		if ( is_wp_error( $response ) ) {
 			error_log( 'ClickSync Cloud API Dispatch Error: ' . $response->get_error_message() );
+			do_action( 'clicksync_event_failed', $topic, $payload, $response->get_error_message() );
 			if ( ! $is_retry ) {
 				self::schedule_retry( $topic, $payload );
 			}
@@ -68,6 +74,7 @@ class Client {
 
 		if ( $status_code < 200 || $status_code >= 300 ) {
 			error_log( 'ClickSync Cloud API Dispatch HTTP Error: ' . $status_code );
+			do_action( 'clicksync_event_failed', $topic, $payload, 'HTTP status code: ' . $status_code );
 			if ( ! $is_retry ) {
 				self::schedule_retry( $topic, $payload );
 			}
@@ -78,6 +85,8 @@ class Client {
 		if ( isset( $data['account'] ) && is_array( $data['account'] ) ) {
 			Options::update_account( $data['account'] );
 		}
+
+		do_action( 'clicksync_event_dispatched', $topic, $payload, $response );
 
 		return array(
 			'status_code' => $status_code,
@@ -95,6 +104,7 @@ class Client {
 	public static function schedule_retry( $topic, $payload, $attempts = 1 ) {
 		if ( function_exists( 'as_schedule_single_action' ) ) {
 			$delay = 5 * MINUTE_IN_SECONDS * $attempts;
+			$delay = apply_filters( 'clicksync_retry_delay', $delay, $attempts, $topic );
 			as_schedule_single_action(
 				time() + $delay,
 				'clicksync_retry_event',
@@ -142,6 +152,9 @@ class Client {
 			),
 			'body'        => $json_body,
 		);
+
+		$args['headers'] = apply_filters( 'clicksync_api_request_headers', $args['headers'], $endpoint );
+		$args            = apply_filters( 'clicksync_api_request_args', $args, $endpoint );
 
 		$response = wp_remote_post( $endpoint, $args );
 

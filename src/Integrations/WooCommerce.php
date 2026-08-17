@@ -63,6 +63,10 @@ class WooCommerce {
 			return;
 		}
 
+		if ( ! apply_filters( 'clicksync_should_sync_order', true, $order_id, $order ) ) {
+			return;
+		}
+
 		$payload = self::normalize_order( $order );
 		Client::dispatch_event( 'orders/create', $payload );
 	}
@@ -86,6 +90,10 @@ class WooCommerce {
 		}
 
 		if ( ! $order ) {
+			return;
+		}
+
+		if ( ! apply_filters( 'clicksync_should_sync_order', true, $order_id, $order ) ) {
 			return;
 		}
 
@@ -119,6 +127,10 @@ class WooCommerce {
 			return;
 		}
 
+		if ( ! apply_filters( 'clicksync_should_sync_order', true, $order_id, $order ) ) {
+			return;
+		}
+
 		$refund_amount = $refund ? abs( $refund->get_amount() ) : 0;
 		$reason        = $refund ? $refund->get_reason() : 'Refund processed';
 
@@ -132,6 +144,8 @@ class WooCommerce {
 			'order_number'   => '#' . $order->get_order_number(),
 			'customer_email' => $order->get_billing_email(),
 		);
+
+		$payload = apply_filters( 'clicksync_refund_payload', $payload, $refund_id, $order );
 
 		Client::dispatch_event( 'refunds/create', $payload );
 	}
@@ -162,6 +176,10 @@ class WooCommerce {
 			return;
 		}
 
+		if ( ! apply_filters( 'clicksync_should_sync_order', true, $order->get_id(), $order ) ) {
+			return;
+		}
+
 		// Resolve current admin identity mapping
 		$user_mappings_data = Options::get_user_mappings();
 		$saved_mappings = $user_mappings_data['mappings'] ?? array();
@@ -182,19 +200,18 @@ class WooCommerce {
 			'action_maker_name'       => $action_maker_name,
 		);
 
+		$payload = apply_filters( 'clicksync_order_note_payload', $payload, $note_id, $order );
+
 		Client::dispatch_event( 'orders/note_created', $payload );
 	}
 
-	/**
-	 * Handle WooCommerce customer creation.
-	 *
-	 * @param int   $customer_id Customer user ID.
-	 * @param array $new_data    Customer data.
-	 * @param bool  $password_generated Password generated boolean.
-	 */
 	public static function on_created_customer( $customer_id, $new_data, $password_generated ) {
 		$settings = Options::get_settings();
 		if ( empty( $settings['customers_enabled'] ) ) {
+			return;
+		}
+
+		if ( ! apply_filters( 'clicksync_should_sync_customer', true, $customer_id, $new_data ) ) {
 			return;
 		}
 
@@ -225,6 +242,8 @@ class WooCommerce {
 			'meta'          => $user_meta,
 		);
 
+		$payload = apply_filters( 'clicksync_customer_payload', $payload, $customer_id );
+
 		Client::dispatch_event( 'customers/create', $payload );
 	}
 
@@ -249,7 +268,13 @@ class WooCommerce {
 			return;
 		}
 
+		if ( ! apply_filters( 'clicksync_should_sync_order', true, $order_id, $order ) ) {
+			return;
+		}
+
 		$payload = self::normalize_order( $order );
+		$payload = apply_filters( 'clicksync_checkout_payload', $payload, $order_id, $order );
+
 		Client::dispatch_event( 'checkouts/update', $payload );
 	}
 
@@ -354,6 +379,8 @@ class WooCommerce {
 			'action_maker_clickup_id' => $action_maker_clickup_id,
 			'action_maker_name'       => $action_maker_name,
 		);
+
+		return apply_filters( 'clicksync_order_payload', $payload, $order );
 	}
 
 	/**
@@ -369,10 +396,11 @@ class WooCommerce {
 		$result = \ClickSync\Api\Client::dispatch_event( $topic, $payload, true );
 
 		if ( ! $result ) {
-			if ( $attempts < 3 ) {
+			$retry_limit = apply_filters( 'clicksync_retry_limit', 3 );
+			if ( $attempts < $retry_limit ) {
 				\ClickSync\Api\Client::schedule_retry( $topic, $payload, $attempts + 1 );
 			} else {
-				error_log( sprintf( 'ClickSync background retry failed after maximum attempts (3) for topic "%s".', $topic ) );
+				error_log( sprintf( 'ClickSync background retry failed after maximum attempts (%d) for topic "%s".', $retry_limit, $topic ) );
 			}
 		} else {
 			error_log( sprintf( 'ClickSync background retry succeeded on attempt %d for topic "%s".', $attempts, $topic ) );
