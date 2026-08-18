@@ -29,3 +29,4 @@ wp_remote_post( 'https://clicksync-connect.apps.loopstates.com/api/save-config',
 // Clear plugin options from wp_options table
 delete_option( 'clicksync_settings' );
 delete_option( 'clicksync_account' );
+delete_option( 'clicksync_user_mappings' );

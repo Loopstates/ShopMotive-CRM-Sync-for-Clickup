@@ -357,36 +357,38 @@
                                     var refundsEnabled = $('#orders-sync-refunds').is(':checked') ? '1' : '0';
                                     var fulfillmentEnabled = $('#orders-sync-fulfillment').is(':checked') ? '1' : '0';
 
-                                    $.ajax({
-                                        url: clicksyncData.ajaxUrl,
-                                        type: 'POST',
-                                        data: {
-                                            action: 'clicksync_save_local_settings',
-                                            refunds_enabled: refundsEnabled,
-                                            fulfillment_enabled: fulfillmentEnabled
-                                        },
-                                        success: function (wpRes) {
-                                            // Collect and save User Identity Mappings
-                                            var userMappings = {};
-                                            $('.clicksync-user-mapping-row').each(function() {
-                                                var row = $(this);
-                                                var wpId = row.attr('data-wp-user-id');
-                                                var cuId = row.find('.clicksync-member-mapping-select').val();
-                                                if (wpId && cuId) {
-                                                    userMappings[wpId] = cuId;
-                                                }
-                                            });
-                                            var fallbackCuId = $('#clicksync-fallback-member-select').val();
-
-                                            $.ajax({
-                                                url: clicksyncData.ajaxUrl,
-                                                type: 'POST',
-                                                data: {
-                                                    action: 'clicksync_save_user_mappings',
-                                                    mappings: userMappings,
-                                                    fallback_clickup_user_id: fallbackCuId
-                                                },
-                                                success: function() {
+                                     $.ajax({
+                                         url: clicksyncData.ajaxUrl,
+                                         type: 'POST',
+                                         data: {
+                                             action: 'clicksync_save_local_settings',
+                                             refunds_enabled: refundsEnabled,
+                                             fulfillment_enabled: fulfillmentEnabled,
+                                             security: clicksyncData.nonce
+                                         },
+                                         success: function (wpRes) {
+                                             // Collect and save User Identity Mappings
+                                             var userMappings = {};
+                                             $('.clicksync-user-mapping-row').each(function() {
+                                                 var row = $(this);
+                                                 var wpId = row.attr('data-wp-user-id');
+                                                 var cuId = row.find('.clicksync-member-mapping-select').val();
+                                                 if (wpId && cuId) {
+                                                     userMappings[wpId] = cuId;
+                                                 }
+                                             });
+                                             var fallbackCuId = $('#clicksync-fallback-member-select').val();
+ 
+                                             $.ajax({
+                                                 url: clicksyncData.ajaxUrl,
+                                                 type: 'POST',
+                                                 data: {
+                                                     action: 'clicksync_save_user_mappings',
+                                                     mappings: userMappings,
+                                                     fallback_clickup_user_id: fallbackCuId,
+                                                     security: clicksyncData.nonce
+                                                 },
+                                                 success: function() {
                                                     // Save toggles (pills) for both rules
                                                     saveOptionTogglesForEvent('orders/create');
                                                     saveOptionTogglesForEvent('customers/create');
@@ -761,7 +763,7 @@
                 type: 'POST',
                 data: {
                     action: 'clicksync_get_wc_fields',
-                    nonce: clicksyncData.nonce
+                    security: clicksyncData.nonce
                 },
                 success: function (res) {
                     if (res.success && res.data) {
@@ -1731,7 +1733,7 @@
             $.ajax({
                 url: clicksyncData.ajaxUrl,
                 type: 'POST',
-                data: form.serialize() + '&action=clicksync_contact_submit',
+                data: form.serialize() + '&action=clicksync_contact_submit&security=' + clicksyncData.nonce,
                 success: function(res) {
                     if (res.success) {
                         alert(res.data.message);
@@ -1764,7 +1766,8 @@
                 data: {
                     action: 'clicksync_widget_force_sync',
                     order_id: payload.id || payload.order_id || 0,
-                    customer_id: payload.customer_id || 0
+                    customer_id: payload.customer_id || 0,
+                    security: clicksyncData.nonce
                 },
                 success: function(res) {
                     if (res.success) {
@@ -1796,7 +1799,8 @@
                     type: 'POST',
                     data: {
                         action: 'clicksync_widget_get_task_details',
-                        task_id: taskId
+                        task_id: taskId,
+                        security: clicksyncData.nonce
                     },
                     success: function (res) {
                         if (res.success && res.data) {
@@ -1858,7 +1862,8 @@
                                         customer_id: customerId,
                                         status: updatedStatus,
                                         priority: updatedPriority,
-                                        assignees: updatedAssignees
+                                        assignees: updatedAssignees,
+                                        security: clicksyncData.nonce
                                     },
                                     success: function (updateRes) {
                                         widgetWrapper.css({ opacity: 1, 'pointer-events': 'auto' });

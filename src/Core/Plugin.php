@@ -66,7 +66,7 @@ class Plugin {
 	 */
 	public function load_textdomain() {
 		load_plugin_textdomain(
-			'clicksync-wordpress',
+			'clicksync-connect',
 			false,
 			dirname( plugin_basename( CLICKSYNC_FILE ) ) . '/languages'
 		);

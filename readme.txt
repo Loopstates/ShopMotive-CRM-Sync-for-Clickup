@@ -1,9 +1,9 @@
 === ClickSync Connect: WooCommerce to ClickUp CRM Sync ===
 Contributors: loopstates
-Tags: clickup, woocommerce, crm, task management, developer-api
-Requires at least: 5.8
-Tested up to: 6.7.1
-Requires PHP: 7.4
+Tags: clickup, woocommerce, crm, task management, sync
+Requires at least: 6.0
+Tested up to: 7.0.4
+Requires PHP: 8.0.0
 Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -57,7 +57,7 @@ All administrative metadata is stored in our secure, encrypted cloud database. T
 
 == Installation ==
 
-1. Upload the `clicksync-wordpress` folder to the `/wp-content/plugins/` directory, or search and install via the WordPress Admin Plugins manager.
+1. Upload the `clicksync-connect` folder to the `/wp-content/plugins/` directory, or search and install via the WordPress Admin Plugins manager.
 2. Activate the plugin.
 3. Go to **WooCommerce -> ClickSync** in your dashboard.
 4. Click **Connect ClickUp Workspace** and authorize access via OAuth 2.0.
@@ -102,6 +102,56 @@ add_filter( 'clicksync_api_request_headers', function( $headers, $endpoint ) {
 }, 10, 2 );
 `
 
+= 5. Bypass Customer Syncing =
+`
+add_filter( 'clicksync_should_sync_customer', function( $should_sync, $customer_id, $new_data ) {
+    // Example: Bypass sync for test accounts
+    if ( isset( $new_data['email'] ) && strpos( $new_data['email'], '@test.com' ) !== false ) {
+        return false;
+    }
+    return $should_sync;
+}, 10, 3 );
+`
+
+= 6. Customize Customer Payload =
+`
+add_filter( 'clicksync_customer_payload', function( $payload, $customer_id ) {
+    $payload['custom_user_segment'] = 'VIP';
+    return $payload;
+}, 10, 2 );
+`
+
+= 7. Customize Refund Payload =
+`
+add_filter( 'clicksync_refund_payload', function( $payload, $refund_id, $order ) {
+    $payload['refund_reason'] = get_post_meta( $refund_id, '_refund_reason', true );
+    return $payload;
+}, 10, 3 );
+`
+
+= 8. Customize Order Note Payload =
+`
+add_filter( 'clicksync_order_note_payload', function( $payload, $note_id, $order ) {
+    $payload['note_urgency'] = 'high';
+    return $payload;
+}, 10, 3 );
+`
+
+= 9. Customize Checkout Payload =
+`
+add_filter( 'clicksync_checkout_payload', function( $payload, $order_id, $order ) {
+    $payload['cart_hash'] = $order->get_cart_hash();
+    return $payload;
+}, 10, 3 );
+`
+
+= 10. Filter API Retry Delay =
+`
+add_filter( 'clicksync_retry_delay', function( $delay, $attempts, $topic ) {
+    return 10 * $attempts; // Linear backoff of 10s per retry
+}, 10, 3 );
+`
+
 == Frequently Asked Questions ==
 
 = Does ClickSync Connect affect shop loading speed? =
@@ -112,6 +162,15 @@ Client tokens are encrypted using AES-256-CBC and kept in the WordPress database
 
 = Is WooCommerce required? =
 WooCommerce is required for checkout, order, and refund triggers. Standard customer registration hooks will function with default WordPress user creation events.
+
+= How does the bi-directional order status sync work? =
+When you map your WooCommerce statuses (Processing, Completed, etc.) to your ClickUp task statuses, any transition of a task status in ClickUp will send a secured API callback webhook to your WordPress site, which automatically updates the WooCommerce order status and logs an administrator note.
+
+= Can I map specific WordPress users to ClickUp workspace members? =
+Yes. The plugin includes a "User Identity Mappings" screen where you can map WordPress administrators and shop managers to their ClickUp users. Order notes and comments will be attributed to the mapped user.
+
+= How does the fail-safe retry mechanism behave during ClickUp API outages? =
+If the ClickUp API is offline or returns a 429 rate limit error, the event payload is retained in a local database queue. ClickSync Connect will automatically retry the dispatch up to 5 times (using an exponential backoff filter) before logging it in the Sync Error Center.
 
 == Changelog ==
 

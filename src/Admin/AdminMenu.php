@@ -61,8 +61,8 @@ class AdminMenu {
 	public static function register_menu() {
 		// 1. Top-Level Parent Menu (Settings)
 		add_menu_page(
-			__( 'ClickSync: Wordpress to ClickUp CRM Sync', 'clicksync-wordpress' ),
-			__( 'ClickSync', 'clicksync-wordpress' ),
+			__( 'ClickSync Connect: WooCommerce to ClickUp CRM Sync', 'clicksync-connect' ),
+			__( 'ClickSync', 'clicksync-connect' ),
 			'manage_options',
 			'clicksync',
 			array( SettingsPage::class, 'render' ),
@@ -73,8 +73,8 @@ class AdminMenu {
 		// Submenu 1: Settings (Default tab)
 		add_submenu_page(
 			'clicksync',
-			__( 'ClickSync Settings', 'clicksync-wordpress' ),
-			__( 'Settings', 'clicksync-wordpress' ),
+			__( 'ClickSync Settings', 'clicksync-connect' ),
+			__( 'Settings', 'clicksync-connect' ),
 			'manage_options',
 			'clicksync',
 			array( SettingsPage::class, 'render' )
@@ -83,8 +83,8 @@ class AdminMenu {
 		// Submenu 2: Sync Logs
 		add_submenu_page(
 			'clicksync',
-			__( 'Sync Logs', 'clicksync-wordpress' ),
-			__( 'Sync Logs', 'clicksync-wordpress' ),
+			__( 'Sync Logs', 'clicksync-connect' ),
+			__( 'Sync Logs', 'clicksync-connect' ),
 			'manage_options',
 			'clicksync-logs',
 			array( LogsPage::class, 'render' )
@@ -93,8 +93,8 @@ class AdminMenu {
 		// Submenu 3: Sync Error Center
 		add_submenu_page(
 			'clicksync',
-			__( 'Sync Error Center', 'clicksync-wordpress' ),
-			__( 'Sync Error Center', 'clicksync-wordpress' ),
+			__( 'Sync Error Center', 'clicksync-connect' ),
+			__( 'Sync Error Center', 'clicksync-connect' ),
 			'manage_options',
 			'clicksync-errors',
 			array( ErrorsPage::class, 'render' )
@@ -103,8 +103,8 @@ class AdminMenu {
 		// Submenu 4: Help Center
 		add_submenu_page(
 			'clicksync',
-			__( 'Help & Documentation', 'clicksync-wordpress' ),
-			__( 'Help Center', 'clicksync-wordpress' ),
+			__( 'Help & Documentation', 'clicksync-connect' ),
+			__( 'Help Center', 'clicksync-connect' ),
 			'manage_options',
 			'clicksync-help',
 			array( HelpPage::class, 'render' )
@@ -136,7 +136,6 @@ class AdminMenu {
 			return;
 		}
 
-		wp_enqueue_style( 'clicksync-google-fonts', 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap' );
 		wp_enqueue_style( 'clicksync-admin-css', CLICKSYNC_URL . 'assets/css/admin.css', array(), time() );
 		wp_enqueue_script( 'clicksync-admin-js-v2', CLICKSYNC_URL . 'assets/js/admin.js', array( 'jquery' ), time(), true );
 
@@ -160,10 +159,10 @@ class AdminMenu {
 			?>
 			<div class="notice notice-warning is-dismissible">
 				<p>
-					<strong><?php esc_html_e( 'ClickSync Limit Reached:', 'clicksync-wordpress' ); ?></strong>
-					<?php printf( esc_html__( 'You have used %1$d of your %2$d monthly sync tasks. Upgrade your plan to keep syncing WooCommerce events without interruption.', 'clicksync-wordpress' ), $sync_count, $quota ); ?>
+					<strong><?php esc_html_e( 'ClickSync Limit Reached:', 'clicksync-connect' ); ?></strong>
+					<?php printf( esc_html__( 'You have used %1$d of your %2$d monthly sync tasks. Upgrade your plan to keep syncing WooCommerce events without interruption.', 'clicksync-connect' ), $sync_count, $quota ); ?>
 					<a href="<?php echo esc_url( admin_url( 'admin.php?page=clicksync#billing-section' ) ); ?>" class="button button-small button-primary" style="margin-left: 10px;">
-						<?php esc_html_e( 'Upgrade Plan ->', 'clicksync-wordpress' ); ?>
+						<?php esc_html_e( 'Upgrade Plan ->', 'clicksync-connect' ); ?>
 					</a>
 				</p>
 			</div>
@@ -175,8 +174,8 @@ class AdminMenu {
 	 * AJAX endpoint to save local WordPress plugin settings (e.g. Refunds, Fulfillment).
 	 */
 	public static function ajax_save_local_settings() {
-		// Verify caller has administrative privileges
-		if ( ! is_user_logged_in() || ! current_user_can( 'manage_options' ) ) {
+		check_ajax_referer( 'clicksync_admin_nonce', 'security' );
+		if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( 'Unauthorized', 403 );
 		}
 
@@ -195,8 +194,8 @@ class AdminMenu {
 	 * AJAX endpoint to save user identity mappings (WP to ClickUp).
 	 */
 	public static function ajax_save_user_mappings() {
-		// Verify caller has administrative privileges
-		if ( ! is_user_logged_in() || ! current_user_can( 'manage_options' ) ) {
+		check_ajax_referer( 'clicksync_admin_nonce', 'security' );
+		if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( 'Unauthorized', 403 );
 		}
 
@@ -221,8 +220,8 @@ class AdminMenu {
 	 * AJAX endpoint to retrieve dynamic WooCommerce fields, meta keys, and order statuses.
 	 */
 	public static function ajax_get_wc_fields() {
-		// Verify caller has administrative privileges
-		if ( ! is_user_logged_in() || ! current_user_can( 'manage_options' ) ) {
+		check_ajax_referer( 'clicksync_admin_nonce', 'security' );
+		if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( 'Unauthorized', 403 );
 		}
 
@@ -247,16 +246,16 @@ class AdminMenu {
 
 		// 2. Get distinct non-underscore Order meta keys from recent orders
 		$order_meta = array();
-		$order_meta_results = $wpdb->get_col( "
+		$order_meta_results = $wpdb->get_col( $wpdb->prepare( "
 			SELECT DISTINCT meta_key 
 			FROM {$wpdb->postmeta} 
 			WHERE post_id IN (
 				SELECT ID FROM {$wpdb->posts} 
-				WHERE post_type = 'shop_order' 
+				WHERE post_type = %s 
 				ORDER BY ID DESC LIMIT 100
 			) 
-			AND meta_key NOT LIKE '\_%'
-		" );
+			AND meta_key NOT LIKE %s
+		", 'shop_order', '\_%' ) );
 		if ( ! empty( $order_meta_results ) ) {
 			foreach ( $order_meta_results as $key ) {
 				$order_meta[] = array(
@@ -268,15 +267,15 @@ class AdminMenu {
 
 		// 3. Get distinct non-underscore Customer user meta keys from recent users
 		$customer_meta = array();
-		$customer_meta_results = $wpdb->get_col( "
+		$customer_meta_results = $wpdb->get_col( $wpdb->prepare( "
 			SELECT DISTINCT meta_key 
 			FROM {$wpdb->usermeta} 
 			WHERE user_id IN (
 				SELECT ID FROM {$wpdb->users} 
 				ORDER BY ID DESC LIMIT 100
 			) 
-			AND meta_key NOT LIKE '\_%'
-		" );
+			AND meta_key NOT LIKE %s
+		", '\_%' ) );
 		if ( ! empty( $customer_meta_results ) ) {
 			foreach ( $customer_meta_results as $key ) {
 				$customer_meta[] = array(
@@ -350,7 +349,7 @@ class AdminMenu {
 		// Legacy orders page
 		add_meta_box(
 			'clicksync_order_details_metabox',
-			__( 'ClickSync Integration', 'clicksync-wordpress' ),
+			__( 'ClickSync Integration', 'clicksync-connect' ),
 			array( \ClickSync\Admin\Widget::class, 'render_order_metabox' ),
 			'shop_order',
 			'side',
@@ -359,7 +358,7 @@ class AdminMenu {
 		// HPOS support
 		add_meta_box(
 			'clicksync_order_details_metabox',
-			__( 'ClickSync Integration', 'clicksync-wordpress' ),
+			__( 'ClickSync Integration', 'clicksync-connect' ),
 			array( \ClickSync\Admin\Widget::class, 'render_order_metabox' ),
 			'woocommerce_page_wc-orders',
 			'side',
@@ -378,10 +377,10 @@ class AdminMenu {
 			return;
 		}
 		?>
-		<h2><?php esc_html_e( 'ClickSync Integration', 'clicksync-wordpress' ); ?></h2>
+		<h2><?php esc_html_e( 'ClickSync Integration', 'clicksync-connect' ); ?></h2>
 		<table class="form-table">
 			<tr>
-				<th><label><?php esc_html_e( 'ClickUp Task Link', 'clicksync-wordpress' ); ?></label></th>
+				<th><label><?php esc_html_e( 'ClickUp Task Link', 'clicksync-connect' ); ?></label></th>
 				<td>
 					<?php \ClickSync\Admin\Widget::render_customer_metabox( $user ); ?>
 				</td>
@@ -394,7 +393,8 @@ class AdminMenu {
 	 * AJAX handler to retrieve ClickUp task details.
 	 */
 	public static function ajax_widget_get_task_details() {
-		if ( ! is_user_logged_in() ) {
+		check_ajax_referer( 'clicksync_admin_nonce', 'security' );
+		if ( ! current_user_can( 'edit_shop_orders' ) && ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( 'Unauthorized', 403 );
 		}
 
@@ -417,7 +417,8 @@ class AdminMenu {
 	 * AJAX handler to update ClickUp task attributes.
 	 */
 	public static function ajax_widget_update_task() {
-		if ( ! is_user_logged_in() ) {
+		check_ajax_referer( 'clicksync_admin_nonce', 'security' );
+		if ( ! current_user_can( 'edit_shop_orders' ) && ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( 'Unauthorized', 403 );
 		}
 
@@ -468,7 +469,8 @@ class AdminMenu {
 	 * AJAX handler to manually force a sync for orders or customers.
 	 */
 	public static function ajax_widget_force_sync() {
-		if ( ! is_user_logged_in() ) {
+		check_ajax_referer( 'clicksync_admin_nonce', 'security' );
+		if ( ! current_user_can( 'edit_shop_orders' ) && ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( 'Unauthorized', 403 );
 		}
 
@@ -510,7 +512,7 @@ class AdminMenu {
 					'X-ClickSync-Timestamp'=> $timestamp,
 					'X-ClickSync-Hmac'     => $signature,
 					'X-ClickSync-Sync'     => 'true',
-					'User-Agent'           => 'ClickSync-WordPress-Plugin/' . CLICKSYNC_VERSION,
+					'User-Agent'           => 'ClickSync-Connect-Plugin/' . CLICKSYNC_VERSION,
 				),
 				'body'        => $json_body,
 			);
@@ -559,7 +561,7 @@ class AdminMenu {
 					'X-ClickSync-Timestamp'=> $timestamp,
 					'X-ClickSync-Hmac'     => $signature,
 					'X-ClickSync-Sync'     => 'true',
-					'User-Agent'           => 'ClickSync-WordPress-Plugin/' . CLICKSYNC_VERSION,
+					'User-Agent'           => 'ClickSync-Connect-Plugin/' . CLICKSYNC_VERSION,
 				),
 				'body'        => $json_body,
 			);
@@ -575,7 +577,7 @@ class AdminMenu {
 		
 		if ( empty( $body['task_ids'] ) ) {
 			wp_send_json_success( array(
-				'message' => isset( $body['message'] ) ? $body['message'] : __( 'Manual sync queued successfully. Refreshed cached values will load shortly.', 'clicksync-wordpress' ),
+				'message' => isset( $body['message'] ) ? $body['message'] : __( 'Manual sync queued successfully. Refreshed cached values will load shortly.', 'clicksync-connect' ),
 				'queued'  => true
 			) );
 		}
@@ -605,7 +607,8 @@ class AdminMenu {
 	 * AJAX handler to process user contact submissions and post to Pumble.
 	 */
 	public static function ajax_contact_submit() {
-		if ( ! is_user_logged_in() ) {
+		check_ajax_referer( 'clicksync_admin_nonce', 'security' );
+		if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( 'Unauthorized', 403 );
 		}
 
@@ -651,7 +654,7 @@ class AdminMenu {
 				'X-ClickSync-Shop'      => sanitize_text_field( $host ),
 				'X-ClickSync-Timestamp' => $timestamp,
 				'X-ClickSync-Hmac'      => $signature,
-				'User-Agent'            => 'ClickSync-WordPress-Plugin/' . CLICKSYNC_VERSION,
+				'User-Agent'            => 'ClickSync-Connect-Plugin/' . CLICKSYNC_VERSION,
 			),
 			'body'        => $json_body,
 		);

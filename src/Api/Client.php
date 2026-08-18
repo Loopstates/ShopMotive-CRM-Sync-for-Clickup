@@ -49,7 +49,7 @@ class Client {
 				'X-ClickSync-Shop'     => sanitize_text_field( $host ),
 				'X-ClickSync-Timestamp'=> $timestamp,
 				'X-ClickSync-Hmac'     => $signature,
-				'User-Agent'           => 'ClickSync-WordPress-Plugin/' . CLICKSYNC_VERSION,
+				'User-Agent'           => 'ClickSync-Connect-Plugin/' . CLICKSYNC_VERSION,
 			),
 			'body'        => $json_body,
 		);
@@ -113,7 +113,7 @@ class Client {
 					'payload'  => $payload,
 					'attempts' => $attempts,
 				),
-				'clicksync-wordpress'
+				'clicksync-connect'
 			);
 			error_log( sprintf( 'ClickSync scheduled retry attempt %d for topic "%s" in %d seconds.', $attempts, $topic, $delay ) );
 		}
@@ -148,7 +148,7 @@ class Client {
 				'X-ClickSync-Shop'     => sanitize_text_field( $host ),
 				'X-ClickSync-Timestamp'=> $timestamp,
 				'X-ClickSync-Hmac'     => $signature,
-				'User-Agent'           => 'ClickSync-WordPress-Plugin/' . CLICKSYNC_VERSION,
+				'User-Agent'           => 'ClickSync-Connect-Plugin/' . CLICKSYNC_VERSION,
 			),
 			'body'        => $json_body,
 		);
