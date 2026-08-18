@@ -410,6 +410,27 @@
     box-shadow: 0 0 0 2px rgba(0, 128, 96, 0.15) !important;
 }
 
+.clicksync-wrap .clicksync-textarea {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 80px !important;
+    padding: 10px 12px !important;
+    border-radius: 8px !important;
+    border: 1px solid #cbd5e1 !important;
+    background: #ffffff !important;
+    font-size: 13px !important;
+    color: #334155 !important;
+    box-sizing: border-box !important;
+    transition: all 0.2s ease !important;
+    resize: vertical !important;
+}
+
+.clicksync-wrap .clicksync-textarea:focus {
+    outline: none !important;
+    border-color: #008060 !important;
+    box-shadow: 0 0 0 2px rgba(0, 128, 96, 0.15) !important;
+}
+
 .clicksync-wrap .clicksync-label {
     display: block !important;
     font-size: 13px !important;
@@ -445,6 +466,32 @@
     background: #f0f9ff !important;
     color: #0369a1 !important;
     border: 1px solid #bae6fd !important;
+}
+
+.clicksync-wrap .clicksync-badge.clicksync-plan-none {
+    background: #fee2e2 !important;
+    color: #b91c1c !important;
+    border: 1px solid #fca5a5 !important;
+}
+
+.clicksync-wrap .clicksync-badge.clicksync-plan-free {
+    background: #ecfdf5 !important;
+    color: #047857 !important;
+    border: 1px solid #a7f3d0 !important;
+}
+
+.clicksync-wrap .clicksync-badge.clicksync-plan-growth {
+    background: #f5f3ff !important;
+    color: #6d28d9 !important;
+    border: 1px solid #d8b4fe !important;
+    box-shadow: 0 1px 2px rgba(109, 40, 217, 0.05) !important;
+}
+
+.clicksync-wrap .clicksync-badge.clicksync-plan-pro {
+    background: #fffbeb !important;
+    color: #b45309 !important;
+    border: 1px solid #f59e0b !important;
+    box-shadow: 0 1px 2px rgba(180, 83, 9, 0.05) !important;
 }
 
 .clicksync-wrap .clicksync-settings-disabled {

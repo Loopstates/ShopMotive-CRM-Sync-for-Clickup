@@ -104,12 +104,32 @@ class HelpPage {
 				align-items: center;
 				gap: 6px;
 			}
+			.clicksync-faq-item details summary {
+				position: relative;
+				padding-right: 24px;
+				cursor: pointer;
+				list-style: none;
+				outline: none;
+				user-select: none;
+			}
 			.clicksync-faq-item details summary::-webkit-details-marker {
 				display: none;
 			}
-			.clicksync-faq-item details summary {
-				list-style: none;
-				outline: none;
+			.clicksync-faq-item details summary::after {
+				content: '';
+				position: absolute;
+				right: 0;
+				top: 50%;
+				transform: translateY(-50%) rotate(0deg);
+				width: 12px;
+				height: 12px;
+				background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236d7175'%3E%3Cpath d='M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z'/%3E%3C/svg%3E");
+				background-size: contain;
+				background-repeat: no-repeat;
+				transition: transform 0.2s ease;
+			}
+			.clicksync-faq-item details[open] summary::after {
+				transform: translateY(-50%) rotate(180deg);
 			}
 			.clicksync-faq-q::before {
 				content: 'Q:';
@@ -268,20 +288,38 @@ class HelpPage {
 							<?php esc_html_e( 'Frequently Asked Questions', 'clicksync-wordpress' ); ?>
 						</h3>
 						<div class="clicksync-faq-item">
-							<div class="clicksync-faq-q"><?php esc_html_e( 'Will ClickSync slow down my customer checkout times?', 'clicksync-wordpress' ); ?></div>
-							<div class="clicksync-faq-a"><?php esc_html_e( 'No. ClickSync works 100% asynchronously. The moment checkouts finish, the sync event payload is handed off to our background cloud processor in 0ms, leaving your customer loading speed completely unaffected.', 'clicksync-wordpress' ); ?></div>
-						</div>
-						<div class="clicksync-faq-item">
-							<div class="clicksync-faq-q"><?php esc_html_e( 'What happens if a rate limit or server error blocks ClickUp?', 'clicksync-wordpress' ); ?></div>
-							<div class="clicksync-faq-a"><?php esc_html_e( 'Events are ingested into our fail-safe cloud database queue. If ClickUp is offline or rate limits your account, the transaction retries automatically in back-off intervals until task creation succeeds.', 'clicksync-wordpress' ); ?></div>
-						</div>
-						<div class="clicksync-faq-item">
-							<div class="clicksync-faq-q"><?php esc_html_e( 'How do I force manual sync if order parameters change?', 'clicksync-wordpress' ); ?></div>
-							<div class="clicksync-faq-a"><?php esc_html_e( 'Go to any WooCommerce order page. The ClickSync Meta Box widget features a "Sync Now" control. Clicking this runs a synchronous manual sync pipeline instantly, pulling updated details into WooCommerce.', 'clicksync-wordpress' ); ?></div>
-						</div>
-						<div class="clicksync-faq-item" style="border-top: 1px solid #e1e3e5; margin-top: 12px; padding-top: 12px;">
 							<details style="outline: none;">
-								<summary class="clicksync-faq-q" style="cursor: pointer; list-style: none; outline: none; user-select: none;">
+								<summary class="clicksync-faq-q">
+									<?php esc_html_e( 'Will ClickSync slow down my customer checkout times?', 'clicksync-wordpress' ); ?>
+								</summary>
+								<div class="clicksync-faq-a" style="margin-top: 8px;">
+									<?php esc_html_e( 'No. ClickSync works 100% asynchronously. The moment checkouts finish, the sync event payload is handed off to our background cloud processor in 0ms, leaving your customer loading speed completely unaffected.', 'clicksync-wordpress' ); ?>
+								</div>
+							</details>
+						</div>
+						<div class="clicksync-faq-item">
+							<details style="outline: none;">
+								<summary class="clicksync-faq-q">
+									<?php esc_html_e( 'What happens if a rate limit or server error blocks ClickUp?', 'clicksync-wordpress' ); ?>
+								</summary>
+								<div class="clicksync-faq-a" style="margin-top: 8px;">
+									<?php esc_html_e( 'Events are ingested into our fail-safe cloud database queue. If ClickUp is offline or rate limits your account, the transaction retries automatically in back-off intervals until task creation succeeds.', 'clicksync-wordpress' ); ?>
+								</div>
+							</details>
+						</div>
+						<div class="clicksync-faq-item">
+							<details style="outline: none;">
+								<summary class="clicksync-faq-q">
+									<?php esc_html_e( 'How do I force manual sync if order parameters change?', 'clicksync-wordpress' ); ?>
+								</summary>
+								<div class="clicksync-faq-a" style="margin-top: 8px;">
+									<?php esc_html_e( 'Go to any WooCommerce order page. The ClickSync Meta Box widget features a "Sync Now" control. Clicking this runs a synchronous manual sync pipeline instantly, pulling updated details into WooCommerce.', 'clicksync-wordpress' ); ?>
+								</div>
+							</details>
+						</div>
+						<div class="clicksync-faq-item" style="border-bottom: none; padding-bottom: 0;">
+							<details style="outline: none;">
+								<summary class="clicksync-faq-q">
 									<?php esc_html_e( 'How do I manage or cancel my billing subscription?', 'clicksync-wordpress' ); ?>
 								</summary>
 								<div class="clicksync-faq-a" style="margin-top: 8px;">

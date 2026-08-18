@@ -45,8 +45,12 @@ class AdminMenu {
 			$secret_key = sanitize_text_field( $_GET['clicksync_secret_key'] );
 			Options::update_secret_key( $secret_key );
 			
-			// Clean redirect URL query parameter
-			wp_safe_redirect( admin_url( 'admin.php?page=clicksync' ) );
+			// Clean redirect URL query parameter but preserve clicksync_action if set
+			$redirect_url = admin_url( 'admin.php?page=clicksync' );
+			if ( isset( $_GET['clicksync_action'] ) ) {
+				$redirect_url = add_query_arg( 'clicksync_action', sanitize_text_field( $_GET['clicksync_action'] ), $redirect_url );
+			}
+			wp_safe_redirect( $redirect_url );
 			exit;
 		}
 	}

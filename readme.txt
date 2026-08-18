@@ -4,7 +4,7 @@ Tags: clickup, woocommerce, crm, task management, developer-api
 Requires at least: 5.8
 Tested up to: 6.7.1
 Requires PHP: 7.4
-Stable tag: 1.1.0
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,23 +12,26 @@ Connect and synchronize WooCommerce store events, order notes, checkout metadata
 
 == Description ==
 
-ClickSync Connect is an asynchronous sync engine designed to bridge WooCommerce storefront activity with ClickUp workspaces. The plugin captures e-commerce events—such as new checkouts, registration forms, refunds, status transitions, and order notes—and queues them for structured syncing into your ClickUp lists.
+ClickSync Connect is an enterprise-grade, asynchronous synchronization engine designed to seamlessly bridge WooCommerce storefront activity with your ClickUp workspace. The plugin instantly captures e-commerce events—such as new checkouts, user registrations, refunds, order status transitions, and order notes—and queues them for structured syncing into your ClickUp lists.
 
-This plugin serves as the client connector linking your WordPress database with the ClickSync Cloud Service (https://clicksync-connect.apps.loopstates.com). By offloading serialization and API request handshakes, ClickSync protects WooCommerce execution threads and prevents transaction bottlenecks during peak checkout periods. All merchant access tokens are stored with AES-256 encryption at rest, and webhook dispatches undergo real-time SHA-256 HMAC signature verification.
+This plugin serves as the client connector linking your WordPress database with the ClickSync Cloud Service (https://clicksync-connect.apps.loopstates.com). By offloading heavy data serialization and external API request handshakes, ClickSync protects your WooCommerce execution threads and guarantees zero customer checkout delays. All merchant access tokens are stored with AES-256 encryption at rest, and webhook dispatches undergo real-time SHA-256 HMAC signature verification.
 
-= Key Features =
+== Key Features ==
 
-* **Asynchronous Task Queue (Under 20ms Capture):** Captures webhook signals in under 20ms and stores them in a processing database queue, preventing database locks and ensuring zero script overhead on client-facing checkout pages.
-* **Bi-Directional Order Status Syncing:** Maps WooCommerce status fields (Processing, Completed, On-hold, Cancelled) to your ClickUp task statuses. Moving a task status inside ClickUp automatically triggers the WooCommerce core order transition.
+* **Asynchronous Task Queue (Under 20ms Capture):** Captures WooCommerce checkouts in under 20ms and enqueues them in a local processing table, ensuring customer loading speeds are completely unaffected by external API latency.
+* **Premium Subscription Visualizer:** Features rich, professional badges detailing your active ClickSync plan (with custom gold Crown icons for Pro Plan and elegant violet Diamond icons for Growth Plan) and dynamic ClickUp API rate-limit meters.
+* **Interactive Help & FAQ Accordions:** Built-in interactive collapsible FAQ dashboard designed for rapid troubleshooting, manual order sync instructions, and direct billing controls.
+* **Bi-Directional Order Status Syncing:** Automatically maps WooCommerce order status fields (Processing, Completed, On-hold, Cancelled) to your ClickUp task statuses. Moving a task status inside ClickUp triggers the WooCommerce core order transition instantly.
+* **Dynamic Customer Contact Syncing:** Keeps the ClickSync support team updated with your administrator contact details so we can alert you about API handshake errors or expired OAuth tokens before they affect your business.
 * **Custom Field Mapping Engine:** Map standard WooCommerce order parameters—including billing details, customer lifetime value, shipping address, or custom checkout attributes—directly to custom text, list, number, or checkbox fields in ClickUp.
 * **Line-Item Split Routing:** Choose whether multi-item WooCommerce checkouts generate a single parent task or separate child tasks in ClickUp, enabling you to route different items to separate team members or fulfillment pipelines.
 * **Refund & Cancellation Syncing:** Track refunds, order cancellations, and item adjustments as automated updates. Full or partial refunds update order totals and log details directly as task comments.
-* **Customer Registration & CRM Profiles:** Sync WordPress user creation events and WooCommerce billing records to dedicated ClickUp customer tasks, keeping customer logs and profiles synchronized.
 * **WP Admin Order Sidebar Widget:** Adds a live metadata panel to the WooCommerce Edit Order screen displaying the linked ClickUp Task ID, real-time status updates, active assignees, and direct workspace links.
 * **Resilient Fail-Safe Retry System:** Retains webhook payloads during ClickUp outages or API rate limiting (HTTP 429), automatically executing up to 5 scheduled retries to prevent data loss.
+* **Custom Quota Request Desk:** Submit custom transaction quota and webhook requests directly from your settings panel to accommodate high-volume holiday sales or promotional traffic.
 * **WordPress Developer API:** Built with hooks and filters allowing developers to conditionally bypass sync events, modify outgoing payloads, customize retry intervals, or add partner headers.
 
-= Third-Party SaaS Service Disclosure =
+== Third-Party SaaS Service Disclosure ==
 
 ClickSync Connect utilizes external cloud APIs to manage authentication tokens, decrypt keys, and queue requests safely:
 
@@ -40,6 +43,17 @@ By activating this connector, e-commerce data (order line items, notes, billing 
 * ClickSync Privacy Policy: https://docs.loopstates.com/clicksync-woocommerce/privacy-policy.html
 * ClickSync Terms: https://docs.loopstates.com/clicksync-woocommerce/plans.html
 * ClickUp Terms of Service: https://clickup.com/terms
+
+== Professional Data Safety & Collection Disclosure ==
+
+To guarantee high service reliability, prompt technical support, and prevention of synchronization outages, ClickSync Connect securely synchronizes specific store administrative metadata with our cloud servers:
+
+* **Site Title (Store Name):** Collected to identify your store configuration in our administrative portal.
+* **Administrator Email Address:** Retained to automatically notify you in the event of continuous ClickUp API handshake failures or key expirations.
+* **Site Owner / Administrator Name:** Used to personalize merchant assistance and authenticate support request tickets.
+* **Integration Telemetry (Sync Counts & Log Stats):** Tracks transaction volumes to monitor subscription quotas and alert you before you reach rate limits.
+
+All administrative metadata is stored in our secure, encrypted cloud database. This data is utilized solely for customer support, service health monitoring, and system security, and is never shared with third parties. Telemetry data is retained for the lifetime of your integration and is permanently deleted within 30 days of subscription cancellation.
 
 == Installation ==
 
@@ -100,6 +114,12 @@ Client tokens are encrypted using AES-256-CBC and kept in the WordPress database
 WooCommerce is required for checkout, order, and refund triggers. Standard customer registration hooks will function with default WordPress user creation events.
 
 == Changelog ==
+
+= 1.2.0 =
+* Added dynamic administrative metadata synchronization (Site Title, Owner Name, Email) for enhanced support.
+* Introduced visual plan badging with premium Crown/Diamond icon designs and active ClickUp API rate limit warnings.
+* Integrated the collapsible FAQ Help Accordion center and main settings page cancellation modal.
+* Implemented the Custom Quota Request CTA overlay to support high-volume WooCommerce checkouts.
 
 = 1.1.0 =
 * Introduced developer extensibility filters: clicksync_should_sync_order, clicksync_order_payload, clicksync_retry_limit, and clicksync_api_request_headers.

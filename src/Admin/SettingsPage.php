@@ -405,10 +405,10 @@ class SettingsPage {
 							<div>
 								<label style="display: block; font-size: 11px; font-weight: 500; color: #6d7175; margin-bottom: 4px;"><?php esc_html_e( 'Then Set Priority:', 'clicksync-wordpress' ); ?></label>
 								<select class="clicksync-priority-level clicksync-select" style="margin: 0; height: 36px;">
-									<option value="1">Urgent</option>
-									<option value="2">High</option>
-									<option value="3">Normal</option>
-									<option value="4">Low</option>
+									<option value="1">🔴 Urgent</option>
+									<option value="2">🟡 High</option>
+									<option value="3">🔵 Normal</option>
+									<option value="4">⚪ Low</option>
 								</select>
 							</div>
 							<button type="button" class="clicksync-add-priority-rule-btn clicksync-btn-secondary" style="height: 36px; white-space: nowrap;" data-event="orders/create"><?php esc_html_e( 'Add Rule', 'clicksync-wordpress' ); ?></button>
@@ -741,7 +741,7 @@ class SettingsPage {
 						<form id="clicksync-cancel-subscription-form">
 							<div style="margin-bottom: 16px;">
 								<label style="display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 6px;"><?php esc_html_e( 'Reason for Canceling:', 'clicksync-wordpress' ); ?></label>
-								<select id="clicksync-cancel-reason" class="clicksync-select" style="width: 100%; height: 38px; padding: 0 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; outline: none; box-sizing: border-box;" required>
+								<select id="clicksync-cancel-reason" class="clicksync-select" style="width: 100% !important; max-width: 100% !important; height: 40px !important; padding: 0 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; outline: none; box-sizing: border-box !important;" required>
 									<option value=""><?php esc_html_e( '-- Select Reason --', 'clicksync-wordpress' ); ?></option>
 									<option value="Too Expensive"><?php esc_html_e( 'Too Expensive / High Price', 'clicksync-wordpress' ); ?></option>
 									<option value="Missing Features"><?php esc_html_e( 'Missing Essential Features', 'clicksync-wordpress' ); ?></option>
@@ -753,17 +753,21 @@ class SettingsPage {
 
 							<div style="margin-bottom: 16px;">
 								<label style="display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 6px;"><?php esc_html_e( 'Additional Feedback (Optional):', 'clicksync-wordpress' ); ?></label>
-								<textarea id="clicksync-cancel-feedback" class="clicksync-select" style="width: 100%; height: 80px; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; outline: none; resize: vertical; box-sizing: border-box;" placeholder="<?php esc_attr_e( 'Please tell us what we could do to make the plugin better...', 'clicksync-wordpress' ); ?>"></textarea>
+								<textarea id="clicksync-cancel-feedback" class="clicksync-textarea" style="width: 100% !important; max-width: 100% !important; height: 80px; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; outline: none; resize: vertical; box-sizing: border-box !important;" placeholder="<?php esc_attr_e( 'Please tell us what we could do to make the plugin better...', 'clicksync-wordpress' ); ?>"></textarea>
 							</div>
 
 							<!-- Notice -->
-							<div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; padding: 12px; font-size: 11px; color: #991b1b; line-height: 1.4; margin-bottom: 20px;">
-								<?php esc_html_e( 'Note: Full deletion of your store data and configuration traces from our cloud database will take up to 30 days.', 'clicksync-wordpress' ); ?>
+							<div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; padding: 12px; font-size: 11px; color: #991b1b; line-height: 1.4; margin-bottom: 16px;">
+								<?php esc_html_e( 'Please note: For security and data compliance purposes, the complete removal of your integration logs, site telemetry, and database records may take up to 30 days.', 'clicksync-wordpress' ); ?>
+							</div>
+
+							<div style="font-size: 13px; font-weight: 600; color: #0f172a; margin-bottom: 12px;">
+								<?php esc_html_e( 'Are you sure you want to cancel?', 'clicksync-wordpress' ); ?>
 							</div>
 
 							<div style="display: flex; justify-content: flex-end; gap: 8px;">
-								<button type="button" id="clicksync-cancel-keep-btn" class="clicksync-btn-secondary" style="height: 36px; padding: 0 16px; font-size: 13px; font-weight: 500;"><?php esc_html_e( 'Keep Subscription', 'clicksync-wordpress' ); ?></button>
-								<button type="submit" class="clicksync-btn-primary" style="height: 36px; padding: 0 16px; font-size: 13px; font-weight: 600; background: #ef4444; color: #ffffff; border: none; border-radius: 6px; cursor: pointer;"><?php esc_html_e( 'Confirm Cancellation', 'clicksync-wordpress' ); ?></button>
+								<button type="submit" class="clicksync-btn-secondary" style="height: 36px; padding: 0 16px; font-size: 13px; font-weight: 500; border-radius: 6px; border: 1px solid #cbd5e1; background: #ffffff; color: #334155; cursor: pointer;"><?php esc_html_e( 'Confirm Cancellation', 'clicksync-wordpress' ); ?></button>
+								<button type="button" id="clicksync-cancel-keep-btn" class="clicksync-btn-primary" style="height: 36px; padding: 0 16px; font-size: 13px; font-weight: 600; background: #008060; color: #ffffff; border: none; border-radius: 6px; cursor: pointer;"><?php esc_html_e( 'Keep Subscription', 'clicksync-wordpress' ); ?></button>
 							</div>
 						</form>
 					</div>

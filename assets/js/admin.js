@@ -848,7 +848,7 @@
                         var statusHtml = '<div class="clicksync-card" style="border-left: 4px solid #7c3aed;">' +
                             '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">' +
                             '<h3 style="margin: 0; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px;">' +
-                            '<svg class="clicksync-title-icon" style="fill: #7c3aed;" viewBox="0 0 24 24"><path d="M16 7v3h2V7h-2zm-5 0v3h2V7h-2zM4 11v6c0 1.1.9 2 2 2h4v3h2v-3h4c1.1 0 2-.9 2-2v-6H4z"/></svg> ClickSync Connection</h3>' +
+                            '<svg class="clicksync-title-icon" style="fill: #7c3aed;" viewBox="0 0 24 24"><path d="M2 18.439l3.69-2.828c1.961 2.56 4.044 3.739 6.363 3.739 2.307 0 4.33-1.166 6.203-3.704L22 18.405C19.298 22.065 15.941 24 12.053 24c-3.875 0-7.265-1.922-10.053-5.561zM12.04 6.15L5.472 11.81l-3.036-3.52L12.055 0l9.543 8.296-3.05 3.509z"/></svg> ClickSync Connection</h3>' +
                             '<span class="clicksync-badge badge-warning" style="background: #fffbeb; color: #b45309; border: 1px solid #fde68a;">Not Connected</span>' +
                             '</div>' +
                             '<p style="font-size: 13px; color: #64748b; margin-bottom: 16px; line-height: 1.5;">ClickSync is not connected to your ClickUp workspace yet. Authorize ClickSync to connect your store with ClickUp spaces.</p>' +
@@ -869,7 +869,7 @@
                         var statusHtml = '<div class="clicksync-card" style="border-left: 4px solid #7c3aed;">' +
                             '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">' +
                             '<h3 style="margin: 0; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px;">' +
-                            '<svg class="clicksync-title-icon" style="fill: #eab308;" viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg> ClickSync Connection</h3>' +
+                            '<svg class="clicksync-title-icon" style="fill: #7c3aed;" viewBox="0 0 24 24"><path d="M2 18.439l3.69-2.828c1.961 2.56 4.044 3.739 6.363 3.739 2.307 0 4.33-1.166 6.203-3.704L22 18.405C19.298 22.065 15.941 24 12.053 24c-3.875 0-7.265-1.922-10.053-5.561zM12.04 6.15L5.472 11.81l-3.036-3.52L12.055 0l9.543 8.296-3.05 3.509z"/></svg> ClickSync Connection</h3>' +
                             '<span class="clicksync-badge badge-warning" style="background: #f3e8ff; color: #7c3aed; border-color: #d8b4fe;">Setup Pending</span>' +
                             '</div>' +
                             '<p style="font-size: 13px; color: #64748b; margin-bottom: 16px; line-height: 1.5;">Successfully authenticated with ClickUp. Please complete the workspace connection steps below.</p>' +
@@ -909,7 +909,7 @@
                         var statusHtml = '<div class="clicksync-card" style="border-left: 4px solid #7c3aed;">' +
                             '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">' +
                             '<h3 style="margin: 0; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px;">' +
-                            '<svg class="clicksync-title-icon" style="fill: #eab308;" viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg> ClickSync Connection</h3>' +
+                            '<svg class="clicksync-title-icon" style="fill: #7c3aed;" viewBox="0 0 24 24"><path d="M2 18.439l3.69-2.828c1.961 2.56 4.044 3.739 6.363 3.739 2.307 0 4.33-1.166 6.203-3.704L22 18.405C19.298 22.065 15.941 24 12.053 24c-3.875 0-7.265-1.922-10.053-5.561zM12.04 6.15L5.472 11.81l-3.036-3.52L12.055 0l9.543 8.296-3.05 3.509z"/></svg> ClickSync Connection</h3>' +
                             '<span class="clicksync-badge badge-warning" style="background: #f3e8ff; color: #7c3aed; border-color: #d8b4fe;">Setup Pending</span>' +
                             '</div>' +
                             '<p style="font-size: 13px; color: #64748b; margin-bottom: 16px; line-height: 1.5;">Successfully authenticated. Please choose your synchronization lists to complete onboarding.</p>' +
@@ -977,7 +977,7 @@
                         '</div>' +
                         '<p style="font-size: 13px; color: #64748b; margin-bottom: 16px; line-height: 1.5;">ClickSync is active. Background WooCommerce events are intercepted and synchronized into ClickUp instantly.</p>' +
                         '<div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px; font-size: 13px; color: #475569; margin-bottom: 16px; line-height: 1.5;">' +
-                        '<svg class="clicksync-title-icon" style="width: 16px; height: 16px; fill: #64748b;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg> Your integration is subject to <strong>ClickUp\'s plan limits (' + (account.clickupLimit || 100) + ' API calls/min)</strong>. If a synchronization fails or experiences delays under heavy load, it is due to ClickUp\'s API rate limits rejecting incoming calls, not our app. ClickSync automatically queues and retries these requests for you.' +
+                        '<svg class="clicksync-title-icon" style="width: 16px; height: 16px; fill: #64748b;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg> Your integration is subject to the API rate limits of your active ClickUp <strong>' + clickupPlanStr + ' Plan</strong> (which restricts traffic to <strong>' + (account.clickupLimit || 100) + ' API calls/min</strong>). If a synchronization fails or experiences delays under heavy load, it is due to ClickUp\'s API rate limits rejecting incoming calls, not our app. ClickSync automatically queues and retries these requests for you.' +
                         '</div>' +
                         '<div style="display: flex; gap: 12px; align-items: center;">' +
                         '<button id="clicksync-process-queue-btn" class="clicksync-btn-primary clicksync-btn-green" style="background: #10b981; color: white; border: none; height: 36px; font-size: 13px; padding: 8px 16px; display: inline-flex; align-items: center; gap: 6px; border-radius: 6px; font-weight: 500; cursor: pointer; ' + queueDisabledStyle + '" ' + queueDisabledAttr + '>' +
@@ -1060,25 +1060,22 @@
                         }
 
                         var activeBadge = $('#clicksync-active-plan-badge');
+                        activeBadge.removeClass('badge-info clicksync-plan-none clicksync-plan-free clicksync-plan-growth clicksync-plan-pro').attr('style', 'padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;');
                         var badgeIcon = '';
-                        var badgeStyle = '';
 
                         if (plan === 'None') {
                             badgeIcon = '<svg style="width: 12px; height: 12px; fill: #b91c1c; margin-right: 4px; vertical-align: middle;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>';
-                            badgeStyle = 'background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5;';
-                            activeBadge.html(badgeIcon + 'No Plan Selected').attr('style', 'padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; ' + badgeStyle);
+                            activeBadge.addClass('clicksync-plan-none').html(badgeIcon + 'No Plan Selected');
                             $('#clicksync-activate-free-btn').show();
                             lockSyncRules();
                         } else if (plan === 'Free Plan') {
                             badgeIcon = '<svg style="width: 12px; height: 12px; fill: #047857; margin-right: 4px; vertical-align: middle;" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>';
-                            badgeStyle = 'background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0;';
-                            activeBadge.html(badgeIcon + 'Free Plan').attr('style', 'padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; ' + badgeStyle);
+                            activeBadge.addClass('clicksync-plan-free').html(badgeIcon + 'Free Plan');
                             $('#clicksync-toggle-upgrade-btn').show();
                             unlockSyncRules();
                         } else if (plan === 'Growth Plan') {
-                            badgeIcon = '<svg style="width: 12px; height: 12px; fill: #4338ca; margin-right: 4px; vertical-align: middle;" viewBox="0 0 24 24"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zm-1-15l5 5-5 5v-4H8v-2h3V7z"/></svg>';
-                            badgeStyle = 'background: #e0e7ff; color: #4338ca; border: 1px solid #c7d2fe;';
-                            activeBadge.html(badgeIcon + 'Growth Plan').attr('style', 'padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; ' + badgeStyle);
+                            badgeIcon = '<svg style="width: 16px; height: 16px; fill: #7c3aed; margin-right: 6px; vertical-align: middle; display: inline-block;" viewBox="0 0 24 24"><path d="M16 2H8L3.25 8.5 12 22 20.75 8.5 16 2zM7.5 7L10 3.3v3.7H7.5zm4.5-3.6l2.3 3.6h-4.6l2.3-3.6zM14 7V3.3l2.5 3.7H14zm-4 2h4v10.5l-4-10.5z"/></svg>';
+                            activeBadge.addClass('clicksync-plan-growth').html(badgeIcon + 'Growth Plan');
                             $('#clicksync-upgrade-to-pro-btn').show();
                             
                             // Highlight inside drawer just in case
@@ -1086,9 +1083,8 @@
                             $('#plan-card-growth .plan-action').html('Active');
                             unlockSyncRules();
                         } else if (plan === 'Pro Plan') {
-                            badgeIcon = '<svg style="width: 12px; height: 12px; fill: #d97706; margin-right: 4px; vertical-align: middle;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
-                            badgeStyle = 'background: #fef3c7; color: #d97706; border: 1px solid #fde68a;';
-                            activeBadge.html(badgeIcon + 'Pro Plan').attr('style', 'padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; ' + badgeStyle);
+                            badgeIcon = '<svg style="width: 16px; height: 16px; fill: #b45309; margin-right: 6px; vertical-align: middle; display: inline-block;" viewBox="0 0 24 24"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7zm3 14h14v2H5v-2z"/></svg>';
+                            activeBadge.addClass('clicksync-plan-pro').html(badgeIcon + 'Pro Plan');
                             
                             // Prevent mailto link, open custom quota modal
                             $('#clicksync-custom-quota-btn').off('click').on('click', function(e) {
@@ -1249,6 +1245,11 @@
             btn.text('Connecting Workspace...').prop('disabled', true);
             var teamId = $('#clicksync-setup-team-id').val();
 
+            var statusBlock = $('#clicksync-connection-status-block');
+            var emailVal = statusBlock.data('site-email') || '';
+            var siteTitleVal = statusBlock.data('site-title') || '';
+            var ownerNameVal = statusBlock.data('site-owner') || '';
+
             $.ajax({
                 url: cloudUrl + '/api/save-config',
                 type: 'POST',
@@ -1256,7 +1257,12 @@
                 data: JSON.stringify({
                     shop: host,
                     actionType: 'save_workspace',
-                    payload: { teamId: teamId }
+                    payload: {
+                        teamId: teamId,
+                        email: emailVal,
+                        siteTitle: siteTitleVal,
+                        ownerName: ownerNameVal
+                    }
                 }),
                 success: function (res) {
                     fetchCloudConfig();
@@ -2091,21 +2097,33 @@
         });
 
         // Render premium Polaris-like toast notification drawer
-        function showClickSyncToast(title, message) {
+        function showClickSyncToast(title, message, type) {
+            type = type || 'warning';
             var toastId = 'cs-toast-' + Date.now();
+            
+            var borderColor = '#db2777';
+            var iconSvg = '<svg width="14" height="14" viewBox="0 0 24 24" fill="#db2777" style="vertical-align: middle;"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>';
+            var footerHtml = '<div style="margin-top: 6px; display: flex; gap: 12px; align-items: center;">' +
+                                '<a href="#" class="clicksync-open-upgrade-btn" style="font-size: 12px; font-weight: 600; color: #db2777; text-decoration: none; cursor: pointer;">Upgrade subscription &rarr;</a>' +
+                             '</div>';
+            
+            if (type === 'success') {
+                borderColor = '#10b981';
+                iconSvg = '<svg width="14" height="14" viewBox="0 0 24 24" fill="#10b981" style="vertical-align: middle;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>';
+                footerHtml = '';
+            }
+            
             var toastHtml = 
-                '<div id="' + toastId + '" class="clicksync-toast" style="pointer-events: auto; min-width: 320px; max-width: 400px; background: #ffffff; border: 1px solid #e1e3e5; border-left: 4px solid #db2777; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; transition: all 0.3s ease; transform: translateY(50px); opacity: 0; margin-top: 10px;">' +
+                '<div id="' + toastId + '" class="clicksync-toast" style="pointer-events: auto; min-width: 320px; max-width: 400px; background: #ffffff; border: 1px solid #e1e3e5; border-left: 4px solid ' + borderColor + '; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; transition: all 0.3s ease; transform: translateY(50px); opacity: 0; margin-top: 10px;">' +
                     '<div style="display: flex; justify-content: space-between; align-items: flex-start;">' +
                         '<span style="font-size: 13px; font-weight: 600; color: #202223; display: flex; align-items: center; gap: 6px;">' +
-                            '<svg width="14" height="14" viewBox="0 0 24 24" fill="#db2777" style="vertical-align: middle;"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>' +
+                            iconSvg +
                             title +
                         '</span>' +
                         '<button type="button" class="clicksync-toast-close" style="background: none; border: none; font-size: 16px; color: #8c9196; cursor: pointer; padding: 0 4px; line-height: 1;">&times;</button>' +
                     '</div>' +
                     '<p style="font-size: 12px; color: #6d7175; margin: 0; line-height: 1.4;">' + message + '</p>' +
-                    '<div style="margin-top: 6px; display: flex; gap: 12px; align-items: center;">' +
-                        '<a href="#" class="clicksync-open-upgrade-btn" style="font-size: 12px; font-weight: 600; color: #db2777; text-decoration: none; cursor: pointer;">Upgrade subscription &rarr;</a>' +
-                    '</div>' +
+                    footerHtml +
                 '</div>';
             
             $('#clicksync-toast-container').append(toastHtml);
@@ -2227,7 +2245,7 @@
                     if (res.success) {
                         $('#clicksync-cancel-modal').hide();
                         fetchCloudConfig();
-                        showClickSyncToast('Subscription Canceled', 'Your subscription was successfully canceled.');
+                        showClickSyncToast('Subscription Canceled', 'Your subscription was successfully canceled.', 'success');
                     } else {
                         alert(res.error || 'Failed to cancel subscription.');
                     }
@@ -2263,7 +2281,7 @@
                     if (res.success) {
                         $('#clicksync-quota-modal').hide();
                         $('#clicksync-quota-message').val('');
-                        showClickSyncToast('Request Submitted', 'Your custom quota request has been sent to our support desk.');
+                        showClickSyncToast('Request Submitted', 'Your custom quota request has been sent to our support desk.', 'success');
                     } else {
                         alert(res.data || 'Failed to submit quota request. Please try again.');
                     }
