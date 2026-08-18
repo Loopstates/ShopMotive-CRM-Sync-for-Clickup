@@ -72,7 +72,14 @@ class SettingsPage {
 			</div>
 			
 			<!-- Header Status Banner -->
-			<div id="clicksync-connection-status-block" data-connect-url="<?php echo esc_url( $connect_url ); ?>">
+			<div id="clicksync-connection-status-block" 
+				data-connect-url="<?php echo esc_url( $connect_url ); ?>"
+				data-site-email="<?php echo esc_attr( get_option( 'admin_email' ) ); ?>"
+				data-site-title="<?php echo esc_attr( get_option( 'blogname' ) ); ?>"
+				data-site-owner="<?php 
+					$current_user = wp_get_current_user();
+					echo esc_attr( $current_user ? $current_user->display_name : 'WordPress Admin' ); 
+				?>">
 				<div class="clicksync-card" style="background: #ffffff; border: 1px solid #e1e3e5; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
 					<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
 						<h3 style="margin: 0; font-size: 16px; font-weight: 600; color: #202223; display: flex; align-items: center; gap: 8px;">
@@ -118,7 +125,7 @@ class SettingsPage {
 						<div style="display: flex; flex-direction: column; gap: 4px;">
 							<div style="display: flex; align-items: center; gap: 8px;">
 								<span style="font-size: 14px; font-weight: 600; color: #202223;"><?php esc_html_e( 'Subscription Plan:', 'clicksync-wordpress' ); ?></span>
-								<span class="clicksync-badge badge-info" style="background: #e2f1f8; color: #005a87; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; display: inline-block;">
+								<span id="clicksync-active-plan-badge" class="clicksync-badge badge-info" style="background: #e2f1f8; color: #005a87; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; display: inline-block;">
 									<?php echo esc_html( $plan_name ); ?>
 								</span>
 							</div>
@@ -234,7 +241,7 @@ class SettingsPage {
 								<div>
 									<div style="font-size: 13px; font-weight: 600; color: #202223; display: flex; align-items: center; gap: 6px;">
 										<svg class="clicksync-title-icon" style="width: 14px; height: 14px;" viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg> <?php esc_html_e( 'Sync Refund Updates', 'clicksync-wordpress' ); ?>
-										<span class="clicksync-unidirectional-tooltip" tabindex="0" style="display: inline-flex; align-items: center; color: #ef4444; cursor: help; margin-left: 4px;" data-tooltip="<?php esc_attr_e( 'This feature is locked on the Free Plan. Upgrade to a Growth or Pro Plan to enable refund syncing.', 'clicksync-wordpress' ); ?>">
+										<span id="clicksync-refunds-lock-tooltip" class="clicksync-unidirectional-tooltip" tabindex="0" style="display: inline-flex; align-items: center; color: #ef4444; cursor: help; margin-left: 4px;" data-tooltip="<?php esc_attr_e( 'This feature is locked on the Free Plan. Upgrade to a Growth or Pro Plan to enable refund syncing.', 'clicksync-wordpress' ); ?>">
 											<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
 										</span>
 									</div>
@@ -253,7 +260,7 @@ class SettingsPage {
 								<div>
 									<div style="font-size: 13px; font-weight: 600; color: #202223; display: flex; align-items: center; gap: 6px;">
 										<svg class="clicksync-title-icon" style="width: 14px; height: 14px;" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.89-1.99 2L2 18c0 1.1.89 2 2 2h16c1.1 0 2-.89 2-2V6c0-1.1-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg> <?php esc_html_e( 'Split Order Routing', 'clicksync-wordpress' ); ?>
-										<span class="clicksync-unidirectional-tooltip" tabindex="0" style="display: inline-flex; align-items: center; color: #ef4444; cursor: help; margin-left: 4px;" data-tooltip="<?php esc_attr_e( 'This feature is locked on the Free Plan. Upgrade to the Pro Plan to enable line-item split routing.', 'clicksync-wordpress' ); ?>">
+										<span id="clicksync-split-routing-lock-tooltip" class="clicksync-unidirectional-tooltip" tabindex="0" style="display: inline-flex; align-items: center; color: #ef4444; cursor: help; margin-left: 4px;" data-tooltip="<?php esc_attr_e( 'This feature is locked on the Free Plan. Upgrade to the Pro Plan to enable line-item split routing.', 'clicksync-wordpress' ); ?>">
 											<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
 										</span>
 									</div>
@@ -684,6 +691,90 @@ class SettingsPage {
 						</button>
 					</div>
 				</div>
+
+				<!-- Custom Quota Request Modal -->
+				<div id="clicksync-quota-modal" style="display: none; position: fixed; z-index: 99999; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); align-items: center; justify-content: center;">
+					<div class="clicksync-card" style="background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; width: 100%; max-width: 480px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); margin: 0 16px; padding: 24px; box-sizing: border-box; position: relative; animation: clicksync-modal-fade 0.2s ease-out;">
+						<button type="button" id="clicksync-close-quota-modal" style="position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 20px; color: #94a3b8; cursor: pointer; line-height: 1;">&times;</button>
+						
+						<div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
+							<div style="background: #eff6ff; border-radius: 8px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; color: #2563eb;">
+								<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+							</div>
+							<h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #0f172a;"><?php esc_html_e( 'Request Custom Quota', 'clicksync-wordpress' ); ?></h3>
+						</div>
+
+						<p style="font-size: 13px; color: #475569; margin: 0 0 16px 0; line-height: 1.5;">
+							<?php esc_html_e( 'Need higher monthly sync limits? Describe your monthly order volume or business requirements below, and our team will customize your plan limits.', 'clicksync-wordpress' ); ?>
+						</p>
+
+						<form id="clicksync-quota-request-form">
+							<div style="margin-bottom: 16px;">
+								<label style="display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 6px;"><?php esc_html_e( 'Detailed Requirements:', 'clicksync-wordpress' ); ?></label>
+								<textarea id="clicksync-quota-message" class="clicksync-select" style="width: 100%; height: 100px; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; outline: none; resize: vertical; box-sizing: border-box;" required placeholder="<?php esc_attr_e( 'e.g. We expect 15,000 orders per month and need a custom volume plan...', 'clicksync-wordpress' ); ?>"></textarea>
+							</div>
+
+							<div style="display: flex; justify-content: flex-end; gap: 8px;">
+								<button type="button" id="clicksync-cancel-quota-modal" class="clicksync-btn-secondary" style="height: 36px; padding: 0 16px; font-size: 13px; font-weight: 500;"><?php esc_html_e( 'Cancel', 'clicksync-wordpress' ); ?></button>
+								<button type="submit" class="clicksync-btn-primary" style="height: 36px; padding: 0 16px; font-size: 13px; font-weight: 600; background: #2563eb; color: #ffffff; border: none; border-radius: 6px; cursor: pointer;"><?php esc_html_e( 'Submit Request', 'clicksync-wordpress' ); ?></button>
+							</div>
+						</form>
+					</div>
+				</div>
+
+				<!-- Cancel Subscription Modal -->
+				<div id="clicksync-cancel-modal" style="display: none; position: fixed; z-index: 99999; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); align-items: center; justify-content: center;">
+					<div class="clicksync-card" style="background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; width: 100%; max-width: 480px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); margin: 0 16px; padding: 24px; box-sizing: border-box; position: relative; animation: clicksync-modal-fade 0.2s ease-out;">
+						<button type="button" id="clicksync-close-cancel-modal" style="position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 20px; color: #94a3b8; cursor: pointer; line-height: 1;">&times;</button>
+						
+						<div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
+							<div style="background: #fef2f2; border-radius: 8px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; color: #ef4444;">
+								<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+							</div>
+							<h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #0f172a;"><?php esc_html_e( 'Cancel Your ClickSync Subscription', 'clicksync-wordpress' ); ?></h3>
+						</div>
+
+						<p style="font-size: 13px; color: #475569; margin: 0 0 16px 0; line-height: 1.5;">
+							<?php esc_html_e( 'We are sorry to see you go. Canceling will immediately suspend your synchronization rules and restrict access to the plugin settings page.', 'clicksync-wordpress' ); ?>
+						</p>
+
+						<form id="clicksync-cancel-subscription-form">
+							<div style="margin-bottom: 16px;">
+								<label style="display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 6px;"><?php esc_html_e( 'Reason for Canceling:', 'clicksync-wordpress' ); ?></label>
+								<select id="clicksync-cancel-reason" class="clicksync-select" style="width: 100%; height: 38px; padding: 0 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; outline: none; box-sizing: border-box;" required>
+									<option value=""><?php esc_html_e( '-- Select Reason --', 'clicksync-wordpress' ); ?></option>
+									<option value="Too Expensive"><?php esc_html_e( 'Too Expensive / High Price', 'clicksync-wordpress' ); ?></option>
+									<option value="Missing Features"><?php esc_html_e( 'Missing Essential Features', 'clicksync-wordpress' ); ?></option>
+									<option value="Difficult Setup"><?php esc_html_e( 'Too Complicated / Difficult Setup', 'clicksync-wordpress' ); ?></option>
+									<option value="Temporary Project"><?php esc_html_e( 'Temporary Project or Site Closed', 'clicksync-wordpress' ); ?></option>
+									<option value="Other"><?php esc_html_e( 'Other Reason', 'clicksync-wordpress' ); ?></option>
+								</select>
+							</div>
+
+							<div style="margin-bottom: 16px;">
+								<label style="display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 6px;"><?php esc_html_e( 'Additional Feedback (Optional):', 'clicksync-wordpress' ); ?></label>
+								<textarea id="clicksync-cancel-feedback" class="clicksync-select" style="width: 100%; height: 80px; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; outline: none; resize: vertical; box-sizing: border-box;" placeholder="<?php esc_attr_e( 'Please tell us what we could do to make the plugin better...', 'clicksync-wordpress' ); ?>"></textarea>
+							</div>
+
+							<!-- Notice -->
+							<div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; padding: 12px; font-size: 11px; color: #991b1b; line-height: 1.4; margin-bottom: 20px;">
+								<?php esc_html_e( 'Note: Full deletion of your store data and configuration traces from our cloud database will take up to 30 days.', 'clicksync-wordpress' ); ?>
+							</div>
+
+							<div style="display: flex; justify-content: flex-end; gap: 8px;">
+								<button type="button" id="clicksync-cancel-keep-btn" class="clicksync-btn-secondary" style="height: 36px; padding: 0 16px; font-size: 13px; font-weight: 500;"><?php esc_html_e( 'Keep Subscription', 'clicksync-wordpress' ); ?></button>
+								<button type="submit" class="clicksync-btn-primary" style="height: 36px; padding: 0 16px; font-size: 13px; font-weight: 600; background: #ef4444; color: #ffffff; border: none; border-radius: 6px; cursor: pointer;"><?php esc_html_e( 'Confirm Cancellation', 'clicksync-wordpress' ); ?></button>
+							</div>
+						</form>
+					</div>
+				</div>
+
+				<style>
+					@keyframes clicksync-modal-fade {
+						from { opacity: 0; transform: scale(0.95); }
+						to { opacity: 1; transform: scale(1); }
+					}
+				</style>
 
 			</div> <!-- end main container -->
 

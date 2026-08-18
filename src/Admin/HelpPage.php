@@ -18,6 +18,9 @@ class HelpPage {
 	 */
 	public static function render() {
 		$logo_url = CLICKSYNC_URL . 'assets/images/logo.png';
+		$account = \ClickSync\Core\Options::get_account();
+		$secret_key = isset( $account['secret_key'] ) ? $account['secret_key'] : '';
+		$cancel_url = admin_url( 'admin.php?page=clicksync&clicksync_secret_key=' . urlencode( $secret_key ) . '&clicksync_action=cancel_subscription' );
 		?>
 		<style>
 			.clicksync-help-container {
@@ -100,6 +103,13 @@ class HelpPage {
 				display: flex;
 				align-items: center;
 				gap: 6px;
+			}
+			.clicksync-faq-item details summary::-webkit-details-marker {
+				display: none;
+			}
+			.clicksync-faq-item details summary {
+				list-style: none;
+				outline: none;
 			}
 			.clicksync-faq-q::before {
 				content: 'Q:';
@@ -268,6 +278,21 @@ class HelpPage {
 						<div class="clicksync-faq-item">
 							<div class="clicksync-faq-q"><?php esc_html_e( 'How do I force manual sync if order parameters change?', 'clicksync-wordpress' ); ?></div>
 							<div class="clicksync-faq-a"><?php esc_html_e( 'Go to any WooCommerce order page. The ClickSync Meta Box widget features a "Sync Now" control. Clicking this runs a synchronous manual sync pipeline instantly, pulling updated details into WooCommerce.', 'clicksync-wordpress' ); ?></div>
+						</div>
+						<div class="clicksync-faq-item" style="border-top: 1px solid #e1e3e5; margin-top: 12px; padding-top: 12px;">
+							<details style="outline: none;">
+								<summary class="clicksync-faq-q" style="cursor: pointer; list-style: none; outline: none; user-select: none;">
+									<?php esc_html_e( 'How do I manage or cancel my billing subscription?', 'clicksync-wordpress' ); ?>
+								</summary>
+								<div class="clicksync-faq-a" style="margin-top: 8px;">
+									<?php esc_html_e( 'Your subscription plan can be managed directly. If you wish to cancel or modify your active ClickSync plan subscription, ', 'clicksync-wordpress' ); ?>
+									<a href="<?php echo esc_url( $cancel_url ); ?>" style="color: #008060; font-weight: 600; text-decoration: underline; display: inline-flex; align-items: center; gap: 4px;">
+										<?php esc_html_e( 'click here to request cancellation', 'clicksync-wordpress' ); ?>
+										<svg style="width: 12px; height: 12px; fill: #008060;" viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>
+									</a>.
+									<?php esc_html_e( ' Stored integration metadata and site telemetry on the cloud will be fully deleted within 30 days of cancellation.', 'clicksync-wordpress' ); ?>
+								</div>
+							</details>
 						</div>
 					</div>
 

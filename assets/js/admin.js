@@ -972,12 +972,12 @@
                         '<span style="font-size: 13px; font-weight: 600; color: #475569; display: inline-flex; align-items: center; gap: 4px;">' +
                         '<svg style="width: 14px; height: 14px; fill: #7c3aed; margin-right: 4px;" viewBox="0 0 24 24"><path d="M2 18.439l3.69-2.828c1.961 2.56 4.044 3.739 6.363 3.739 2.307 0 4.33-1.166 6.203-3.704L22 18.405C19.298 22.065 15.941 24 12.053 24c-3.875 0-7.265-1.922-10.053-5.561zM12.04 6.15L5.472 11.81l-3.036-3.52L12.055 0l9.543 8.296-3.05 3.509z"/></svg>' +
                         'ClickUp Subscription:</span> ' +
-                        '<span class="clicksync-badge badge-info" style="background: #f3e8ff; color: #7c3aed; border-color: #d8b4fe; padding: 4px 10px; font-weight: 600; font-size: 11px;">' + clickupPlanStr + '</span>' +
+                        '<span class="clicksync-badge clicksync-clickup-plan-badge" style="background: #f3e8ff; color: #7c3aed; border-color: #d8b4fe; padding: 4px 10px; font-weight: 600; font-size: 11px;">' + clickupPlanStr + '</span>' +
                         '</div>' +
                         '</div>' +
                         '<p style="font-size: 13px; color: #64748b; margin-bottom: 16px; line-height: 1.5;">ClickSync is active. Background WooCommerce events are intercepted and synchronized into ClickUp instantly.</p>' +
                         '<div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px; font-size: 13px; color: #475569; margin-bottom: 16px; line-height: 1.5;">' +
-                        '<svg class="clicksync-title-icon" style="width: 16px; height: 16px; fill: #64748b;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg> Your integration is subject to <strong>ClickUp\'s plan limits (100 API calls/min)</strong>. If a synchronization fails or experiences delays under heavy load, it is due to ClickUp\'s API rate limits rejecting incoming calls, not our app. ClickSync automatically queues and retries these requests for you.' +
+                        '<svg class="clicksync-title-icon" style="width: 16px; height: 16px; fill: #64748b;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg> Your integration is subject to <strong>ClickUp\'s plan limits (' + (account.clickupLimit || 100) + ' API calls/min)</strong>. If a synchronization fails or experiences delays under heavy load, it is due to ClickUp\'s API rate limits rejecting incoming calls, not our app. ClickSync automatically queues and retries these requests for you.' +
                         '</div>' +
                         '<div style="display: flex; gap: 12px; align-items: center;">' +
                         '<button id="clicksync-process-queue-btn" class="clicksync-btn-primary clicksync-btn-green" style="background: #10b981; color: white; border: none; height: 36px; font-size: 13px; padding: 8px 16px; display: inline-flex; align-items: center; gap: 6px; border-radius: 6px; font-weight: 500; cursor: pointer; ' + queueDisabledStyle + '" ' + queueDisabledAttr + '>' +
@@ -1034,16 +1034,51 @@
                         $('#clicksync-activate-free-btn, #clicksync-toggle-upgrade-btn, #clicksync-upgrade-to-pro-btn, #clicksync-custom-quota-btn').hide();
                         $('#clicksync-upgrade-drawer').hide();
 
+                        // Silent Contact Info Sync to Cloud
+                        if (!res.account.email || !res.account.ownerName) {
+                            var statusBlock = $('#clicksync-connection-status-block');
+                            var emailVal = statusBlock.data('site-email') || '';
+                            var siteTitleVal = statusBlock.data('site-title') || '';
+                            var ownerNameVal = statusBlock.data('site-owner') || '';
+                            
+                            if (emailVal) {
+                                $.ajax({
+                                    url: cloudUrl + '/api/save-config',
+                                    type: 'POST',
+                                    contentType: 'application/json',
+                                    data: JSON.stringify({
+                                        shop: host,
+                                        actionType: 'update_contact_info',
+                                        payload: {
+                                            email: emailVal,
+                                            siteTitle: siteTitleVal,
+                                            ownerName: ownerNameVal
+                                        }
+                                    })
+                                });
+                            }
+                        }
+
+                        var activeBadge = $('#clicksync-active-plan-badge');
+                        var badgeIcon = '';
+                        var badgeStyle = '';
+
                         if (plan === 'None') {
-                            $('.badge-info').text('No Plan Selected').css({ background: '#fee2e2', color: '#b91c1c', border: '1px solid #fca5a5' });
+                            badgeIcon = '<svg style="width: 12px; height: 12px; fill: #b91c1c; margin-right: 4px; vertical-align: middle;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>';
+                            badgeStyle = 'background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5;';
+                            activeBadge.html(badgeIcon + 'No Plan Selected').attr('style', 'padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; ' + badgeStyle);
                             $('#clicksync-activate-free-btn').show();
                             lockSyncRules();
                         } else if (plan === 'Free Plan') {
-                            $('.badge-info').text('Free').css({ background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0' });
+                            badgeIcon = '<svg style="width: 12px; height: 12px; fill: #047857; margin-right: 4px; vertical-align: middle;" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>';
+                            badgeStyle = 'background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0;';
+                            activeBadge.html(badgeIcon + 'Free Plan').attr('style', 'padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; ' + badgeStyle);
                             $('#clicksync-toggle-upgrade-btn').show();
                             unlockSyncRules();
                         } else if (plan === 'Growth Plan') {
-                            $('.badge-info').text('Paid').css({ background: '#f3e8ff', color: '#7c3aed', border: '1px solid #d8b4fe' });
+                            badgeIcon = '<svg style="width: 12px; height: 12px; fill: #4338ca; margin-right: 4px; vertical-align: middle;" viewBox="0 0 24 24"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zm-1-15l5 5-5 5v-4H8v-2h3V7z"/></svg>';
+                            badgeStyle = 'background: #e0e7ff; color: #4338ca; border: 1px solid #c7d2fe;';
+                            activeBadge.html(badgeIcon + 'Growth Plan').attr('style', 'padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; ' + badgeStyle);
                             $('#clicksync-upgrade-to-pro-btn').show();
                             
                             // Highlight inside drawer just in case
@@ -1051,11 +1086,15 @@
                             $('#plan-card-growth .plan-action').html('Active');
                             unlockSyncRules();
                         } else if (plan === 'Pro Plan') {
-                            $('.badge-info').text('Paid').css({ background: '#f3e8ff', color: '#7c3aed', border: '1px solid #d8b4fe' });
+                            badgeIcon = '<svg style="width: 12px; height: 12px; fill: #d97706; margin-right: 4px; vertical-align: middle;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+                            badgeStyle = 'background: #fef3c7; color: #d97706; border: 1px solid #fde68a;';
+                            activeBadge.html(badgeIcon + 'Pro Plan').attr('style', 'padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; ' + badgeStyle);
                             
-                            // Setup mailto dynamic parameters for custom request
-                            var mailtoLink = 'mailto:support@loopstates.com?subject=ClickSync%20Custom%20Quota%20Request%20-%20' + encodeURIComponent(host) + '&body=Hi%20ClickSync%20Team%2C%0A%0AI%20would%20like%20to%20request%20a%20custom%20quota%20for%20my%20store%20' + encodeURIComponent(host) + '.';
-                            $('#clicksync-custom-quota-btn').attr('href', mailtoLink).show();
+                            // Prevent mailto link, open custom quota modal
+                            $('#clicksync-custom-quota-btn').off('click').on('click', function(e) {
+                                e.preventDefault();
+                                $('#clicksync-quota-modal').css('display', 'flex');
+                            }).show();
 
                             // Highlight inside drawer just in case
                             $('#plan-card-pro').addClass('active clicksync-btn-disabled').css('pointer-events', 'none').find('.plan-active-badge').show();
@@ -1373,7 +1412,7 @@
                     var taskLink = '-';
                     if (log.clickupTaskId) {
                         var taskUrl = log.clickupTaskId.startsWith('http') ? log.clickupTaskId : 'https://app.clickup.com/t/' + log.clickupTaskId;
-                        taskLink = '<a href="' + taskUrl + '" target="_blank" style="color: #008060; font-weight: 600; text-decoration: underline;">View ClickUp Task</a>';
+                        taskLink = '<a href="' + taskUrl + '" target="_blank" style="color: #008060; font-weight: 600; text-decoration: underline; display: inline-flex; align-items: center; gap: 4px;">View ClickUp Task <svg style="width: 12px; height: 12px; fill: #008060;" viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg></a>';
                     }
                     html += '<tr>' +
                         '<td style="padding: 12px 24px; border-bottom: 1px solid #e2e8f0;"><strong>' + (log.event || 'Sync Event') + '</strong></td>' +
@@ -1474,7 +1513,11 @@
                 var html = '';
                 $.each(miniLogs, function (i, log) {
                     var badgeStyle = log.status === 'Success' ? 'background: #dcfce7; color: #15803d;' : 'background: #fee2e2; color: #b91c1c;';
-                    var taskLink = log.clickupTaskId ? '<a href="' + log.clickupTaskId + '" target="_blank" style="color: #7c3aed; font-weight: 600; text-decoration: underline;">View Task</a>' : '-';
+                    var taskLink = '-';
+                    if (log.clickupTaskId) {
+                        var taskUrl = log.clickupTaskId.startsWith('http') ? log.clickupTaskId : 'https://app.clickup.com/t/' + log.clickupTaskId;
+                        taskLink = '<a href="' + taskUrl + '" target="_blank" style="color: #008060; font-weight: 600; text-decoration: underline; display: inline-flex; align-items: center; gap: 4px;">View Task <svg style="width: 12px; height: 12px; fill: #008060;" viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg></a>';
+                    }
                     html += '<tr>' +
                         '<td style="padding: 12px; border-bottom: 1px solid #e2e8f0;"><strong>' + (log.event || 'Sync Event') + '</strong></td>' +
                         '<td style="padding: 12px; border-bottom: 1px solid #e2e8f0;"><span class="clicksync-badge" style="' + badgeStyle + ' padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600;">' + log.status + '</span></td>' +
@@ -1861,11 +1904,13 @@
                 $('#orders-split-routing').prop('checked', false).prop('disabled', true);
                 $('#orders-split-routing').closest('.clicksync-switch').css({ opacity: '0.55', 'pointer-events': 'auto', cursor: 'not-allowed' });
                 $('#orders-split-routing').closest('label').addClass('clicksync-switch-disabled');
+                $('#clicksync-split-routing-lock-tooltip').css('display', 'inline-flex');
             } else {
                 $('#orders-split-routing').prop('disabled', false);
                 $('#orders-split-routing').closest('.clicksync-switch').css({ opacity: '1', 'pointer-events': 'auto', cursor: '' });
                 $('#orders-split-routing').closest('label').removeClass('clicksync-switch-disabled');
                 $('#split-routing-lock-notice').remove();
+                $('#clicksync-split-routing-lock-tooltip').hide();
             }
 
             // 2. Gating Sync Refunds: Growth or Pro (requires Growth or Pro)
@@ -1873,11 +1918,13 @@
                 $('#orders-sync-refunds').prop('checked', false).prop('disabled', true);
                 $('#orders-sync-refunds').closest('.clicksync-switch').css({ opacity: '0.55', 'pointer-events': 'auto', cursor: 'not-allowed' });
                 $('#orders-sync-refunds').closest('label').addClass('clicksync-switch-disabled-refunds');
+                $('#clicksync-refunds-lock-tooltip').css('display', 'inline-flex');
             } else {
                 $('#orders-sync-refunds').prop('disabled', false);
                 $('#orders-sync-refunds').closest('.clicksync-switch').css({ opacity: '1', 'pointer-events': 'auto', cursor: '' });
                 $('#orders-sync-refunds').closest('label').removeClass('clicksync-switch-disabled-refunds');
                 $('#refunds-lock-notice').remove();
+                $('#clicksync-refunds-lock-tooltip').hide();
             }
 
             // 3. Gating Status Mapping: Always enabled for configuration (runs in unidirectional mode on Free)
@@ -2129,6 +2176,103 @@
             setTimeout(function() {
                 toast.remove();
             }, 300);
+        });
+
+        // Close Custom Quota modal
+        $(document).on('click', '#clicksync-close-quota-modal, #clicksync-cancel-quota-modal', function() {
+            $('#clicksync-quota-modal').hide();
+        });
+
+        // Auto-trigger cancellation modal if query action parameter is present
+        var urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('clicksync_action') === 'cancel_subscription') {
+            var checkInterval = setInterval(function() {
+                if (activePlanName) {
+                    clearInterval(checkInterval);
+                    if (activePlanName !== 'None') {
+                        $('#clicksync-cancel-modal').css('display', 'flex');
+                    }
+                }
+            }, 200);
+        }
+
+        // Close Cancel modal
+        $(document).on('click', '#clicksync-close-cancel-modal, #clicksync-cancel-keep-btn', function() {
+            $('#clicksync-cancel-modal').hide();
+        });
+
+        // Submit Cancel Subscription Form to Cloud
+        $(document).on('submit', '#clicksync-cancel-subscription-form', function(e) {
+            e.preventDefault();
+            var submitBtn = $(this).find('button[type="submit"]');
+            var reason = $('#clicksync-cancel-reason').val();
+            var feedback = $('#clicksync-cancel-feedback').val();
+
+            submitBtn.prop('disabled', true).text('Canceling...');
+
+            $.ajax({
+                url: cloudUrl + '/api/save-config',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    shop: host,
+                    actionType: 'cancel_subscription',
+                    payload: {
+                        reason: reason,
+                        feedback: feedback
+                    }
+                }),
+                success: function(res) {
+                    submitBtn.prop('disabled', false).text('Confirm Cancellation');
+                    if (res.success) {
+                        $('#clicksync-cancel-modal').hide();
+                        fetchCloudConfig();
+                        showClickSyncToast('Subscription Canceled', 'Your subscription was successfully canceled.');
+                    } else {
+                        alert(res.error || 'Failed to cancel subscription.');
+                    }
+                },
+                error: function() {
+                    submitBtn.prop('disabled', false).text('Confirm Cancellation');
+                    alert('An error occurred during cancellation. Please try again.');
+                }
+            });
+        });
+
+        // Submit Custom Quota Request Form
+        $(document).on('submit', '#clicksync-quota-request-form', function(e) {
+            e.preventDefault();
+            var form = $(this);
+            var submitBtn = form.find('button[type="submit"]');
+            var message = $('#clicksync-quota-message').val();
+
+            submitBtn.prop('disabled', true).text('Sending...');
+
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'clicksync_contact_submit',
+                    contact_name: 'Store Manager (' + host + ')',
+                    contact_email: $('#clicksync-connection-status-block').data('site-email') || 'billing@' + host,
+                    contact_subject: 'Custom Quota Request',
+                    contact_message: message
+                },
+                success: function(res) {
+                    submitBtn.prop('disabled', false).text('Submit Request');
+                    if (res.success) {
+                        $('#clicksync-quota-modal').hide();
+                        $('#clicksync-quota-message').val('');
+                        showClickSyncToast('Request Submitted', 'Your custom quota request has been sent to our support desk.');
+                    } else {
+                        alert(res.data || 'Failed to submit quota request. Please try again.');
+                    }
+                },
+                error: function() {
+                    submitBtn.prop('disabled', false).text('Submit Request');
+                    alert('An error occurred. Please try again.');
+                }
+            });
         });
 
         $(document).on('click', '.clicksync-open-upgrade-btn', function (e) {

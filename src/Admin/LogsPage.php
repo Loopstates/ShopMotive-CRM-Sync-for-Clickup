@@ -66,10 +66,10 @@ class LogsPage {
 				<table class="wp-list-table widefat fixed striped" style="width: 100%; border: none; margin: 0; border-collapse: collapse; box-shadow: none;">
 					<thead>
 						<tr>
-							<th style="padding: 12px 24px; font-weight: 600; font-size: 13px; color: #475569; border-bottom: 1px solid #cbd5e1; background: #f8fafc;"><?php esc_html_e( 'Event & Entity', 'clicksync-wordpress' ); ?></th>
-							<th style="padding: 12px 24px; font-weight: 600; font-size: 13px; color: #475569; border-bottom: 1px solid #cbd5e1; background: #f8fafc;"><?php esc_html_e( 'Execution Status', 'clicksync-wordpress' ); ?></th>
-							<th style="padding: 12px 24px; font-weight: 600; font-size: 13px; color: #475569; border-bottom: 1px solid #cbd5e1; background: #f8fafc;"><?php esc_html_e( 'ClickUp Task Link', 'clicksync-wordpress' ); ?></th>
-							<th style="padding: 12px 24px; font-weight: 600; font-size: 13px; color: #475569; border-bottom: 1px solid #cbd5e1; background: #f8fafc; text-align: right;"><?php esc_html_e( 'Timestamp', 'clicksync-wordpress' ); ?></th>
+							<th style="width: 45%; padding: 12px 24px; font-weight: 600; font-size: 13px; color: #475569; border-bottom: 1px solid #cbd5e1; background: #f8fafc;"><?php esc_html_e( 'Event & Entity', 'clicksync-wordpress' ); ?></th>
+							<th style="width: 15%; padding: 12px 24px; font-weight: 600; font-size: 13px; color: #475569; border-bottom: 1px solid #cbd5e1; background: #f8fafc;"><?php esc_html_e( 'Execution Status', 'clicksync-wordpress' ); ?></th>
+							<th style="width: 20%; padding: 12px 24px; font-weight: 600; font-size: 13px; color: #475569; border-bottom: 1px solid #cbd5e1; background: #f8fafc;"><?php esc_html_e( 'ClickUp Task Link', 'clicksync-wordpress' ); ?></th>
+							<th style="width: 20%; padding: 12px 24px; font-weight: 600; font-size: 13px; color: #475569; border-bottom: 1px solid #cbd5e1; background: #f8fafc; text-align: right;"><?php esc_html_e( 'Timestamp', 'clicksync-wordpress' ); ?></th>
 						</tr>
 					</thead>
 					<tbody id="full-sync-logs-tbody">

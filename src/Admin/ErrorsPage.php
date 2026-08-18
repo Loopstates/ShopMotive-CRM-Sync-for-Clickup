@@ -50,15 +50,13 @@ class ErrorsPage {
 				</div>
 			</div>
 
-			<!-- Status Banner -->
-			<div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 16px 24px; margin-bottom: 20px; color: #991b1b; display: flex; align-items: flex-start; gap: 12px;">
-				<svg class="clicksync-title-icon" viewBox="0 0 24 24" style="width: 24px; height: 24px; fill: #ef4444; margin-top: 2px;"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
-				<div>
-					<strong style="font-size: 14px; display: block; margin-bottom: 4px;"><?php esc_html_e( 'Automatic Fail-Safe Architecture', 'clicksync-wordpress' ); ?></strong>
-					<span style="font-size: 13px; color: #b91c1c; line-height: 1.5; display: block;">
-						<?php esc_html_e( 'If ClickUp rate limits (e.g. 100 calls/min) temporarily block an event, ClickSync automatically queues and retries execution in the background. Your WooCommerce checkout flow is never blocked.', 'clicksync-wordpress' ); ?>
-					</span>
-				</div>
+			<!-- Retry & Deletion Info Slim Banner -->
+			<div style="background: #fef2f2; border: 1px solid #fee2e2; border-radius: 6px; padding: 10px 16px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; font-size: 12px; color: #991b1b; line-height: 1.4;">
+				<svg class="clicksync-title-icon" viewBox="0 0 24 24" style="width: 14px; height: 14px; fill: #ef4444; flex-shrink: 0; margin: 0;"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+				<span>
+					<strong><?php esc_html_e( 'Sync Retries & Retention Policy:', 'clicksync-wordpress' ); ?></strong>
+					<?php esc_html_e( 'Failed syncs are automatically retried 3 times in the background. If they still fail, they appear here. Error logs are kept for 7 days for manual retry before automatic deletion.', 'clicksync-wordpress' ); ?>
+				</span>
 			</div>
 
 			<!-- Error Logs Table -->
@@ -72,9 +70,9 @@ class ErrorsPage {
 				<table class="wp-list-table widefat fixed striped" style="width: 100%; border: none; margin: 0; border-collapse: collapse; box-shadow: none;">
 					<thead>
 						<tr>
-							<th style="padding: 12px 24px; font-weight: 600; font-size: 13px; color: #475569; border-bottom: 1px solid #cbd5e1; background: #f8fafc;"><?php esc_html_e( 'Failed Event', 'clicksync-wordpress' ); ?></th>
-							<th style="padding: 12px 24px; font-weight: 600; font-size: 13px; color: #475569; border-bottom: 1px solid #cbd5e1; background: #f8fafc;"><?php esc_html_e( 'Error Traceback', 'clicksync-wordpress' ); ?></th>
-							<th style="padding: 12px 24px; font-weight: 600; font-size: 13px; color: #475569; border-bottom: 1px solid #cbd5e1; background: #f8fafc; text-align: right;"><?php esc_html_e( 'Action', 'clicksync-wordpress' ); ?></th>
+							<th style="width: 40%; padding: 12px 24px; font-weight: 600; font-size: 13px; color: #475569; border-bottom: 1px solid #cbd5e1; background: #f8fafc;"><?php esc_html_e( 'Failed Event', 'clicksync-wordpress' ); ?></th>
+							<th style="width: 45%; padding: 12px 24px; font-weight: 600; font-size: 13px; color: #475569; border-bottom: 1px solid #cbd5e1; background: #f8fafc;"><?php esc_html_e( 'Error Traceback', 'clicksync-wordpress' ); ?></th>
+							<th style="width: 15%; padding: 12px 24px; font-weight: 600; font-size: 13px; color: #475569; border-bottom: 1px solid #cbd5e1; background: #f8fafc; text-align: right;"><?php esc_html_e( 'Action', 'clicksync-wordpress' ); ?></th>
 						</tr>
 					</thead>
 					<tbody id="sync-errors-tbody">
