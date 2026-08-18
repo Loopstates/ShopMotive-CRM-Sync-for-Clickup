@@ -953,6 +953,17 @@
                     // STATE 4: Fully Connected
                     var pendingCount = res.pendingQueueCount || 0;
                     var clickupPlanStr = account.clickupPlan || 'Free';
+                    var clickupRateLimit = account.clickupLimit;
+                    if (!clickupRateLimit) {
+                        var planLower = clickupPlanStr.toLowerCase();
+                        if (planLower.indexOf('enterprise') !== -1) {
+                            clickupRateLimit = 10000;
+                        } else if (planLower.indexOf('business plus') !== -1 || planLower.indexOf('business-plus') !== -1) {
+                            clickupRateLimit = 1000;
+                        } else {
+                            clickupRateLimit = 100;
+                        }
+                    }
                     
                     // Disable Process Queue button if nothing is in the queue
                     var isQueueEmpty = pendingCount === 0;
@@ -977,7 +988,7 @@
                         '</div>' +
                         '<p style="font-size: 13px; color: #64748b; margin-bottom: 16px; line-height: 1.5;">ClickSync is active. Background WooCommerce events are intercepted and synchronized into ClickUp instantly.</p>' +
                         '<div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px; font-size: 13px; color: #475569; margin-bottom: 16px; line-height: 1.5;">' +
-                        '<svg class="clicksync-title-icon" style="width: 16px; height: 16px; fill: #64748b;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg> Your integration is subject to the API rate limits of your active ClickUp <strong>' + clickupPlanStr + ' Plan</strong> (which restricts traffic to <strong>' + (account.clickupLimit || 100) + ' API calls/min</strong>). If a synchronization fails or experiences delays under heavy load, it is due to ClickUp\'s API rate limits rejecting incoming calls, not our app. ClickSync automatically queues and retries these requests for you.' +
+                        '<svg class="clicksync-title-icon" style="width: 16px; height: 16px; fill: #64748b;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg> Your integration is subject to the API rate limits of your active ClickUp <strong>' + clickupPlanStr + ' Plan</strong> (which restricts traffic to <strong>' + clickupRateLimit + ' API calls/min</strong>). If a synchronization fails or experiences delays under heavy load, it is due to ClickUp\'s API rate limits rejecting incoming calls, not our app. ClickSync automatically queues and retries these requests for you.' +
                         '</div>' +
                         '<div style="display: flex; gap: 12px; align-items: center;">' +
                         '<button id="clicksync-process-queue-btn" class="clicksync-btn-primary clicksync-btn-green" style="background: #10b981; color: white; border: none; height: 36px; font-size: 13px; padding: 8px 16px; display: inline-flex; align-items: center; gap: 6px; border-radius: 6px; font-weight: 500; cursor: pointer; ' + queueDisabledStyle + '" ' + queueDisabledAttr + '>' +
