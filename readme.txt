@@ -8,13 +8,52 @@ Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Connect and synchronize WooCommerce store events, order notes, checkout metadata, and customers directly with ClickUp tasks.
+Connect and synchronize WooCommerce store events, order notes, checkout metadata, and customers directly with ClickUp tasks. Learn more and get your sync API credentials at the [ClickSync Connect Homepage](https://clicksync-connect.apps.loopstates.com).
 
 == Description ==
 
 ClickSync Connect is an enterprise-grade, asynchronous synchronization engine designed to seamlessly bridge WooCommerce storefront activity with your ClickUp workspace. The plugin instantly captures e-commerce events—such as new checkouts, user registrations, refunds, order status transitions, and order notes—and queues them for structured syncing into your ClickUp lists.
 
 This plugin serves as the client connector linking your WordPress database with the ClickSync Cloud Service (https://clicksync-connect.apps.loopstates.com). By offloading heavy data serialization and external API request handshakes, ClickSync protects your WooCommerce execution threads and guarantees zero customer checkout delays. All merchant access tokens are stored with AES-256 encryption at rest, and webhook dispatches undergo real-time SHA-256 HMAC signature verification.
+
+== Subscription Plans & Pricing ==
+
+ClickSync Connect offers flexible plans to scale with your business requirements:
+
+* **Free Plan**
+    * **Sync Quota:** 100 tasks/month
+    * **Store Connections:** Single Store
+    * **Sync Direction:** WP -> ClickUp Only (Unidirectional)
+    * **Order & Customer Sync:** Yes
+    * **WooCommerce Sidebar Widgets:** Yes
+    * **WordPress User Mapping:** Yes
+    * **Bi-directional Notes/Comments:** WP -> ClickUp Only (Unidirectional)
+    * **Bi-directional Status Updates:** WP -> ClickUp Only (Unidirectional)
+
+* **Growth Plan**
+    * **Sync Quota:** 1,000 tasks/month
+    * **Store Connections:** Single Store
+    * **Sync Direction:** Bi-directional
+    * **Order & Customer Sync:** Yes
+    * **WooCommerce Sidebar Widgets:** Yes
+    * **WordPress User Mapping:** Yes
+    * **Bi-directional Notes/Comments:** Yes
+    * **Bi-directional Status Updates:** Yes
+    * **Custom Field Mapping:** Yes
+    * **Refund Sync Rules:** Yes
+
+* **Pro Plan**
+    * **Sync Quota:** 10,000 tasks/month
+    * **Store Connections:** Up to 5 Stores
+    * **Sync Direction:** Bi-directional
+    * **Order & Customer Sync:** Yes
+    * **WooCommerce Sidebar Widgets:** Yes
+    * **WordPress User Mapping:** Yes
+    * **Bi-directional Notes/Comments:** Yes
+    * **Bi-directional Status Updates:** Yes
+    * **Custom Field Mapping:** Yes
+    * **Refund Sync Rules:** Yes
+    * **Line-Item Split Routing:** Yes
 
 == Key Features ==
 
