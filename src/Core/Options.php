@@ -31,7 +31,6 @@ class Options {
 			'customers_enabled'      => true,
 			'refunds_enabled'        => true,
 			'fulfillment_enabled'    => true,
-			'draft_checkouts_enabled'=> true,
 			'sync_rules'             => array(),
 			'last_sync_timestamp'    => 0,
 			'secret_key'             => '',

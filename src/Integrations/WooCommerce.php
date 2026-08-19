@@ -36,9 +36,6 @@ class WooCommerce {
 		// Customer Creation
 		add_action( 'woocommerce_created_customer', array( __CLASS__, 'on_created_customer' ), 10, 3 );
 
-		// Draft & Abandoned Checkout Tracking
-		add_action( 'woocommerce_checkout_order_processed', array( __CLASS__, 'on_checkout_processed' ), 10, 3 );
-
 		// Action Scheduler background retries
 		add_action( 'clicksync_retry_event', array( __CLASS__, 'handle_retry_event' ), 10, 3 );
 	}
@@ -134,15 +131,29 @@ class WooCommerce {
 		$refund_amount = $refund ? abs( $refund->get_amount() ) : 0;
 		$reason        = $refund ? $refund->get_reason() : 'Refund processed';
 
+		$refund_line_items = array();
+		if ( $refund ) {
+			foreach ( $refund->get_items() as $item_id => $item ) {
+				$refund_line_items[] = array(
+					'quantity'  => abs( $item->get_quantity() ),
+					'subtotal'  => (string) abs( $item->get_subtotal() ),
+					'line_item' => array(
+						'name' => $item->get_name(),
+					),
+				);
+			}
+		}
+
 		$payload = array(
-			'id'             => $refund_id,
-			'order_id'       => $order_id,
-			'amount'         => (string) $refund_amount,
-			'currency'       => $order->get_currency(),
-			'note'           => $reason,
-			'created_at'     => date( 'c', strtotime( $order->get_date_created() ) ),
-			'order_number'   => '#' . $order->get_order_number(),
-			'customer_email' => $order->get_billing_email(),
+			'id'                => $refund_id,
+			'order_id'          => $order_id,
+			'amount'            => (string) $refund_amount,
+			'currency'          => $order->get_currency(),
+			'note'              => $reason,
+			'created_at'        => date( 'c', strtotime( $order->get_date_created() ) ),
+			'order_number'      => '#' . $order->get_order_number(),
+			'customer_email'    => $order->get_billing_email(),
+			'refund_line_items' => $refund_line_items,
 		);
 
 		$payload = apply_filters( 'clicksync_refund_payload', $payload, $refund_id, $order );
@@ -247,36 +258,6 @@ class WooCommerce {
 		Client::dispatch_event( 'customers/create', $payload );
 	}
 
-	/**
-	 * Handle WooCommerce checkout processing (Draft / Abandoned Checkouts).
-	 *
-	 * @param int   $order_id Order ID.
-	 * @param array $posted_data Posted checkout data.
-	 * @param \WC_Order $order WooCommerce Order Object.
-	 */
-	public static function on_checkout_processed( $order_id, $posted_data, $order = null ) {
-		$settings = Options::get_settings();
-		if ( empty( $settings['draft_checkouts_enabled'] ) ) {
-			return;
-		}
-
-		if ( ! $order && function_exists( 'wc_get_order' ) ) {
-			$order = wc_get_order( $order_id );
-		}
-
-		if ( ! $order || 'completed' === $order->get_status() ) {
-			return;
-		}
-
-		if ( ! apply_filters( 'clicksync_should_sync_order', true, $order_id, $order ) ) {
-			return;
-		}
-
-		$payload = self::normalize_order( $order );
-		$payload = apply_filters( 'clicksync_checkout_payload', $payload, $order_id, $order );
-
-		Client::dispatch_event( 'checkouts/update', $payload );
-	}
 
 	/**
 	 * Normalize WooCommerce Order object into Shopify JSON Schema.

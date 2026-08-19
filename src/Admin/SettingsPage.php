@@ -23,10 +23,9 @@ class SettingsPage {
 			check_admin_referer( 'clicksync_save_settings_action', 'clicksync_nonce' );
 
 			$updated = array(
-				'orders_enabled'          => ! empty( $_POST['orders_enabled'] ),
-				'customers_enabled'       => ! empty( $_POST['customers_enabled'] ),
-				'refunds_enabled'         => ! empty( $_POST['refunds_enabled'] ),
-				'draft_checkouts_enabled' => ! empty( $_POST['draft_checkouts_enabled'] ),
+				'orders_enabled'    => ! empty( $_POST['orders_enabled'] ),
+				'customers_enabled' => ! empty( $_POST['customers_enabled'] ),
+				'refunds_enabled'   => ! empty( $_POST['refunds_enabled'] ),
 			);
 			Options::update_settings( $updated );
 			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'ClickSync settings saved successfully.', 'clicksync-connect' ) . '</p></div>';
