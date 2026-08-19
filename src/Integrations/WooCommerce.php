@@ -99,6 +99,11 @@ class WooCommerce {
 		// Dispatch order update event
 		Client::dispatch_event( 'orders/updated', $payload );
 
+		// Dispatch specific cancellation topic if cancelled
+		if ( 'cancelled' === $new_status ) {
+			Client::dispatch_event( 'orders/cancelled', $payload );
+		}
+
 		// Dispatch specific fulfillment topic if completed
 		if ( 'completed' === $new_status ) {
 			Client::dispatch_event( 'orders/fulfilled', $payload );
