@@ -81,7 +81,7 @@ class WooCommerce {
 	 */
 	public static function on_order_status_changed( $order_id, $old_status, $new_status, $order = null ) {
 		$settings = Options::get_settings();
-		if ( empty( $settings['orders_enabled'] ) || empty( $settings['fulfillment_enabled'] ) ) {
+		if ( empty( $settings['orders_enabled'] ) ) {
 			return;
 		}
 

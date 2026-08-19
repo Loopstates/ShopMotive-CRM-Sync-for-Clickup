@@ -72,8 +72,8 @@ class Webhook {
 		}
 
 		$settings = \ClickSync\Core\Options::get_settings();
-		if ( empty( $settings['fulfillment_enabled'] ) ) {
-			return new \WP_REST_Response( array( 'error' => 'Fulfillment status sync is disabled in settings.' ), 403 );
+		if ( empty( $settings['orders_enabled'] ) ) {
+			return new \WP_REST_Response( array( 'error' => 'Order status sync is disabled in settings.' ), 403 );
 		}
 
 		$params   = $request->get_json_params();

@@ -180,11 +180,9 @@ class AdminMenu {
 		}
 
 		$refunds_enabled = isset( $_POST['refunds_enabled'] ) ? '1' === $_POST['refunds_enabled'] : true;
-		$fulfillment_enabled = isset( $_POST['fulfillment_enabled'] ) ? '1' === $_POST['fulfillment_enabled'] : true;
-
 		Options::update_settings( array(
 			'refunds_enabled'     => $refunds_enabled,
-			'fulfillment_enabled' => $fulfillment_enabled,
+			'fulfillment_enabled' => true,
 		) );
 
 		wp_send_json_success( array( 'message' => 'Local settings updated successfully.' ) );
@@ -349,7 +347,7 @@ class AdminMenu {
 		// Legacy orders page
 		add_meta_box(
 			'clicksync_order_details_metabox',
-			__( 'ClickSync Integration', 'clicksync-connect' ),
+			__( 'ClickUp Task Sync', 'clicksync-connect' ),
 			array( \ClickSync\Admin\Widget::class, 'render_order_metabox' ),
 			'shop_order',
 			'side',
@@ -358,7 +356,7 @@ class AdminMenu {
 		// HPOS support
 		add_meta_box(
 			'clicksync_order_details_metabox',
-			__( 'ClickSync Integration', 'clicksync-connect' ),
+			__( 'ClickUp Task Sync', 'clicksync-connect' ),
 			array( \ClickSync\Admin\Widget::class, 'render_order_metabox' ),
 			'woocommerce_page_wc-orders',
 			'side',
@@ -377,7 +375,7 @@ class AdminMenu {
 			return;
 		}
 		?>
-		<h2><?php esc_html_e( 'ClickSync Integration', 'clicksync-connect' ); ?></h2>
+		<h2><?php esc_html_e( 'ClickUp Customer Sync', 'clicksync-connect' ); ?></h2>
 		<table class="form-table">
 			<tr>
 				<th><label><?php esc_html_e( 'ClickUp Task Link', 'clicksync-connect' ); ?></label></th>
