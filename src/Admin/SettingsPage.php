@@ -125,8 +125,19 @@ class SettingsPage {
 						<div style="display: flex; flex-direction: column; gap: 4px;">
 							<div style="display: flex; align-items: center; gap: 8px;">
 								<span style="font-size: 14px; font-weight: 600; color: #202223;"><?php esc_html_e( 'Subscription Plan:', 'clicksync-connect' ); ?></span>
-								<span id="clicksync-active-plan-badge" class="clicksync-badge badge-info" style="background: #e2f1f8; color: #005a87; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; display: inline-block;">
-									<?php echo esc_html( $plan_name ); ?>
+								<span id="clicksync-active-plan-badge" class="clicksync-badge badge-info" style="background: #e2f1f8; color: #005a87; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+									<?php 
+									$icon_html = '';
+									if ( 'Free Plan' === $plan_name ) {
+										$icon_html = '<svg style="width: 12px; height: 12px; fill: #047857; margin-right: 4px; vertical-align: middle;" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>';
+									} elseif ( 'Growth Plan' === $plan_name ) {
+										$icon_html = '<svg style="width: 16px; height: 16px; fill: #7c3aed; margin-right: 6px; vertical-align: middle; display: inline-block;" viewBox="0 0 24 24"><path d="M16 2H8L3.25 8.5 12 22 20.75 8.5 16 2zM7.5 7L10 3.3v3.7H7.5zm4.5-3.6l2.3 3.6h-4.6l2.3-3.6zM14 7V3.3l2.5 3.7H14zm-4 2h4v10.5l-4-10.5z"/></svg>';
+									} elseif ( 'Pro Plan' === $plan_name ) {
+										$icon_html = '<svg style="width: 16px; height: 16px; fill: #b45309; margin-right: 6px; vertical-align: middle; display: inline-block;" viewBox="0 0 24 24"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7zm3 14h14v2H5v-2z"/></svg>';
+									}
+									echo $icon_html;
+									echo esc_html( $plan_name ); 
+									?>
 								</span>
 							</div>
 							<div style="font-size: 12px; color: #6d7175;">

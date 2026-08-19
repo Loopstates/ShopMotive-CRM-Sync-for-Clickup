@@ -1013,9 +1013,17 @@
                         var plan = res.account.planName || 'None';
                         activePlanName = plan;
                         var syncCount = res.account.monthlySyncCount || 0;
+                        var boostQuota = res.account.boostQuota || 0;
+                        var boostMonths = res.account.boostIterationsLeft || 0;
+                        var baseQuota = plan.toLowerCase().indexOf('pro') !== -1 ? 10000 : (plan.toLowerCase().indexOf('growth') !== -1 ? 1000 : 100);
                         var quota = res.account.monthlyQuota || 100;
+                        
                         $('#clicksync-usage-count').text(syncCount);
-                        $('#clicksync-usage-quota').text(quota);
+                        if (boostQuota > 0 && boostMonths > 0) {
+                            $('#clicksync-usage-quota').html(baseQuota + ' <span style="color: #7c3aed; font-weight: bold;">+ ' + boostQuota + '</span> <span style="font-size: 11px; color: #6d7175; font-weight: normal; margin-left: 4px;">(⚡ Boost: ' + boostMonths + 'mo left)</span>');
+                        } else {
+                            $('#clicksync-usage-quota').text(quota);
+                        }
 
                         var pct = quota > 0 ? Math.min(100, Math.max(0, (syncCount / quota) * 100)) : 0;
                         var barColor = '#10b981';
@@ -1089,7 +1097,7 @@
                         } else if (plan === 'Growth Plan') {
                             badgeIcon = '<svg style="width: 16px; height: 16px; fill: #7c3aed; margin-right: 6px; vertical-align: middle; display: inline-block;" viewBox="0 0 24 24"><path d="M16 2H8L3.25 8.5 12 22 20.75 8.5 16 2zM7.5 7L10 3.3v3.7H7.5zm4.5-3.6l2.3 3.6h-4.6l2.3-3.6zM14 7V3.3l2.5 3.7H14zm-4 2h4v10.5l-4-10.5z"/></svg>';
                             activeBadge.addClass('clicksync-plan-growth').html(badgeIcon + 'Growth Plan');
-                            $('#clicksync-upgrade-to-pro-btn').show();
+                            $('#clicksync-toggle-upgrade-btn').show();
                             
                             // Highlight inside drawer just in case
                             $('#plan-card-growth').addClass('active clicksync-btn-disabled').css('pointer-events', 'none').find('.plan-active-badge').show();
@@ -1109,6 +1117,10 @@
                             $('#plan-card-pro').addClass('active clicksync-btn-disabled').css('pointer-events', 'none').find('.plan-active-badge').show();
                             $('#plan-card-pro .plan-action').html('Active');
                             unlockSyncRules();
+                        }
+                        
+                        if (res.account.boostQuota > 0 && res.account.boostIterationsLeft > 0) {
+                            activeBadge.append(' <span style="font-size: 10px; background: rgba(124, 58, 237, 0.1); color: #7c3aed; padding: 1.5px 6px; border-radius: 8px; font-weight: 700; margin-left: 6px; display: inline-flex; align-items: center; gap: 2px; vertical-align: middle;">⚡ Boost Active</span>');
                         }
                     }
 
