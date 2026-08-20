@@ -1903,14 +1903,14 @@
                 var btn = $(this);
                 var originalHtml = btn.html();
                 btn.html('Syncing...').prop('disabled', true);
-
                 $.ajax({
                     url: clicksyncData.ajaxUrl,
                     type: 'POST',
                     data: {
                         action: 'clicksync_widget_force_sync',
                         order_id: orderId,
-                        customer_id: customerId
+                        customer_id: customerId,
+                        security: clicksyncData.nonce
                     },
                     success: function (res) {
                         if (res.success) {

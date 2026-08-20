@@ -18,6 +18,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 class WooCommerce {
 
 	/**
+	 * Array of order IDs dispatched in the current request to prevent duplicates.
+	 *
+	 * @var array
+	 */
+	private static $dispatched_orders = array();
+
+	/**
 	 * Register WooCommerce event hooks.
 	 */
 	public static function init() {
@@ -28,13 +35,16 @@ class WooCommerce {
 		// Order Creation & Status Changes
 		add_action( 'woocommerce_new_order', array( __CLASS__, 'on_new_order' ), 10, 2 );
 		add_action( 'woocommerce_order_status_changed', array( __CLASS__, 'on_order_status_changed' ), 10, 4 );
+		add_action( 'woocommerce_update_order', array( __CLASS__, 'on_update_order' ), 10, 1 );
 
 		// Refunds
 		add_action( 'woocommerce_order_refunded', array( __CLASS__, 'on_order_refunded' ), 10, 2 );
-		add_action( 'woocommerce_new_order_note', array( __CLASS__, 'on_new_order_note' ), 10, 2 );
+		add_action( 'woocommerce_order_note_added', array( __CLASS__, 'on_new_order_note' ), 10, 2 );
 
 		// Customer Creation
 		add_action( 'woocommerce_created_customer', array( __CLASS__, 'on_created_customer' ), 10, 3 );
+		add_action( 'woocommerce_update_customer', array( __CLASS__, 'on_update_customer' ), 10, 1 );
+		add_action( 'profile_update', array( __CLASS__, 'on_update_customer' ), 10, 1 );
 
 		// Action Scheduler background retries
 		add_action( 'clicksync_retry_event', array( __CLASS__, 'handle_retry_event' ), 10, 3 );
@@ -111,6 +121,42 @@ class WooCommerce {
 	}
 
 	/**
+	 * Handle WooCommerce order update event.
+	 *
+	 * @param int $order_id Order ID.
+	 */
+	public static function on_update_order( $order_id ) {
+		// Prevent double dispatch in a single thread
+		if ( in_array( $order_id, self::$dispatched_orders, true ) ) {
+			return;
+		}
+
+		$settings = Options::get_settings();
+		if ( empty( $settings['orders_enabled'] ) ) {
+			return;
+		}
+
+		if ( ! function_exists( 'wc_get_order' ) ) {
+			return;
+		}
+
+		$order = wc_get_order( $order_id );
+		if ( ! $order ) {
+			return;
+		}
+
+		// Don't dispatch if order is in trash
+		if ( 'trash' === $order->get_status() ) {
+			return;
+		}
+
+		self::$dispatched_orders[] = $order_id;
+
+		$payload = self::normalize_order( $order );
+		Client::dispatch_event( 'orders/updated', $payload );
+	}
+
+	/**
 	 * Handle WooCommerce order refund.
 	 *
 	 * @param int $order_id  Order ID.
@@ -178,17 +224,13 @@ class WooCommerce {
 			return;
 		}
 
-		if ( ! function_exists( 'wc_get_order_note' ) ) {
-			return;
-		}
-
-		$note = wc_get_order_note( $note_id );
-		if ( ! $note ) {
+		$comment = get_comment( $note_id );
+		if ( ! $comment ) {
 			return;
 		}
 
 		// Prevent sync feedback loops
-		if ( strpos( $note->content, 'via ClickUp' ) !== false || strpos( $note->content, '[ClickUp]' ) !== false ) {
+		if ( strpos( $comment->comment_content, 'via ClickUp' ) !== false || strpos( $comment->comment_content, '[ClickUp]' ) !== false ) {
 			return;
 		}
 
@@ -206,12 +248,14 @@ class WooCommerce {
 		$wp_user = wp_get_current_user();
 		$action_maker_name = $wp_user && $wp_user->ID ? $wp_user->display_name : 'System';
 
+		$is_customer_note = (bool) get_comment_meta( $note_id, 'is_customer_note', true );
+
 		$payload = array(
 			'order_id'                => $order->get_id(),
 			'note_id'                 => $note_id,
-			'content'                 => $note->content,
-			'customer_note'           => $note->customer_note,
-			'added_by'                => $note->added_by,
+			'content'                 => $comment->comment_content,
+			'customer_note'           => $is_customer_note,
+			'added_by'                => $comment->comment_author,
 			'action_maker_clickup_id' => $action_maker_clickup_id,
 			'action_maker_name'       => $action_maker_name,
 		);
@@ -261,6 +305,60 @@ class WooCommerce {
 		$payload = apply_filters( 'clicksync_customer_payload', $payload, $customer_id );
 
 		Client::dispatch_event( 'customers/create', $payload );
+	}
+
+	/**
+	 * Handle WooCommerce customer details update.
+	 *
+	 * @param int $customer_id Customer user ID.
+	 */
+	public static function on_update_customer( $customer_id ) {
+		$settings = Options::get_settings();
+		if ( empty( $settings['customers_enabled'] ) ) {
+			return;
+		}
+
+		if ( ! apply_filters( 'clicksync_should_sync_customer', true, $customer_id, array() ) ) {
+			return;
+		}
+
+		$user = get_userdata( $customer_id );
+		if ( ! $user ) {
+			return;
+		}
+
+		$user_meta = array();
+		$all_user_meta = get_user_meta( $customer_id );
+		if ( ! empty( $all_user_meta ) ) {
+			foreach ( $all_user_meta as $k => $values ) {
+				if ( strpos( $k, '_' ) !== 0 ) {
+					$user_meta[ $k ] = maybe_unserialize( $values[0] );
+				}
+			}
+		}
+
+		$orders_count = 0;
+		$total_spent = '0.00';
+		if ( function_exists( 'wc_get_customer_order_count' ) ) {
+			$orders_count = wc_get_customer_order_count( $customer_id );
+			$total_spent = wc_get_customer_total_spent( $customer_id );
+		}
+
+		$payload = array(
+			'id'            => $customer_id,
+			'email'         => $user->user_email,
+			'first_name'    => get_user_meta( $customer_id, 'billing_first_name', true ) ?: $user->first_name,
+			'last_name'     => get_user_meta( $customer_id, 'billing_last_name', true ) ?: $user->last_name,
+			'orders_count'  => intval( $orders_count ),
+			'total_spent'   => (string) $total_spent,
+			'created_at'    => date( 'c', strtotime( $user->user_registered ) ),
+			'phone'         => get_user_meta( $customer_id, 'billing_phone', true ),
+			'meta'          => $user_meta,
+		);
+
+		$payload = apply_filters( 'clicksync_customer_payload', $payload, $customer_id );
+
+		Client::dispatch_event( 'customers/update', $payload );
 	}
 
 
@@ -362,6 +460,8 @@ class WooCommerce {
 			),
 			'payment_method'          => $order->get_payment_method(),
 			'payment_method_title'    => $order->get_payment_method_title(),
+			'meta_data'               => $meta_data,
+			'meta'                    => $meta_data,
 			'action_maker_clickup_id' => $action_maker_clickup_id,
 			'action_maker_name'       => $action_maker_name,
 		);
