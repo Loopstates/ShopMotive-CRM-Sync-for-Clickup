@@ -115,7 +115,7 @@ class AdminMenu {
 	 * Enqueue assets on ClickSync admin pages only.
 	 */
 	public static function enqueue_assets( $hook ) {
-		$allowed_pages = array( 'post.php', 'post-new.php', 'user-edit.php', 'profile.php' );
+		$allowed_pages = array( 'post.php', 'post-new.php', 'user-edit.php', 'profile.php', 'woocommerce_page_wc-orders' );
 		$is_allowed = false;
 		if ( strpos( $hook, 'clicksync' ) !== false ) {
 			$is_allowed = true;
