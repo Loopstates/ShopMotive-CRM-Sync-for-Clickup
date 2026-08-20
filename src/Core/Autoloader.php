@@ -47,6 +47,12 @@ class Autoloader {
 		// If the file exists, require it
 		if ( file_exists( $file ) ) {
 			require $file;
+		} else {
+			// Try lowercase path fallback in case of FTP/server naming alterations
+			$lowercase_file = strtolower( $file );
+			if ( file_exists( $lowercase_file ) ) {
+				require $lowercase_file;
+			}
 		}
 	}
 }

@@ -4,7 +4,7 @@
  * Plugin URI:        https://docs.loopstates.com/clicksync/wordpress/
  * Description:       Automate your WooCommerce workflow by converting orders, refunds, customer updates, and abandoned checkouts directly into ClickUp tasks.
  * Version:           1.2.0
- * Tested up to:      6.7.1
+ * Tested up to:      7.1
  * Requires PHP:      7.4
  * Author:            Loopstates
  * Author URI:        https://loopstates.com
@@ -19,14 +19,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Define Plugin Constants
-define( 'CLICKSYNC_VERSION', '1.0.0' );
+define( 'CLICKSYNC_VERSION', '1.2.0' );
 define( 'CLICKSYNC_FILE', __FILE__ );
 define( 'CLICKSYNC_PATH', plugin_dir_path( __FILE__ ) );
 define( 'CLICKSYNC_URL', plugin_dir_url( __FILE__ ) );
 define( 'CLICKSYNC_CLOUD_URL', 'https://clicksync-connect.apps.loopstates.com' );
 
-// Require Autoloader
-require_once untrailingslashit( CLICKSYNC_PATH ) . '/src/Core/Autoloader.php';
+// Require Autoloader with case-insensitive file system fallback check
+$clicksync_autoloader = untrailingslashit( CLICKSYNC_PATH ) . '/src/Core/Autoloader.php';
+if ( ! file_exists( $clicksync_autoloader ) ) {
+	$clicksync_autoloader = strtolower( $clicksync_autoloader );
+}
+require_once $clicksync_autoloader;
 
 // Register Autoloader
 \ClickSync\Core\Autoloader::register();

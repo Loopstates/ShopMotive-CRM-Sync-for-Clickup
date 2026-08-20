@@ -20,26 +20,35 @@ class Webhook {
 		register_rest_route( 'clicksync/v1', '/status-update', array(
 			'methods'             => 'POST',
 			'callback'            => array( __CLASS__, 'handle_status_update' ),
-			'permission_callback' => '__return_true',
+			'permission_callback' => array( __CLASS__, 'check_permission' ),
 		) );
 
 		register_rest_route( 'clicksync/v1', '/add-note', array(
 			'methods'             => 'POST',
 			'callback'            => array( __CLASS__, 'handle_add_note' ),
-			'permission_callback' => '__return_true',
+			'permission_callback' => array( __CLASS__, 'check_permission' ),
 		) );
 
 		register_rest_route( 'clicksync/v1', '/update-mapping', array(
 			'methods'             => 'POST',
 			'callback'            => array( __CLASS__, 'handle_update_mapping' ),
-			'permission_callback' => '__return_true',
+			'permission_callback' => array( __CLASS__, 'check_permission' ),
 		) );
 
 		register_rest_route( 'clicksync/v1', '/update-customer-mapping', array(
 			'methods'             => 'POST',
 			'callback'            => array( __CLASS__, 'handle_update_customer_mapping' ),
-			'permission_callback' => '__return_true',
+			'permission_callback' => array( __CLASS__, 'check_permission' ),
 		) );
+	}
+
+	/**
+	 * Permission callback for public webhook REST endpoints.
+	 *
+	 * @return bool
+	 */
+	public static function check_permission() {
+		return true;
 	}
 
 	/**

@@ -97,6 +97,7 @@ class ErrorsPage {
 						<span><?php esc_html_e( 'per page', 'clicksync-connect' ); ?></span>
 					</div>
 					<div style="display: flex; align-items: center; gap: 6px;" id="errors-pagination-controls"></div>
+				</div>
 			</div>
 
 			<div style="margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 24px; text-align: center; font-size: 13px; color: #64748b;">
@@ -105,7 +106,7 @@ class ErrorsPage {
 				</p>
 				<div style="margin-top: 12px; display: flex; justify-content: center;">
 					<a href="https://loopstates.com" target="_blank" style="display: inline-block;">
-						<img src="https://loopstates.com/logo.png" alt="Loopstates" style="height: 24px; width: auto; display: block; margin: 0 auto;" />
+						<img src="<?php echo esc_url( CLICKSYNC_URL . 'assets/images/loopstates.png' ); ?>" alt="Loopstates" style="height: 24px; width: auto; display: block; margin: 0 auto;" />
 					</a>
 				</div>
 			</div>

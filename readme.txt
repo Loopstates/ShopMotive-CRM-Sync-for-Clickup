@@ -2,7 +2,7 @@
 Contributors: loopstates
 Tags: clickup, woocommerce, crm, task management, sync
 Requires at least: 6.0
-Tested up to: 7.0.4
+Tested up to: 7.1
 Requires PHP: 8.0.0
 Stable tag: 1.2.0
 License: GPLv2 or later
@@ -70,7 +70,7 @@ ClickSync Connect offers flexible plans to scale with your business requirements
 * **Custom Quota Request Desk:** Submit custom transaction quota and webhook requests directly from your settings panel to accommodate high-volume holiday sales or promotional traffic.
 * **WordPress Developer API:** Built with hooks and filters allowing developers to conditionally bypass sync events, modify outgoing payloads, customize retry intervals, or add partner headers.
 
-== Third-Party SaaS Service Disclosure ==
+== External Services ==
 
 ClickSync Connect utilizes external cloud APIs to manage authentication tokens, decrypt keys, and queue requests safely:
 

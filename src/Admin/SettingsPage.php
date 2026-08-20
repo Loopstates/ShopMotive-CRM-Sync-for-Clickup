@@ -20,6 +20,9 @@ class SettingsPage {
 	 */
 	public static function render() {
 		if ( isset( $_POST['clicksync_save_settings'] ) ) {
+			if ( ! current_user_can( 'manage_options' ) ) {
+				wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'clicksync-connect' ) );
+			}
 			check_admin_referer( 'clicksync_save_settings_action', 'clicksync_nonce' );
 
 			$updated = array(
@@ -798,7 +801,7 @@ class SettingsPage {
 				</p>
 				<div style="margin-top: 12px; display: flex; justify-content: center;">
 					<a href="https://loopstates.com" target="_blank" style="display: inline-block;">
-						<img src="https://loopstates.com/logo.png" alt="Loopstates" style="height: 24px; width: auto; display: block; margin: 0 auto;" />
+						<img src="<?php echo esc_url( CLICKSYNC_URL . 'assets/images/loopstates.png' ); ?>" alt="Loopstates" style="height: 24px; width: auto; display: block; margin: 0 auto;" />
 					</a>
 				</div>
 			</div>

@@ -380,6 +380,7 @@ class HelpPage {
 						</form>
 					</div>
 			</div>
+		</div>
 
 			<div style="margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 24px; text-align: center; font-size: 13px; color: #64748b;">
 				<p style="margin: 0 0 12px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;">
@@ -387,7 +388,7 @@ class HelpPage {
 				</p>
 				<div style="margin-top: 12px; display: flex; justify-content: center;">
 					<a href="https://loopstates.com" target="_blank" style="display: inline-block;">
-						<img src="https://loopstates.com/logo.png" alt="Loopstates" style="height: 24px; width: auto; display: block; margin: 0 auto;" />
+						<img src="<?php echo esc_url( CLICKSYNC_URL . 'assets/images/loopstates.png' ); ?>" alt="Loopstates" style="height: 24px; width: auto; display: block; margin: 0 auto;" />
 					</a>
 				</div>
 			</div>

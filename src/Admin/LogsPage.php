@@ -103,7 +103,7 @@ class LogsPage {
 				</p>
 				<div style="margin-top: 12px; display: flex; justify-content: center;">
 					<a href="https://loopstates.com" target="_blank" style="display: inline-block;">
-						<img src="https://loopstates.com/logo.png" alt="Loopstates" style="height: 24px; width: auto; display: block; margin: 0 auto;" />
+						<img src="<?php echo esc_url( CLICKSYNC_URL . 'assets/images/loopstates.png' ); ?>" alt="Loopstates" style="height: 24px; width: auto; display: block; margin: 0 auto;" />
 					</a>
 				</div>
 			</div>
