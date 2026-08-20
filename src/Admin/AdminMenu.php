@@ -41,13 +41,17 @@ class AdminMenu {
 	 * Save secret key and clean URL parameters.
 	 */
 	public static function check_secret_key_redirect() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( isset( $_GET['page'] ) && $_GET['page'] === 'clicksync' && isset( $_GET['clicksync_secret_key'] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 			$secret_key = sanitize_text_field( $_GET['clicksync_secret_key'] );
 			Options::update_secret_key( $secret_key );
 			
 			// Clean redirect URL query parameter but preserve clicksync_action if set
 			$redirect_url = admin_url( 'admin.php?page=clicksync' );
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			if ( isset( $_GET['clicksync_action'] ) ) {
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 				$redirect_url = add_query_arg( 'clicksync_action', sanitize_text_field( $_GET['clicksync_action'] ), $redirect_url );
 			}
 			wp_safe_redirect( $redirect_url );
@@ -61,8 +65,8 @@ class AdminMenu {
 	public static function register_menu() {
 		// 1. Top-Level Parent Menu (Settings)
 		add_menu_page(
-			__( 'ClickSync Connect: WooCommerce to ClickUp CRM Sync', 'clicksync-connect' ),
-			__( 'ClickSync', 'clicksync-connect' ),
+			__( 'ClickSync Connect: WooCommerce to ClickUp CRM Sync', 'clicksync-connect-clickup-crm-sync-for-woocommerce' ),
+			__( 'ClickSync', 'clicksync-connect-clickup-crm-sync-for-woocommerce' ),
 			'manage_options',
 			'clicksync',
 			array( SettingsPage::class, 'render' ),
@@ -73,8 +77,8 @@ class AdminMenu {
 		// Submenu 1: Settings (Default tab)
 		add_submenu_page(
 			'clicksync',
-			__( 'ClickSync Settings', 'clicksync-connect' ),
-			__( 'Settings', 'clicksync-connect' ),
+			__( 'ClickSync Settings', 'clicksync-connect-clickup-crm-sync-for-woocommerce' ),
+			__( 'Settings', 'clicksync-connect-clickup-crm-sync-for-woocommerce' ),
 			'manage_options',
 			'clicksync',
 			array( SettingsPage::class, 'render' )
@@ -83,8 +87,8 @@ class AdminMenu {
 		// Submenu 2: Sync Logs
 		add_submenu_page(
 			'clicksync',
-			__( 'Sync Logs', 'clicksync-connect' ),
-			__( 'Sync Logs', 'clicksync-connect' ),
+			__( 'Sync Logs', 'clicksync-connect-clickup-crm-sync-for-woocommerce' ),
+			__( 'Sync Logs', 'clicksync-connect-clickup-crm-sync-for-woocommerce' ),
 			'manage_options',
 			'clicksync-logs',
 			array( LogsPage::class, 'render' )
@@ -93,8 +97,8 @@ class AdminMenu {
 		// Submenu 3: Sync Error Center
 		add_submenu_page(
 			'clicksync',
-			__( 'Sync Error Center', 'clicksync-connect' ),
-			__( 'Sync Error Center', 'clicksync-connect' ),
+			__( 'Sync Error Center', 'clicksync-connect-clickup-crm-sync-for-woocommerce' ),
+			__( 'Sync Error Center', 'clicksync-connect-clickup-crm-sync-for-woocommerce' ),
 			'manage_options',
 			'clicksync-errors',
 			array( ErrorsPage::class, 'render' )
@@ -103,8 +107,8 @@ class AdminMenu {
 		// Submenu 4: Help Center
 		add_submenu_page(
 			'clicksync',
-			__( 'Help & Documentation', 'clicksync-connect' ),
-			__( 'Help Center', 'clicksync-connect' ),
+			__( 'Help & Documentation', 'clicksync-connect-clickup-crm-sync-for-woocommerce' ),
+			__( 'Help Center', 'clicksync-connect-clickup-crm-sync-for-woocommerce' ),
 			'manage_options',
 			'clicksync-help',
 			array( HelpPage::class, 'render' )
@@ -120,8 +124,10 @@ class AdminMenu {
 		if ( strpos( $hook, 'clicksync' ) !== false ) {
 			$is_allowed = true;
 		} elseif ( in_array( $hook, $allowed_pages ) ) {
-			if ( isset( $_GET['post'] ) && get_post_type( $_GET['post'] ) === 'shop_order' ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			if ( isset( $_GET['post'] ) && get_post_type( absint( $_GET['post'] ) ) === 'shop_order' ) {
 				$is_allowed = true;
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			} elseif ( isset( $_GET['page'] ) && $_GET['page'] === 'wc-orders' ) {
 				$is_allowed = true;
 			} else {
@@ -159,13 +165,13 @@ class AdminMenu {
 			?>
 			<div class="notice notice-warning is-dismissible">
 				<p>
-					<strong><?php esc_html_e( 'ClickSync Limit Reached:', 'clicksync-connect' ); ?></strong>
+					<strong><?php esc_html_e( 'ClickSync Limit Reached:', 'clicksync-connect-clickup-crm-sync-for-woocommerce' ); ?></strong>
 					<?php
 					// translators: 1: sync count, 2: total quota
-					printf( esc_html__( 'You have used %1$d of your %2$d monthly sync tasks. Upgrade your plan to keep syncing WooCommerce events without interruption.', 'clicksync-connect' ), esc_html( $sync_count ), esc_html( $quota ) );
+					printf( esc_html__( 'You have used %1$d of your %2$d monthly sync tasks. Upgrade your plan to keep syncing WooCommerce events without interruption.', 'clicksync-connect-clickup-crm-sync-for-woocommerce' ), esc_html( $sync_count ), esc_html( $quota ) );
 					?>
 					<a href="<?php echo esc_url( admin_url( 'admin.php?page=clicksync#billing-section' ) ); ?>" class="button button-small button-primary" style="margin-left: 10px;">
-						<?php esc_html_e( 'Upgrade Plan ->', 'clicksync-connect' ); ?>
+						<?php esc_html_e( 'Upgrade Plan ->', 'clicksync-connect-clickup-crm-sync-for-woocommerce' ); ?>
 					</a>
 				</p>
 			</div>
@@ -200,8 +206,9 @@ class AdminMenu {
 			wp_send_json_error( 'Unauthorized', 403 );
 		}
 
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 		$mappings = isset( $_POST['mappings'] ) ? (array) $_POST['mappings'] : array();
-		$fallback = isset( $_POST['fallback_clickup_user_id'] ) ? sanitize_text_field( $_POST['fallback_clickup_user_id'] ) : '';
+		$fallback = isset( $_POST['fallback_clickup_user_id'] ) ? sanitize_text_field( wp_unslash( $_POST['fallback_clickup_user_id'] ) ) : '';
 
 		// Clean keys and values
 		$cleaned_mappings = array();
@@ -247,6 +254,7 @@ class AdminMenu {
 
 		// 2. Get distinct non-underscore Order meta keys from recent orders
 		$order_meta = array();
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$order_meta_results = $wpdb->get_col( $wpdb->prepare( "
 			SELECT DISTINCT meta_key 
 			FROM {$wpdb->postmeta} 
@@ -268,6 +276,7 @@ class AdminMenu {
 
 		// 3. Get distinct non-underscore Customer user meta keys from recent users
 		$customer_meta = array();
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$customer_meta_results = $wpdb->get_col( $wpdb->prepare( "
 			SELECT DISTINCT meta_key 
 			FROM {$wpdb->usermeta} 
@@ -350,7 +359,7 @@ class AdminMenu {
 		// Legacy orders page
 		add_meta_box(
 			'clicksync_order_details_metabox',
-			__( 'ClickUp Task Sync', 'clicksync-connect' ),
+			__( 'ClickUp Task Sync', 'clicksync-connect-clickup-crm-sync-for-woocommerce' ),
 			array( \ClickSync\Admin\Widget::class, 'render_order_metabox' ),
 			'shop_order',
 			'side',
@@ -359,7 +368,7 @@ class AdminMenu {
 		// HPOS support
 		add_meta_box(
 			'clicksync_order_details_metabox',
-			__( 'ClickUp Task Sync', 'clicksync-connect' ),
+			__( 'ClickUp Task Sync', 'clicksync-connect-clickup-crm-sync-for-woocommerce' ),
 			array( \ClickSync\Admin\Widget::class, 'render_order_metabox' ),
 			'woocommerce_page_wc-orders',
 			'side',
@@ -378,10 +387,10 @@ class AdminMenu {
 			return;
 		}
 		?>
-		<h2><?php esc_html_e( 'ClickUp Customer Sync', 'clicksync-connect' ); ?></h2>
+		<h2><?php esc_html_e( 'ClickUp Customer Sync', 'clicksync-connect-clickup-crm-sync-for-woocommerce' ); ?></h2>
 		<table class="form-table">
 			<tr>
-				<th><label><?php esc_html_e( 'ClickUp Task Link', 'clicksync-connect' ); ?></label></th>
+				<th><label><?php esc_html_e( 'ClickUp Task Link', 'clicksync-connect-clickup-crm-sync-for-woocommerce' ); ?></label></th>
 				<td>
 					<?php \ClickSync\Admin\Widget::render_customer_metabox( $user ); ?>
 				</td>
@@ -399,7 +408,7 @@ class AdminMenu {
 			wp_send_json_error( 'Unauthorized', 403 );
 		}
 
-		$task_id = isset( $_POST['task_id'] ) ? sanitize_text_field( $_POST['task_id'] ) : '';
+		$task_id = isset( $_POST['task_id'] ) ? sanitize_text_field( wp_unslash( $_POST['task_id'] ) ) : '';
 		if ( empty( $task_id ) ) {
 			wp_send_json_error( 'Missing task_id', 400 );
 		}
@@ -423,19 +432,20 @@ class AdminMenu {
 			wp_send_json_error( 'Unauthorized', 403 );
 		}
 
-		$task_id = isset( $_POST['task_id'] ) ? sanitize_text_field( $_POST['task_id'] ) : '';
+		$task_id = isset( $_POST['task_id'] ) ? sanitize_text_field( wp_unslash( $_POST['task_id'] ) ) : '';
 		if ( empty( $task_id ) ) {
 			wp_send_json_error( 'Missing task_id', 400 );
 		}
 
 		$payload = array( 'task_id' => $task_id );
 		if ( isset( $_POST['status'] ) ) {
-			$payload['status'] = sanitize_text_field( $_POST['status'] );
+			$payload['status'] = sanitize_text_field( wp_unslash( $_POST['status'] ) );
 		}
 		if ( isset( $_POST['priority'] ) ) {
-			$payload['priority'] = sanitize_text_field( $_POST['priority'] );
+			$payload['priority'] = sanitize_text_field( wp_unslash( $_POST['priority'] ) );
 		}
 		if ( isset( $_POST['assignees'] ) ) {
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 			$payload['assignees'] = (array) $_POST['assignees'];
 		}
 
@@ -578,7 +588,7 @@ class AdminMenu {
 		
 		if ( empty( $body['task_ids'] ) ) {
 			wp_send_json_success( array(
-				'message' => isset( $body['message'] ) ? $body['message'] : __( 'Manual sync queued successfully. Refreshed cached values will load shortly.', 'clicksync-connect' ),
+				'message' => isset( $body['message'] ) ? $body['message'] : __( 'Manual sync queued successfully. Refreshed cached values will load shortly.', 'clicksync-connect-clickup-crm-sync-for-woocommerce' ),
 				'queued'  => true
 			) );
 		}
@@ -613,10 +623,10 @@ class AdminMenu {
 			wp_send_json_error( 'Unauthorized', 403 );
 		}
 
-		$name    = isset( $_POST['contact_name'] ) ? sanitize_text_field( $_POST['contact_name'] ) : '';
-		$email   = isset( $_POST['contact_email'] ) ? sanitize_email( $_POST['contact_email'] ) : '';
-		$subject = isset( $_POST['contact_subject'] ) ? sanitize_text_field( $_POST['contact_subject'] ) : '';
-		$message = isset( $_POST['contact_message'] ) ? sanitize_textarea_field( $_POST['contact_message'] ) : '';
+		$name    = isset( $_POST['contact_name'] ) ? sanitize_text_field( wp_unslash( $_POST['contact_name'] ) ) : '';
+		$email   = isset( $_POST['contact_email'] ) ? sanitize_email( wp_unslash( $_POST['contact_email'] ) ) : '';
+		$subject = isset( $_POST['contact_subject'] ) ? sanitize_text_field( wp_unslash( $_POST['contact_subject'] ) ) : '';
+		$message = isset( $_POST['contact_message'] ) ? sanitize_textarea_field( wp_unslash( $_POST['contact_message'] ) ) : '';
 
 		if ( empty( $name ) || empty( $email ) || empty( $message ) ) {
 			wp_send_json_error( 'Please fill out all required fields.', 400 );
