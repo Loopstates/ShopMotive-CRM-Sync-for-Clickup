@@ -1798,8 +1798,8 @@
         });
 
         // ClickSync Sidebar Meta Boxes (Widgets) Controller
-        var widgetWrapper = $('.clicksync-widget-wrapper');
-        if (widgetWrapper.length > 0) {
+        $('.clicksync-widget-wrapper').each(function () {
+            var widgetWrapper = $(this);
             var taskId = widgetWrapper.attr('data-task-id');
             var orderId = widgetWrapper.attr('data-order-id') || 0;
             var customerId = widgetWrapper.attr('data-customer-id') || 0;
@@ -1927,7 +1927,7 @@
                     }
                 });
             });
-        }
+        });
 
         // Enforce cloud-controlled plan features and toggle locks in the WordPress UI
         function enforcePlanLocks() {

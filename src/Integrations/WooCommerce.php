@@ -413,6 +413,28 @@ class WooCommerce {
 			$fulfillment_status = 'fulfilled';
 		}
 
+		$customer_id = $order->get_customer_id();
+		$orders_count = 0;
+		$total_spent = '0.00';
+		if ( $customer_id && function_exists( 'wc_get_customer_order_count' ) ) {
+			$orders_count = wc_get_customer_order_count( $customer_id );
+			$total_spent = wc_get_customer_total_spent( $customer_id );
+		}
+
+		// Extract card brand & last 4 digits from Stripe / common gateways if available
+		$card_brand = get_post_meta( $order->get_id(), '_stripe_card_brand', true )
+			?: get_post_meta( $order->get_id(), '_card_brand', true );
+		$card_last4 = get_post_meta( $order->get_id(), '_stripe_card_last4', true )
+			?: get_post_meta( $order->get_id(), '_card_last4', true );
+
+		$payment_details = null;
+		if ( $card_brand || $card_last4 ) {
+			$payment_details = array(
+				'credit_card_company' => $card_brand ?: 'Card',
+				'credit_card_number'  => $card_last4 ? '**** **** **** ' . $card_last4 : '****',
+			);
+		}
+
 		return array(
 			'id'                 => $order->get_id(),
 			'name'               => '#' . $order->get_order_number(),
@@ -429,12 +451,16 @@ class WooCommerce {
 			'note'               => $order->get_customer_note(),
 			'line_items'         => $items,
 			'customer'           => array(
-				'id'         => $order->get_customer_id(),
-				'first_name' => $order->get_billing_first_name(),
-				'last_name'  => $order->get_billing_last_name(),
-				'email'      => $order->get_billing_email(),
-				'phone'      => $order->get_billing_phone(),
+				'id'           => $customer_id,
+				'first_name'   => $order->get_billing_first_name(),
+				'last_name'    => $order->get_billing_last_name(),
+				'email'        => $order->get_billing_email(),
+				'phone'        => $order->get_billing_phone(),
+				'orders_count' => intval( $orders_count ),
+				'total_spent'  => (string) $total_spent,
 			),
+			'payment_details'    => $payment_details,
+			'transaction_id'     => $order->get_transaction_id(),
 			'billing_address'    => array(
 				'first_name' => $order->get_billing_first_name(),
 				'last_name'  => $order->get_billing_last_name(),
