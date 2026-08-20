@@ -142,7 +142,7 @@ class AdminMenu {
 		wp_localize_script( 'clicksync-admin-js-v2', 'clicksyncData', array(
 			'ajaxUrl'  => admin_url( 'admin-ajax.php', 'relative' ),
 			'cloudUrl' => CLICKSYNC_CLOUD_URL,
-			'host'     => parse_url( site_url(), PHP_URL_HOST ),
+			'host'     => wp_parse_url( site_url(), PHP_URL_HOST ),
 			'nonce'    => wp_create_nonce( 'clicksync_admin_nonce' ),
 		) );
 	}
@@ -160,7 +160,10 @@ class AdminMenu {
 			<div class="notice notice-warning is-dismissible">
 				<p>
 					<strong><?php esc_html_e( 'ClickSync Limit Reached:', 'clicksync-connect' ); ?></strong>
-					<?php printf( esc_html__( 'You have used %1$d of your %2$d monthly sync tasks. Upgrade your plan to keep syncing WooCommerce events without interruption.', 'clicksync-connect' ), $sync_count, $quota ); ?>
+					<?php
+					// translators: 1: sync count, 2: total quota
+					printf( esc_html__( 'You have used %1$d of your %2$d monthly sync tasks. Upgrade your plan to keep syncing WooCommerce events without interruption.', 'clicksync-connect' ), esc_html( $sync_count ), esc_html( $quota ) );
+					?>
 					<a href="<?php echo esc_url( admin_url( 'admin.php?page=clicksync#billing-section' ) ); ?>" class="button button-small button-primary" style="margin-left: 10px;">
 						<?php esc_html_e( 'Upgrade Plan ->', 'clicksync-connect' ); ?>
 					</a>
@@ -494,7 +497,7 @@ class AdminMenu {
 			$json_body = wp_json_encode( $payload );
 
 			$timestamp   = time();
-			$host        = parse_url( site_url(), PHP_URL_HOST );
+			$host        = wp_parse_url( site_url(), PHP_URL_HOST );
 			$secret_key  = Options::get_secret_key();
 			$signing_key = ! empty( $secret_key ) ? $secret_key : $host;
 			$signature   = hash_hmac( 'sha256', $json_body, $signing_key . ':' . $timestamp );
@@ -536,14 +539,14 @@ class AdminMenu {
 				'last_name'    => $user->last_name,
 				'orders_count' => intval( $orders_count ),
 				'total_spent'  => (string) $total_spent,
-				'created_at'   => date( 'c', strtotime( $user->user_registered ) )
+				'created_at'   => gmdate( 'c', strtotime( $user->user_registered ) )
 			);
 
 			$endpoint = '/api/sync-event';
 			$json_body = wp_json_encode( $payload );
 
 			$timestamp   = time();
-			$host        = parse_url( site_url(), PHP_URL_HOST );
+			$host        = wp_parse_url( site_url(), PHP_URL_HOST );
 			$secret_key  = Options::get_secret_key();
 			$signing_key = ! empty( $secret_key ) ? $secret_key : $host;
 			$signature   = hash_hmac( 'sha256', $json_body, $signing_key . ':' . $timestamp );
@@ -619,7 +622,7 @@ class AdminMenu {
 			wp_send_json_error( 'Please fill out all required fields.', 400 );
 		}
 
-		$host = parse_url( site_url(), PHP_URL_HOST );
+		$host = wp_parse_url( site_url(), PHP_URL_HOST );
 
 		$account   = Options::get_account();
 		$plan_name = $account['plan_name'] ?? 'Free Plan';

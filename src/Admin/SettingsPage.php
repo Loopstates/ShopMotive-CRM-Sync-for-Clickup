@@ -47,14 +47,14 @@ class SettingsPage {
 		) );
 		$wp_users = $user_query->get_results();
 
-		$host       = parse_url( site_url(), PHP_URL_HOST );
+		$host       = wp_parse_url( site_url(), PHP_URL_HOST );
 		$is_ssl      = is_ssl() ? 'https' : 'http';
 		$connect_url= CLICKSYNC_CLOUD_URL . '/auth/clickup?shop=' . urlencode( $host ) . '&protocol=' . $is_ssl;
 
 		$plan_name  = $account['plan_name'] ?? 'Free Plan';
 		$sync_count = (int) ( $account['monthly_sync_count'] ?? 0 );
 		$quota      = (int) ( $account['monthly_quota'] ?? 100 );
-		$reset_date = $account['last_sync_reset'] ?? date( 'm/d/Y' );
+		$reset_date = $account['last_sync_reset'] ?? gmdate( 'm/d/Y' );
 		?>
 		<div class="wrap clicksync-wrap" style="max-width: 1050px; margin: 20px auto;">
 			
@@ -137,14 +137,14 @@ class SettingsPage {
 									} elseif ( 'Pro Plan' === $plan_name ) {
 										$icon_html = '<svg style="width: 16px; height: 16px; fill: #b45309; margin-right: 6px; vertical-align: middle; display: inline-block;" viewBox="0 0 24 24"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7zm3 14h14v2H5v-2z"/></svg>';
 									}
-									echo $icon_html;
+									echo wp_kses_post( $icon_html );
 									echo esc_html( $plan_name ); 
 									?>
 								</span>
 							</div>
 							<div style="font-size: 12px; color: #6d7175;">
 								<strong><?php esc_html_e( 'Usage Quota:', 'clicksync-connect' ); ?></strong> 
-								<span id="clicksync-usage-count"><?php echo esc_html( number_format( $sync_count ) ); ?></span> / <span id="clicksync-usage-quota"><?php echo esc_html( number_format( $quota ) ); ?></span> runs. (Reset: <span id="clicksync-usage-reset"><?php echo esc_html( ! empty( $reset_date ) ? date( 'Y-m-d H:i:s', strtotime( $reset_date ) ) : __( 'Pending Sync', 'clicksync-connect' ) ); ?></span>)
+								<span id="clicksync-usage-count"><?php echo esc_html( number_format( $sync_count ) ); ?></span> / <span id="clicksync-usage-quota"><?php echo esc_html( number_format( $quota ) ); ?></span> runs. (Reset: <span id="clicksync-usage-reset"><?php echo esc_html( ! empty( $reset_date ) ? gmdate( 'Y-m-d H:i:s', strtotime( $reset_date ) ) : __( 'Pending Sync', 'clicksync-connect' ) ); ?></span>)
 							</div>
 						</div>
 						<div style="display: flex; align-items: center; gap: 10px;">

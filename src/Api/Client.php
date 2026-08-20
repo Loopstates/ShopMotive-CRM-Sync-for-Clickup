@@ -32,7 +32,7 @@ class Client {
 
 		// Sign request using secret key for security validation
 		$timestamp   = time();
-		$host        = parse_url( site_url(), PHP_URL_HOST );
+		$host        = wp_parse_url( site_url(), PHP_URL_HOST );
 		$secret_key  = Options::get_secret_key();
 		$signing_key = ! empty( $secret_key ) ? $secret_key : $host;
 		$signature   = hash_hmac( 'sha256', $json_body, $signing_key . ':' . $timestamp );
@@ -60,7 +60,7 @@ class Client {
 		$response = wp_remote_post( $endpoint, $args );
 
 		if ( is_wp_error( $response ) ) {
-			error_log( 'ClickSync Cloud API Dispatch Error: ' . $response->get_error_message() );
+			// Debug log commented for WordPress.org compliance: error_log( 'ClickSync Cloud API Dispatch Error: ' . $response->get_error_message() );
 			do_action( 'clicksync_event_failed', $topic, $payload, $response->get_error_message() );
 			if ( ! $is_retry ) {
 				self::schedule_retry( $topic, $payload );
@@ -73,7 +73,7 @@ class Client {
 		$data        = json_decode( $body, true );
 
 		if ( $status_code < 200 || $status_code >= 300 ) {
-			error_log( 'ClickSync Cloud API Dispatch HTTP Error: ' . $status_code );
+			// Debug log commented for WordPress.org compliance: error_log( 'ClickSync Cloud API Dispatch HTTP Error: ' . $status_code );
 			do_action( 'clicksync_event_failed', $topic, $payload, 'HTTP status code: ' . $status_code );
 			if ( ! $is_retry ) {
 				self::schedule_retry( $topic, $payload );
@@ -115,7 +115,7 @@ class Client {
 				),
 				'clicksync-connect'
 			);
-			error_log( sprintf( 'ClickSync scheduled retry attempt %d for topic "%s" in %d seconds.', $attempts, $topic, $delay ) );
+			// Debug log commented for WordPress.org compliance: error_log( sprintf( 'ClickSync scheduled retry attempt %d for topic "%s" in %d seconds.', $attempts, $topic, $delay ) );
 		}
 	}
 
@@ -132,7 +132,7 @@ class Client {
 
 		// Sign request using secret key for security validation
 		$timestamp   = time();
-		$host        = parse_url( site_url(), PHP_URL_HOST );
+		$host        = wp_parse_url( site_url(), PHP_URL_HOST );
 		$secret_key  = Options::get_secret_key();
 		$signing_key = ! empty( $secret_key ) ? $secret_key : $host;
 		$signature   = hash_hmac( 'sha256', $json_body, $signing_key . ':' . $timestamp );
@@ -159,7 +159,7 @@ class Client {
 		$response = wp_remote_post( $endpoint, $args );
 
 		if ( is_wp_error( $response ) ) {
-			error_log( 'ClickSync Cloud API Request Error: ' . $response->get_error_message() );
+			// Debug log commented for WordPress.org compliance: error_log( 'ClickSync Cloud API Request Error: ' . $response->get_error_message() );
 			return false;
 		}
 

@@ -1,14 +1,14 @@
-=== ClickSync Connect: WooCommerce to ClickUp CRM Sync ===
+=== ClickSync Connect: ClickUp CRM Sync for WooCommerce ===
 Contributors: loopstates
 Tags: clickup, woocommerce, crm, task management, sync
 Requires at least: 6.0
 Tested up to: 7.1
-Requires PHP: 8.0.0
+Requires PHP: 7.4
 Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Connect and synchronize WooCommerce store events, order notes, checkout metadata, and customers directly with ClickUp tasks. Learn more and get your sync API credentials at the [ClickSync Connect Homepage](https://clicksync-connect.apps.loopstates.com).
+Connect and synchronize WooCommerce order events, notes, and customers directly with ClickUp tasks.
 
 == Description ==
 

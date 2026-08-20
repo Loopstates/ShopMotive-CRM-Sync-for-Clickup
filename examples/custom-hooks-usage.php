@@ -6,6 +6,10 @@
  * to hook into ClickSync's event pipeline.
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 // 1. Conditional Syncing: Stop syncing orders that are under $50
 add_filter( 'clicksync_should_sync_order', 'my_custom_clicksync_order_eligibility', 10, 3 );
 function my_custom_clicksync_order_eligibility( $should_sync, $order_id, $order ) {

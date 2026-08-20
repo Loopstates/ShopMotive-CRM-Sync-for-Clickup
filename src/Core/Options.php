@@ -26,7 +26,7 @@ class Options {
 		return array(
 			'connected'              => false,
 			'api_key'                => '',
-			'store_identifier'       => parse_url( site_url(), PHP_URL_HOST ),
+			'store_identifier'       => wp_parse_url( site_url(), PHP_URL_HOST ),
 			'orders_enabled'         => true,
 			'customers_enabled'      => true,
 			'refunds_enabled'        => true,

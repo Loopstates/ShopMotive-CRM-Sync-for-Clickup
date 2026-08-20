@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:       ClickSync Connect: WooCommerce to ClickUp CRM Sync
+ * Plugin Name:       ClickSync Connect: ClickUp CRM Sync for WooCommerce
  * Plugin URI:        https://docs.loopstates.com/clicksync/wordpress/
  * Description:       Automate your WooCommerce workflow by converting orders, refunds, customer updates, and abandoned checkouts directly into ClickUp tasks.
  * Version:           1.2.0

@@ -38,7 +38,10 @@ class Widget {
 						<span><?php esc_html_e( 'Open ClickUp Task', 'clicksync-connect' ); ?></span>
 					</a>
 					<span style="display: block; font-size: 11px; color: #64748b; margin-top: 4px;">
-						<?php printf( esc_html__( 'Last Sync: %s', 'clicksync-connect' ), $last_sync_formatted ); ?>
+						<?php
+						// translators: %s is the formatted date/time of the last sync
+						printf( esc_html__( 'Last Sync: %s', 'clicksync-connect' ), esc_html( $last_sync_formatted ) );
+						?>
 					</span>
 				</div>
 				
@@ -118,7 +121,7 @@ class Widget {
 				</div>
 				<div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
 					<span style="color: #64748b;"><?php esc_html_e( 'Total Spend:', 'clicksync-connect' ); ?></span>
-					<span style="font-weight: 700; color: #1e293b;"><?php echo function_exists( 'wc_price' ) ? wc_price( $total_spent ) : '$' . number_format( $total_spent, 2 ); ?></span>
+					<span style="font-weight: 700; color: #1e293b;"><?php echo wp_kses_post( function_exists( 'wc_price' ) ? wc_price( $total_spent ) : '$' . number_format( $total_spent, 2 ) ); ?></span>
 				</div>
 				<div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
 					<span style="color: #64748b;"><?php esc_html_e( 'Total Orders:', 'clicksync-connect' ); ?></span>
@@ -135,7 +138,7 @@ class Widget {
 										#<?php echo esc_html( $o->get_order_number() ); ?>
 									</a>
 									<span style="color: #64748b;"><?php echo esc_html( date_i18n( get_option( 'date_format' ), $o->get_date_created()->getTimestamp() ) ); ?></span>
-									<span style="font-weight: 600; color: #1e293b;"><?php echo function_exists( 'wc_price' ) ? wc_price( $o->get_total() ) : '$' . number_format( $o->get_total(), 2 ); ?></span>
+									<span style="font-weight: 600; color: #1e293b;"><?php echo wp_kses_post( function_exists( 'wc_price' ) ? wc_price( $o->get_total() ) : '$' . number_format( $o->get_total(), 2 ) ); ?></span>
 								</li>
 							<?php endforeach; ?>
 						</ul>
@@ -159,7 +162,10 @@ class Widget {
 						<span><?php esc_html_e( 'Open ClickUp Task', 'clicksync-connect' ); ?></span>
 					</a>
 					<span style="display: block; font-size: 11px; color: #64748b; margin-top: 4px;">
-						<?php printf( esc_html__( 'Last Sync: %s', 'clicksync-connect' ), $last_sync_formatted ); ?>
+						<?php
+						// translators: %s is the formatted date/time of the last sync
+						printf( esc_html__( 'Last Sync: %s', 'clicksync-connect' ), esc_html( $last_sync_formatted ) );
+						?>
 					</span>
 				</div>
 				

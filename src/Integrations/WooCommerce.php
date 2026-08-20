@@ -201,7 +201,7 @@ class WooCommerce {
 			'amount'            => (string) $refund_amount,
 			'currency'          => $order->get_currency(),
 			'note'              => $reason,
-			'created_at'        => date( 'c', strtotime( $order->get_date_created() ) ),
+			'created_at'        => gmdate( 'c', strtotime( $order->get_date_created() ) ),
 			'order_number'      => '#' . $order->get_order_number(),
 			'customer_email'    => $order->get_billing_email(),
 			'refund_line_items' => $refund_line_items,
@@ -297,7 +297,7 @@ class WooCommerce {
 			'last_name'     => get_user_meta( $customer_id, 'billing_last_name', true ) ?: $user->last_name,
 			'orders_count'  => wc_get_customer_order_count( $customer_id ),
 			'total_spent'   => (string) wc_get_customer_total_spent( $customer_id ),
-			'created_at'    => date( 'c', strtotime( $user->user_registered ) ),
+			'created_at'    => gmdate( 'c', strtotime( $user->user_registered ) ),
 			'phone'         => get_user_meta( $customer_id, 'billing_phone', true ),
 			'meta'          => $user_meta,
 		);
@@ -351,7 +351,7 @@ class WooCommerce {
 			'last_name'     => get_user_meta( $customer_id, 'billing_last_name', true ) ?: $user->last_name,
 			'orders_count'  => intval( $orders_count ),
 			'total_spent'   => (string) $total_spent,
-			'created_at'    => date( 'c', strtotime( $user->user_registered ) ),
+			'created_at'    => gmdate( 'c', strtotime( $user->user_registered ) ),
 			'phone'         => get_user_meta( $customer_id, 'billing_phone', true ),
 			'meta'          => $user_meta,
 		);
@@ -440,8 +440,8 @@ class WooCommerce {
 			'name'               => '#' . $order->get_order_number(),
 			'order_number'       => (string) $order->get_order_number(),
 			'email'              => $order->get_billing_email(),
-			'created_at'         => date( 'c', strtotime( $order->get_date_created() ) ),
-			'updated_at'         => date( 'c', strtotime( $order->get_date_modified() ) ),
+			'created_at'         => gmdate( 'c', strtotime( $order->get_date_created() ) ),
+			'updated_at'         => gmdate( 'c', strtotime( $order->get_date_modified() ) ),
 			'total_price'        => (string) $order->get_total(),
 			'subtotal_price'     => (string) $order->get_subtotal(),
 			'total_tax'          => (string) $order->get_total_tax(),
@@ -503,7 +503,7 @@ class WooCommerce {
 	 * @param int    $attempts Current attempt number.
 	 */
 	public static function handle_retry_event( $topic, $payload, $attempts ) {
-		error_log( sprintf( 'ClickSync executing background retry attempt %d for topic "%s".', $attempts, $topic ) );
+		// Debug log commented for WordPress.org compliance: error_log( sprintf( 'ClickSync executing background retry attempt %d for topic "%s".', $attempts, $topic ) );
 		
 		$result = \ClickSync\Api\Client::dispatch_event( $topic, $payload, true );
 
@@ -512,10 +512,10 @@ class WooCommerce {
 			if ( $attempts < $retry_limit ) {
 				\ClickSync\Api\Client::schedule_retry( $topic, $payload, $attempts + 1 );
 			} else {
-				error_log( sprintf( 'ClickSync background retry failed after maximum attempts (%d) for topic "%s".', $retry_limit, $topic ) );
+				// Debug log commented for WordPress.org compliance: error_log( sprintf( 'ClickSync background retry failed after maximum attempts (%d) for topic "%s".', $retry_limit, $topic ) );
 			}
 		} else {
-			error_log( sprintf( 'ClickSync background retry succeeded on attempt %d for topic "%s".', $attempts, $topic ) );
+			// Debug log commented for WordPress.org compliance: error_log( sprintf( 'ClickSync background retry succeeded on attempt %d for topic "%s".', $attempts, $topic ) );
 		}
 	}
 }

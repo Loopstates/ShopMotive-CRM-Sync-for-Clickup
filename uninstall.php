@@ -9,7 +9,7 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
 
-$host = parse_url( site_url(), PHP_URL_HOST );
+$clicksync_host = wp_parse_url( site_url(), PHP_URL_HOST );
 
 // Ping cloud to register uninstall before wiping options
 wp_remote_post( 'https://clicksync-connect.apps.loopstates.com/api/save-config', array(
@@ -20,7 +20,7 @@ wp_remote_post( 'https://clicksync-connect.apps.loopstates.com/api/save-config',
 		'Content-Type' => 'application/json',
 	),
 	'body'        => wp_json_encode( array(
-		'shop'       => $host,
+		'shop'       => $clicksync_host,
 		'actionType' => 'uninstall_plugin',
 		'payload'    => array()
 	) ),

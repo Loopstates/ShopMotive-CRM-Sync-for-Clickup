@@ -65,11 +65,7 @@ class Plugin {
 	 * Load plugin translation text domain.
 	 */
 	public function load_textdomain() {
-		load_plugin_textdomain(
-			'clicksync-connect',
-			false,
-			dirname( plugin_basename( CLICKSYNC_FILE ) ) . '/languages'
-		);
+		// Translation files are automatically loaded by WordPress.org Translate system
 	}
 
 	/**
@@ -79,7 +75,7 @@ class Plugin {
 		Options::get_settings();
 		Options::get_account();
 
-		$host = parse_url( site_url(), PHP_URL_HOST );
+		$host = wp_parse_url( site_url(), PHP_URL_HOST );
 		wp_remote_post( CLICKSYNC_CLOUD_URL . '/api/save-config', array(
 			'method'      => 'POST',
 			'timeout'     => 5,
@@ -99,7 +95,7 @@ class Plugin {
 	 * Plugin deactivation hook callback.
 	 */
 	public static function deactivate() {
-		$host = parse_url( site_url(), PHP_URL_HOST );
+		$host = wp_parse_url( site_url(), PHP_URL_HOST );
 		wp_remote_post( CLICKSYNC_CLOUD_URL . '/api/save-config', array(
 			'method'      => 'POST',
 			'timeout'     => 5,

@@ -71,7 +71,7 @@ class Webhook {
 			return new \WP_REST_Response( array( 'error' => 'Request expired.' ), 401 );
 		}
 
-		$host = parse_url( site_url(), PHP_URL_HOST );
+		$host = wp_parse_url( site_url(), PHP_URL_HOST );
 		$secret_key = \ClickSync\Core\Options::get_secret_key();
 		$signing_key = ! empty( $secret_key ) ? $secret_key : $host;
 		$computed_signature = hash_hmac( 'sha256', $body, $signing_key . ':' . $timestamp );
@@ -106,6 +106,7 @@ class Webhook {
 		$status_slug = str_replace( 'wc-', '', $status );
 		
 		// Update WooCommerce order status
+		// translators: %s is the new status slug
 		$order->update_status( $status_slug, sprintf( __( 'Status updated to "%s" via ClickUp task status sync.', 'clicksync-connect' ), $status_slug ) );
 
 		return new \WP_REST_Response( array(
@@ -133,7 +134,7 @@ class Webhook {
 			return new \WP_REST_Response( array( 'error' => 'Request expired.' ), 401 );
 		}
 
-		$host = parse_url( site_url(), PHP_URL_HOST );
+		$host = wp_parse_url( site_url(), PHP_URL_HOST );
 		$secret_key = \ClickSync\Core\Options::get_secret_key();
 		$signing_key = ! empty( $secret_key ) ? $secret_key : $host;
 		$computed_signature = hash_hmac( 'sha256', $body, $signing_key . ':' . $timestamp );
@@ -212,7 +213,7 @@ class Webhook {
 			return new \WP_REST_Response( array( 'error' => 'Request expired.' ), 401 );
 		}
 
-		$host = parse_url( site_url(), PHP_URL_HOST );
+		$host = wp_parse_url( site_url(), PHP_URL_HOST );
 		$secret_key = \ClickSync\Core\Options::get_secret_key();
 		$signing_key = ! empty( $secret_key ) ? $secret_key : $host;
 		$computed_signature = hash_hmac( 'sha256', $body, $signing_key . ':' . $timestamp );
@@ -275,7 +276,7 @@ class Webhook {
 			return new \WP_REST_Response( array( 'error' => 'Request expired.' ), 401 );
 		}
 
-		$host = parse_url( site_url(), PHP_URL_HOST );
+		$host = wp_parse_url( site_url(), PHP_URL_HOST );
 		$secret_key = \ClickSync\Core\Options::get_secret_key();
 		$signing_key = ! empty( $secret_key ) ? $secret_key : $host;
 		$computed_signature = hash_hmac( 'sha256', $body, $signing_key . ':' . $timestamp );
