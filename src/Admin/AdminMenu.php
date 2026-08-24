@@ -23,13 +23,14 @@ class AdminMenu {
 		add_action( 'admin_menu', array( __CLASS__, 'register_menu' ), 20 );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_assets' ) );
 		add_action( 'admin_notices', array( __CLASS__, 'render_quota_notice' ) );
-		add_action( 'wp_ajax_clicksync_get_wc_fields', array( __CLASS__, 'ajax_get_wc_fields' ) );
-		add_action( 'wp_ajax_clicksync_save_local_settings', array( __CLASS__, 'ajax_save_local_settings' ) );
-		add_action( 'wp_ajax_clicksync_save_user_mappings', array( __CLASS__, 'ajax_save_user_mappings' ) );
-		add_action( 'wp_ajax_clicksync_widget_get_task_details', array( __CLASS__, 'ajax_widget_get_task_details' ) );
-		add_action( 'wp_ajax_clicksync_widget_update_task', array( __CLASS__, 'ajax_widget_update_task' ) );
-		add_action( 'wp_ajax_clicksync_widget_force_sync', array( __CLASS__, 'ajax_widget_force_sync' ) );
-		add_action( 'wp_ajax_clicksync_contact_submit', array( __CLASS__, 'ajax_contact_submit' ) );
+		add_action( 'wp_ajax_swiftsync_get_wc_fields', array( __CLASS__, 'ajax_get_wc_fields' ) );
+		add_action( 'wp_ajax_swiftsync_save_local_settings', array( __CLASS__, 'ajax_save_local_settings' ) );
+		add_action( 'wp_ajax_swiftsync_save_user_mappings', array( __CLASS__, 'ajax_save_user_mappings' ) );
+		add_action( 'wp_ajax_swiftsync_widget_get_task_details', array( __CLASS__, 'ajax_widget_get_task_details' ) );
+		add_action( 'wp_ajax_swiftsync_widget_update_task', array( __CLASS__, 'ajax_widget_update_task' ) );
+		add_action( 'wp_ajax_swiftsync_widget_force_sync', array( __CLASS__, 'ajax_widget_force_sync' ) );
+		add_action( 'wp_ajax_swiftsync_contact_submit', array( __CLASS__, 'ajax_contact_submit' ) );
+		add_action( 'wp_ajax_swiftsync_submit_exit_feedback', array( __CLASS__, 'ajax_submit_exit_feedback' ) );
 
 		// Register Sidebar Widgets (Meta Boxes)
 		add_action( 'add_meta_boxes', array( __CLASS__, 'register_metaboxes' ) );
@@ -42,13 +43,13 @@ class AdminMenu {
 	 */
 	public static function check_secret_key_redirect() {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		if ( isset( $_GET['page'] ) && $_GET['page'] === 'clicksync' && isset( $_GET['clicksync_secret_key'] ) ) {
+		if ( isset( $_GET['page'] ) && $_GET['page'] === 'swiftsync' && isset( $_GET['clicksync_secret_key'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 			$secret_key = sanitize_text_field( $_GET['clicksync_secret_key'] );
 			Options::update_secret_key( $secret_key );
 			
 			// Clean redirect URL query parameter but preserve clicksync_action if set
-			$redirect_url = admin_url( 'admin.php?page=clicksync' );
+			$redirect_url = admin_url( 'admin.php?page=swiftsync' );
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			if ( isset( $_GET['clicksync_action'] ) ) {
 				// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
@@ -65,10 +66,10 @@ class AdminMenu {
 	public static function register_menu() {
 		// 1. Top-Level Parent Menu (Settings)
 		add_menu_page(
-			__( 'ClickSync Connect: WooCommerce to ClickUp CRM Sync', 'clicksync-connect-clickup-crm-sync-for-woocommerce' ),
-			__( 'ClickSync', 'clicksync-connect-clickup-crm-sync-for-woocommerce' ),
+			__( 'SwiftSync: Connect ClickUp with WooCommerce', 'swiftsync-connect-clickup-with-woocommerce' ),
+			__( 'SwiftSync', 'swiftsync-connect-clickup-with-woocommerce' ),
 			'manage_options',
-			'clicksync',
+			'swiftsync',
 			array( SettingsPage::class, 'render' ),
 			'dashicons-update',
 			56
@@ -76,41 +77,41 @@ class AdminMenu {
 
 		// Submenu 1: Settings (Default tab)
 		add_submenu_page(
-			'clicksync',
-			__( 'ClickSync Settings', 'clicksync-connect-clickup-crm-sync-for-woocommerce' ),
-			__( 'Settings', 'clicksync-connect-clickup-crm-sync-for-woocommerce' ),
+			'swiftsync',
+			__( 'SwiftSync Settings', 'swiftsync-connect-clickup-with-woocommerce' ),
+			__( 'Settings', 'swiftsync-connect-clickup-with-woocommerce' ),
 			'manage_options',
-			'clicksync',
+			'swiftsync',
 			array( SettingsPage::class, 'render' )
 		);
 
 		// Submenu 2: Sync Logs
 		add_submenu_page(
-			'clicksync',
-			__( 'Sync Logs', 'clicksync-connect-clickup-crm-sync-for-woocommerce' ),
-			__( 'Sync Logs', 'clicksync-connect-clickup-crm-sync-for-woocommerce' ),
+			'swiftsync',
+			__( 'Sync Logs', 'swiftsync-connect-clickup-with-woocommerce' ),
+			__( 'Sync Logs', 'swiftsync-connect-clickup-with-woocommerce' ),
 			'manage_options',
-			'clicksync-logs',
+			'swiftsync-logs',
 			array( LogsPage::class, 'render' )
 		);
 
-		// Submenu 3: Sync Error Center
+		// Submenu 3: Sync Errors
 		add_submenu_page(
-			'clicksync',
-			__( 'Sync Error Center', 'clicksync-connect-clickup-crm-sync-for-woocommerce' ),
-			__( 'Sync Error Center', 'clicksync-connect-clickup-crm-sync-for-woocommerce' ),
+			'swiftsync',
+			__( 'Sync Errors', 'swiftsync-connect-clickup-with-woocommerce' ),
+			__( 'Sync Errors', 'swiftsync-connect-clickup-with-woocommerce' ),
 			'manage_options',
-			'clicksync-errors',
+			'swiftsync-errors',
 			array( ErrorsPage::class, 'render' )
 		);
 
 		// Submenu 4: Help Center
 		add_submenu_page(
-			'clicksync',
-			__( 'Help & Documentation', 'clicksync-connect-clickup-crm-sync-for-woocommerce' ),
-			__( 'Help Center', 'clicksync-connect-clickup-crm-sync-for-woocommerce' ),
+			'swiftsync',
+			__( 'Help & Documentation', 'swiftsync-connect-clickup-with-woocommerce' ),
+			__( 'Help Center', 'swiftsync-connect-clickup-with-woocommerce' ),
 			'manage_options',
-			'clicksync-help',
+			'swiftsync-help',
 			array( HelpPage::class, 'render' )
 		);
 	}
@@ -121,7 +122,7 @@ class AdminMenu {
 	public static function enqueue_assets( $hook ) {
 		$allowed_pages = array( 'post.php', 'post-new.php', 'user-edit.php', 'profile.php', 'woocommerce_page_wc-orders' );
 		$is_allowed = false;
-		if ( strpos( $hook, 'clicksync' ) !== false ) {
+		if ( strpos( $hook, 'swiftsync' ) !== false || strpos( $hook, 'clicksync' ) !== false ) {
 			$is_allowed = true;
 		} elseif ( in_array( $hook, $allowed_pages ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -138,6 +139,16 @@ class AdminMenu {
 			}
 		}
 
+		if ( $hook === 'plugins.php' ) {
+			wp_enqueue_script( 'swiftsync-deactivate-modal-js', CLICKSYNC_URL . 'assets/js/deactivate-modal.js', array( 'jquery' ), time(), true );
+			wp_localize_script( 'swiftsync-deactivate-modal-js', 'clicksyncData', array(
+				'ajaxurl' => admin_url( 'admin-ajax.php' ),
+				'nonce'   => wp_create_nonce( 'swiftsync_admin_nonce' ),
+				'logoUrl' => CLICKSYNC_URL . 'assets/images/logo.png',
+			) );
+			return;
+		}
+
 		if ( ! $is_allowed ) {
 			return;
 		}
@@ -149,7 +160,7 @@ class AdminMenu {
 			'ajaxUrl'  => admin_url( 'admin-ajax.php', 'relative' ),
 			'cloudUrl' => CLICKSYNC_CLOUD_URL,
 			'host'     => wp_parse_url( site_url(), PHP_URL_HOST ),
-			'nonce'    => wp_create_nonce( 'clicksync_admin_nonce' ),
+			'nonce'    => wp_create_nonce( 'swiftsync_admin_nonce' ),
 		) );
 	}
 
@@ -165,13 +176,13 @@ class AdminMenu {
 			?>
 			<div class="notice notice-warning is-dismissible">
 				<p>
-					<strong><?php esc_html_e( 'ClickSync Limit Reached:', 'clicksync-connect-clickup-crm-sync-for-woocommerce' ); ?></strong>
+					<strong><?php esc_html_e( 'SwiftSync Limit Reached:', 'swiftsync-connect-clickup-with-woocommerce' ); ?></strong>
 					<?php
 					// translators: 1: sync count, 2: total quota
-					printf( esc_html__( 'You have used %1$d of your %2$d monthly sync tasks. Upgrade your plan to keep syncing WooCommerce events without interruption.', 'clicksync-connect-clickup-crm-sync-for-woocommerce' ), esc_html( $sync_count ), esc_html( $quota ) );
+					printf( esc_html__( 'You have used %1$d of your %2$d monthly sync tasks. Upgrade your plan to keep syncing WooCommerce events without interruption.', 'swiftsync-connect-clickup-with-woocommerce' ), esc_html( $sync_count ), esc_html( $quota ) );
 					?>
-					<a href="<?php echo esc_url( admin_url( 'admin.php?page=clicksync#billing-section' ) ); ?>" class="button button-small button-primary" style="margin-left: 10px;">
-						<?php esc_html_e( 'Upgrade Plan ->', 'clicksync-connect-clickup-crm-sync-for-woocommerce' ); ?>
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=swiftsync#billing-section' ) ); ?>" class="button button-small button-primary" style="margin-left: 10px;">
+						<?php esc_html_e( 'Upgrade Plan ->', 'swiftsync-connect-clickup-with-woocommerce' ); ?>
 					</a>
 				</p>
 			</div>
@@ -183,12 +194,13 @@ class AdminMenu {
 	 * AJAX endpoint to save local WordPress plugin settings (e.g. Refunds, Fulfillment).
 	 */
 	public static function ajax_save_local_settings() {
-		check_ajax_referer( 'clicksync_admin_nonce', 'security' );
+		check_ajax_referer( 'swiftsync_admin_nonce', 'security' );
 		if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( 'Unauthorized', 403 );
 		}
 
-		$refunds_enabled = isset( $_POST['refunds_enabled'] ) ? '1' === $_POST['refunds_enabled'] : true;
+		$raw_refunds     = isset( $_POST['refunds_enabled'] ) ? sanitize_text_field( wp_unslash( $_POST['refunds_enabled'] ) ) : '1';
+		$refunds_enabled = '1' === $raw_refunds;
 		Options::update_settings( array(
 			'refunds_enabled'     => $refunds_enabled,
 			'fulfillment_enabled' => true,
@@ -201,14 +213,15 @@ class AdminMenu {
 	 * AJAX endpoint to save user identity mappings (WP to ClickUp).
 	 */
 	public static function ajax_save_user_mappings() {
-		check_ajax_referer( 'clicksync_admin_nonce', 'security' );
+		check_ajax_referer( 'swiftsync_admin_nonce', 'security' );
 		if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( 'Unauthorized', 403 );
 		}
 
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
-		$mappings = isset( $_POST['mappings'] ) ? (array) $_POST['mappings'] : array();
-		$fallback = isset( $_POST['fallback_clickup_user_id'] ) ? sanitize_text_field( wp_unslash( $_POST['fallback_clickup_user_id'] ) ) : '';
+		$raw_mappings     = isset( $_POST['mappings'] ) ? wp_unslash( $_POST['mappings'] ) : array();
+		$mappings         = is_array( $raw_mappings ) ? $raw_mappings : array();
+		$fallback         = isset( $_POST['fallback_clickup_user_id'] ) ? sanitize_text_field( wp_unslash( $_POST['fallback_clickup_user_id'] ) ) : '';
 
 		// Clean keys and values
 		$cleaned_mappings = array();
@@ -228,7 +241,7 @@ class AdminMenu {
 	 * AJAX endpoint to retrieve dynamic WooCommerce fields, meta keys, and order statuses.
 	 */
 	public static function ajax_get_wc_fields() {
-		check_ajax_referer( 'clicksync_admin_nonce', 'security' );
+		check_ajax_referer( 'swiftsync_admin_nonce', 'security' );
 		if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( 'Unauthorized', 403 );
 		}
@@ -359,7 +372,7 @@ class AdminMenu {
 		// Legacy orders page
 		add_meta_box(
 			'clicksync_order_details_metabox',
-			__( 'ClickUp Task Sync', 'clicksync-connect-clickup-crm-sync-for-woocommerce' ),
+			__( 'ClickUp Task Sync', 'swiftsync-connect-clickup-with-woocommerce' ),
 			array( \ClickSync\Admin\Widget::class, 'render_order_metabox' ),
 			'shop_order',
 			'side',
@@ -368,7 +381,7 @@ class AdminMenu {
 		// HPOS support
 		add_meta_box(
 			'clicksync_order_details_metabox',
-			__( 'ClickUp Task Sync', 'clicksync-connect-clickup-crm-sync-for-woocommerce' ),
+			__( 'ClickUp Task Sync', 'swiftsync-connect-clickup-with-woocommerce' ),
 			array( \ClickSync\Admin\Widget::class, 'render_order_metabox' ),
 			'woocommerce_page_wc-orders',
 			'side',
@@ -387,10 +400,10 @@ class AdminMenu {
 			return;
 		}
 		?>
-		<h2><?php esc_html_e( 'ClickUp Customer Sync', 'clicksync-connect-clickup-crm-sync-for-woocommerce' ); ?></h2>
+		<h2><?php esc_html_e( 'ClickUp Customer Sync', 'swiftsync-connect-clickup-with-woocommerce' ); ?></h2>
 		<table class="form-table">
 			<tr>
-				<th><label><?php esc_html_e( 'ClickUp Task Link', 'clicksync-connect-clickup-crm-sync-for-woocommerce' ); ?></label></th>
+				<th><label><?php esc_html_e( 'ClickUp Task Link', 'swiftsync-connect-clickup-with-woocommerce' ); ?></label></th>
 				<td>
 					<?php \ClickSync\Admin\Widget::render_customer_metabox( $user ); ?>
 				</td>
@@ -403,7 +416,7 @@ class AdminMenu {
 	 * AJAX handler to retrieve ClickUp task details.
 	 */
 	public static function ajax_widget_get_task_details() {
-		check_ajax_referer( 'clicksync_admin_nonce', 'security' );
+		check_ajax_referer( 'swiftsync_admin_nonce', 'security' );
 		if ( ! current_user_can( 'edit_shop_orders' ) && ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( 'Unauthorized', 403 );
 		}
@@ -427,7 +440,7 @@ class AdminMenu {
 	 * AJAX handler to update ClickUp task attributes.
 	 */
 	public static function ajax_widget_update_task() {
-		check_ajax_referer( 'clicksync_admin_nonce', 'security' );
+		check_ajax_referer( 'swiftsync_admin_nonce', 'security' );
 		if ( ! current_user_can( 'edit_shop_orders' ) && ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( 'Unauthorized', 403 );
 		}
@@ -446,7 +459,9 @@ class AdminMenu {
 		}
 		if ( isset( $_POST['assignees'] ) ) {
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
-			$payload['assignees'] = (array) $_POST['assignees'];
+			$unslashed_assignees  = wp_unslash( $_POST['assignees'] );
+			$raw_assignees        = is_array( $unslashed_assignees ) ? $unslashed_assignees : array( $unslashed_assignees );
+			$payload['assignees'] = array_map( 'sanitize_text_field', $raw_assignees );
 		}
 
 		$response = \ClickSync\Api\Client::request( '/api/update-task', $payload );
@@ -457,8 +472,8 @@ class AdminMenu {
 		}
 
 		// Update local WordPress cache
-		$order_id = isset( $_POST['order_id'] ) ? intval( $_POST['order_id'] ) : 0;
-		$customer_id = isset( $_POST['customer_id'] ) ? intval( $_POST['customer_id'] ) : 0;
+		$order_id    = isset( $_POST['order_id'] ) ? absint( wp_unslash( $_POST['order_id'] ) ) : 0;
+		$customer_id = isset( $_POST['customer_id'] ) ? absint( wp_unslash( $_POST['customer_id'] ) ) : 0;
 		$data = $response['data']['task'];
 
 		if ( $order_id ) {
@@ -480,13 +495,13 @@ class AdminMenu {
 	 * AJAX handler to manually force a sync for orders or customers.
 	 */
 	public static function ajax_widget_force_sync() {
-		check_ajax_referer( 'clicksync_admin_nonce', 'security' );
+		check_ajax_referer( 'swiftsync_admin_nonce', 'security' );
 		if ( ! current_user_can( 'edit_shop_orders' ) && ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( 'Unauthorized', 403 );
 		}
 
-		$order_id = isset( $_POST['order_id'] ) ? intval( $_POST['order_id'] ) : 0;
-		$customer_id = isset( $_POST['customer_id'] ) ? intval( $_POST['customer_id'] ) : 0;
+		$order_id    = isset( $_POST['order_id'] ) ? absint( wp_unslash( $_POST['order_id'] ) ) : 0;
+		$customer_id = isset( $_POST['customer_id'] ) ? absint( wp_unslash( $_POST['customer_id'] ) ) : 0;
 
 		if ( ! $order_id && ! $customer_id ) {
 			wp_send_json_error( 'Missing parameters.', 400 );
@@ -588,7 +603,7 @@ class AdminMenu {
 		
 		if ( empty( $body['task_ids'] ) ) {
 			wp_send_json_success( array(
-				'message' => isset( $body['message'] ) ? $body['message'] : __( 'Manual sync queued successfully. Refreshed cached values will load shortly.', 'clicksync-connect-clickup-crm-sync-for-woocommerce' ),
+				'message' => isset( $body['message'] ) ? $body['message'] : __( 'Manual sync queued successfully. Refreshed cached values will load shortly.', 'swiftsync-connect-clickup-with-woocommerce' ),
 				'queued'  => true
 			) );
 		}
@@ -615,10 +630,46 @@ class AdminMenu {
 	}
 
 	/**
+	 * AJAX handler for submitting exit feedback and deactivation cancellation choice.
+	 */
+	public static function ajax_submit_exit_feedback() {
+		check_ajax_referer( 'swiftsync_admin_nonce', 'security' );
+		if ( ! current_user_can( 'activate_plugins' ) ) {
+			wp_send_json_error( 'Unauthorized', 403 );
+		}
+
+		$reason                = isset( $_POST['reason'] ) ? sanitize_text_field( wp_unslash( $_POST['reason'] ) ) : 'Other';
+		$message               = isset( $_POST['message'] ) ? sanitize_textarea_field( wp_unslash( $_POST['message'] ) ) : '';
+		$canceled_subscription = ! empty( $_POST['canceledSubscription'] );
+
+		$host    = wp_parse_url( site_url(), PHP_URL_HOST );
+		$payload = array(
+			'reason'               => $reason,
+			'message'              => $message,
+			'canceledSubscription' => $canceled_subscription,
+		);
+
+		// Dispatch user-initiated exit feedback to Cloud backend
+		wp_remote_post( CLICKSYNC_CLOUD_URL . '/api/save-config', array(
+			'method'   => 'POST',
+			'timeout'  => 5,
+			'blocking' => false,
+			'headers'  => array( 'Content-Type' => 'application/json' ),
+			'body'     => wp_json_encode( array(
+				'shop'       => $host,
+				'actionType' => 'submit_exit_feedback',
+				'payload'    => $payload,
+			) ),
+		) );
+
+		wp_send_json_success( array( 'message' => 'Feedback submitted.' ) );
+	}
+
+	/**
 	 * AJAX handler to process user contact submissions and post to Pumble.
 	 */
 	public static function ajax_contact_submit() {
-		check_ajax_referer( 'clicksync_admin_nonce', 'security' );
+		check_ajax_referer( 'swiftsync_admin_nonce', 'security' );
 		if ( ! current_user_can( 'manage_woocommerce' ) && ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( 'Unauthorized', 403 );
 		}

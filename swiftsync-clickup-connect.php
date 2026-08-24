@@ -1,16 +1,17 @@
 <?php
 /**
- * Plugin Name:       ClickSync Connect: ClickUp CRM Sync for WooCommerce
+ * Plugin Name:       SwiftSync: Connect ClickUp with WooCommerce
  * Plugin URI:        https://docs.loopstates.com/clicksync/wordpress/
  * Description:       Automate your WooCommerce workflow by converting orders, refunds, customer updates, and abandoned checkouts directly into ClickUp tasks.
- * Version:           1.2.0
+ * Version:           1.2.1
  * Tested up to:      7.1
  * Requires PHP:      7.4
+ * Requires Plugins:  woocommerce
  * Author:            Loopstates
  * Author URI:        https://loopstates.com
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:       clicksync-connect-clickup-crm-sync-for-woocommerce
+ * Text Domain:       swiftsync-connect-clickup-with-woocommerce
  * Domain Path:       /languages
  */
 
@@ -19,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Define Plugin Constants
-define( 'CLICKSYNC_VERSION', '1.2.0' );
+define( 'CLICKSYNC_VERSION', '1.2.1' );
 define( 'CLICKSYNC_FILE', __FILE__ );
 define( 'CLICKSYNC_PATH', plugin_dir_path( __FILE__ ) );
 define( 'CLICKSYNC_URL', plugin_dir_url( __FILE__ ) );

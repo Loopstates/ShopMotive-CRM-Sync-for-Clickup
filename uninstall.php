@@ -9,24 +9,7 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
 
-$clicksync_host = wp_parse_url( site_url(), PHP_URL_HOST );
-
-// Ping cloud to register uninstall before wiping options
-wp_remote_post( 'https://clicksync-connect.apps.loopstates.com/api/save-config', array(
-	'method'      => 'POST',
-	'timeout'     => 5,
-	'blocking'    => true, // Block slightly during uninstall to ensure the request is sent
-	'headers'     => array(
-		'Content-Type' => 'application/json',
-	),
-	'body'        => wp_json_encode( array(
-		'shop'       => $clicksync_host,
-		'actionType' => 'uninstall_plugin',
-		'payload'    => array()
-	) ),
-) );
-
-// Clear plugin options from wp_options table
+// Clear plugin options from wp_options table upon uninstall
 delete_option( 'clicksync_settings' );
 delete_option( 'clicksync_account' );
 delete_option( 'clicksync_user_mappings' );

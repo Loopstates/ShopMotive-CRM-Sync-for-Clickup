@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Webhook
  * 
- * Handles incoming REST API callbacks from ClickSync Cloud (e.g. status changes).
+ * Handles incoming REST API callbacks from SwiftSync Cloud (e.g. status changes).
  */
 class Webhook {
 
@@ -48,6 +48,10 @@ class Webhook {
 	 * @return bool
 	 */
 	public static function check_permission() {
+		$secret_key = \ClickSync\Core\Options::get_secret_key();
+		if ( empty( $secret_key ) ) {
+			return false;
+		}
 		return true;
 	}
 
@@ -71,10 +75,11 @@ class Webhook {
 			return new \WP_REST_Response( array( 'error' => 'Request expired.' ), 401 );
 		}
 
-		$host = wp_parse_url( site_url(), PHP_URL_HOST );
 		$secret_key = \ClickSync\Core\Options::get_secret_key();
-		$signing_key = ! empty( $secret_key ) ? $secret_key : $host;
-		$computed_signature = hash_hmac( 'sha256', $body, $signing_key . ':' . $timestamp );
+		if ( empty( $secret_key ) ) {
+			return new \WP_REST_Response( array( 'error' => 'Secret key not configured.' ), 401 );
+		}
+		$computed_signature = hash_hmac( 'sha256', $body, $secret_key . ':' . $timestamp );
 
 		if ( ! hash_equals( $computed_signature, $hmac ) ) {
 			return new \WP_REST_Response( array( 'error' => 'Invalid HMAC signature.' ), 401 );
@@ -107,7 +112,7 @@ class Webhook {
 		
 		// Update WooCommerce order status
 		// translators: %s is the new status slug
-		$order->update_status( $status_slug, sprintf( __( 'Status updated to "%s" via ClickUp task status sync.', 'clicksync-connect-clickup-crm-sync-for-woocommerce' ), $status_slug ) );
+		$order->update_status( $status_slug, sprintf( __( 'Status updated to "%s" via ClickUp task status sync.', 'swiftsync-connect-clickup-with-woocommerce' ), $status_slug ) );
 
 		return new \WP_REST_Response( array(
 			'success' => true,
@@ -134,10 +139,11 @@ class Webhook {
 			return new \WP_REST_Response( array( 'error' => 'Request expired.' ), 401 );
 		}
 
-		$host = wp_parse_url( site_url(), PHP_URL_HOST );
 		$secret_key = \ClickSync\Core\Options::get_secret_key();
-		$signing_key = ! empty( $secret_key ) ? $secret_key : $host;
-		$computed_signature = hash_hmac( 'sha256', $body, $signing_key . ':' . $timestamp );
+		if ( empty( $secret_key ) ) {
+			return new \WP_REST_Response( array( 'error' => 'Secret key not configured.' ), 401 );
+		}
+		$computed_signature = hash_hmac( 'sha256', $body, $secret_key . ':' . $timestamp );
 
 		if ( ! hash_equals( $computed_signature, $hmac ) ) {
 			return new \WP_REST_Response( array( 'error' => 'Invalid HMAC signature.' ), 401 );
@@ -213,10 +219,11 @@ class Webhook {
 			return new \WP_REST_Response( array( 'error' => 'Request expired.' ), 401 );
 		}
 
-		$host = wp_parse_url( site_url(), PHP_URL_HOST );
 		$secret_key = \ClickSync\Core\Options::get_secret_key();
-		$signing_key = ! empty( $secret_key ) ? $secret_key : $host;
-		$computed_signature = hash_hmac( 'sha256', $body, $signing_key . ':' . $timestamp );
+		if ( empty( $secret_key ) ) {
+			return new \WP_REST_Response( array( 'error' => 'Secret key not configured.' ), 401 );
+		}
+		$computed_signature = hash_hmac( 'sha256', $body, $secret_key . ':' . $timestamp );
 
 		if ( ! hash_equals( $computed_signature, $hmac ) ) {
 			return new \WP_REST_Response( array( 'error' => 'Invalid HMAC signature.' ), 401 );
@@ -276,10 +283,11 @@ class Webhook {
 			return new \WP_REST_Response( array( 'error' => 'Request expired.' ), 401 );
 		}
 
-		$host = wp_parse_url( site_url(), PHP_URL_HOST );
 		$secret_key = \ClickSync\Core\Options::get_secret_key();
-		$signing_key = ! empty( $secret_key ) ? $secret_key : $host;
-		$computed_signature = hash_hmac( 'sha256', $body, $signing_key . ':' . $timestamp );
+		if ( empty( $secret_key ) ) {
+			return new \WP_REST_Response( array( 'error' => 'Secret key not configured.' ), 401 );
+		}
+		$computed_signature = hash_hmac( 'sha256', $body, $secret_key . ':' . $timestamp );
 
 		if ( ! hash_equals( $computed_signature, $hmac ) ) {
 			return new \WP_REST_Response( array( 'error' => 'Invalid HMAC signature.' ), 401 );

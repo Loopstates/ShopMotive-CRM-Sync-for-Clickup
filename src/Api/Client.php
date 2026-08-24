@@ -11,12 +11,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Client
  * 
- * HTTP API client for dispatching normalized JSON payloads to ClickSync Cloud backend.
+ * HTTP API client for dispatching normalized JSON payloads to SwiftSync Cloud backend.
  */
 class Client {
 
 	/**
-	 * Dispatch normalized JSON payload to ClickSync Cloud middleware.
+	 * Dispatch normalized JSON payload to SwiftSync Cloud middleware.
 	 *
 	 * @param string $topic   Event topic (e.g. 'orders/create', 'customers/create', 'refunds/create', 'checkouts/update').
 	 * @param array  $payload Normalized Shopify-schema JSON array.
@@ -26,7 +26,7 @@ class Client {
 		$settings = Options::get_settings();
 		$endpoint = CLICKSYNC_CLOUD_URL . '/api/sync-event';
 
-		$topic = apply_filters( 'clicksync_event_topic', $topic, $payload );
+		$topic = apply_filters( 'swiftsync_event_topic', $topic, $payload );
 
 		$json_body = wp_json_encode( $payload );
 
@@ -54,14 +54,14 @@ class Client {
 			'body'        => $json_body,
 		);
 
-		$args['headers'] = apply_filters( 'clicksync_api_request_headers', $args['headers'], $endpoint );
-		$args            = apply_filters( 'clicksync_api_request_args', $args, $endpoint );
+		$args['headers'] = apply_filters( 'swiftsync_api_request_headers', $args['headers'], $endpoint );
+		$args            = apply_filters( 'swiftsync_api_request_args', $args, $endpoint );
 
 		$response = wp_remote_post( $endpoint, $args );
 
 		if ( is_wp_error( $response ) ) {
-			// Debug log commented for WordPress.org compliance: error_log( 'ClickSync Cloud API Dispatch Error: ' . $response->get_error_message() );
-			do_action( 'clicksync_event_failed', $topic, $payload, $response->get_error_message() );
+			// Debug log commented for WordPress.org compliance: error_log( 'SwiftSync Cloud API Dispatch Error: ' . $response->get_error_message() );
+			do_action( 'swiftsync_event_failed', $topic, $payload, $response->get_error_message() );
 			if ( ! $is_retry ) {
 				self::schedule_retry( $topic, $payload );
 			}
@@ -73,8 +73,8 @@ class Client {
 		$data        = json_decode( $body, true );
 
 		if ( $status_code < 200 || $status_code >= 300 ) {
-			// Debug log commented for WordPress.org compliance: error_log( 'ClickSync Cloud API Dispatch HTTP Error: ' . $status_code );
-			do_action( 'clicksync_event_failed', $topic, $payload, 'HTTP status code: ' . $status_code );
+			// Debug log commented for WordPress.org compliance: error_log( 'SwiftSync Cloud API Dispatch HTTP Error: ' . $status_code );
+			do_action( 'swiftsync_event_failed', $topic, $payload, 'HTTP status code: ' . $status_code );
 			if ( ! $is_retry ) {
 				self::schedule_retry( $topic, $payload );
 			}
@@ -86,7 +86,7 @@ class Client {
 			Options::update_account( $data['account'] );
 		}
 
-		do_action( 'clicksync_event_dispatched', $topic, $payload, $response );
+		do_action( 'swiftsync_event_dispatched', $topic, $payload, $response );
 
 		return array(
 			'status_code' => $status_code,
@@ -104,23 +104,23 @@ class Client {
 	public static function schedule_retry( $topic, $payload, $attempts = 1 ) {
 		if ( function_exists( 'as_schedule_single_action' ) ) {
 			$delay = 5 * MINUTE_IN_SECONDS * $attempts;
-			$delay = apply_filters( 'clicksync_retry_delay', $delay, $attempts, $topic );
+			$delay = apply_filters( 'swiftsync_retry_delay', $delay, $attempts, $topic );
 			as_schedule_single_action(
 				time() + $delay,
-				'clicksync_retry_event',
+				'swiftsync_retry_event',
 				array(
 					'topic'    => $topic,
 					'payload'  => $payload,
 					'attempts' => $attempts,
 				),
-				'clicksync-connect-clickup-crm-sync-for-woocommerce'
+				'swiftsync-connect-clickup-with-woocommerce'
 			);
 			// Debug log commented for WordPress.org compliance: error_log( sprintf( 'ClickSync scheduled retry attempt %d for topic "%s" in %d seconds.', $attempts, $topic, $delay ) );
 		}
 	}
 
 	/**
-	 * Send arbitrary signed request to ClickSync Cloud middleware.
+	 * Send arbitrary signed request to SwiftSync Cloud middleware.
 	 *
 	 * @param string $endpoint_path Endpoint path (e.g. '/api/get-task-details').
 	 * @param array  $payload Payload array.
@@ -153,13 +153,13 @@ class Client {
 			'body'        => $json_body,
 		);
 
-		$args['headers'] = apply_filters( 'clicksync_api_request_headers', $args['headers'], $endpoint );
-		$args            = apply_filters( 'clicksync_api_request_args', $args, $endpoint );
+		$args['headers'] = apply_filters( 'swiftsync_api_request_headers', $args['headers'], $endpoint );
+		$args            = apply_filters( 'swiftsync_api_request_args', $args, $endpoint );
 
 		$response = wp_remote_post( $endpoint, $args );
 
 		if ( is_wp_error( $response ) ) {
-			// Debug log commented for WordPress.org compliance: error_log( 'ClickSync Cloud API Request Error: ' . $response->get_error_message() );
+			// Debug log commented for WordPress.org compliance: error_log( 'SwiftSync Cloud API Request Error: ' . $response->get_error_message() );
 			return false;
 		}
 
