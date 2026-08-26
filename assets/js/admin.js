@@ -3,7 +3,7 @@
     'use strict';
 
     $(document).ready(function () {
-        var cloudUrl = typeof clicksyncData !== 'undefined' ? clicksyncData.cloudUrl : 'https://clicksync-connect.apps.loopstates.com';
+        var cloudUrl = typeof clicksyncData !== 'undefined' ? clicksyncData.cloudUrl : 'https://swiftsync.apps.loopstates.com';
         var host = typeof clicksyncData !== 'undefined' ? clicksyncData.host : window.location.hostname;
         var cachedLogs = [];
         var activePlanName = 'Free Plan';

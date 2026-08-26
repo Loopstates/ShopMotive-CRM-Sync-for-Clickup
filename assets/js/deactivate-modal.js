@@ -1,6 +1,6 @@
 jQuery(document).ready(function($) {
     // Target the deactivate link specifically for SwiftSync
-    var $deactivateLink = $('tr[data-slug="swiftsync-connect-clickup-with-woocommerce"] .deactivate a, tr[data-slug="clicksync-connect-clickup-crm-sync-for-woocommerce"] .deactivate a');
+    var $deactivateLink = $('tr[data-slug="swiftsync-crm-sync-for-clickup-and-woocommerce"] .deactivate a, tr[data-slug="clicksync-connect-clickup-crm-sync-for-woocommerce"] .deactivate a');
     
     if (!$deactivateLink.length) {
         return;

@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name:       SwiftSync: Connect ClickUp with WooCommerce
- * Plugin URI:        https://docs.loopstates.com/clicksync/wordpress/
- * Description:       Automate your WooCommerce workflow by converting orders, refunds, customer updates, and abandoned checkouts directly into ClickUp tasks.
+ * Plugin Name:       SwiftSync: CRM Sync for ClickUp and WooCommerce
+ * Plugin URI:        https://docs.loopstates.com/swiftsync-for-clickup-and-woocommerce/
+ * Description:       Connect and synchronize WooCommerce order events, customer profiles, notes, and refunds directly into ClickUp tasks.
  * Version:           1.2.1
  * Tested up to:      7.1
  * Requires PHP:      7.4
@@ -11,7 +11,7 @@
  * Author URI:        https://loopstates.com
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:       swiftsync-connect-clickup-with-woocommerce
+ * Text Domain:       swiftsync-crm-sync-for-clickup-and-woocommerce
  * Domain Path:       /languages
  */
 
@@ -24,7 +24,7 @@ define( 'CLICKSYNC_VERSION', '1.2.1' );
 define( 'CLICKSYNC_FILE', __FILE__ );
 define( 'CLICKSYNC_PATH', plugin_dir_path( __FILE__ ) );
 define( 'CLICKSYNC_URL', plugin_dir_url( __FILE__ ) );
-define( 'CLICKSYNC_CLOUD_URL', 'https://clicksync-connect.apps.loopstates.com' );
+define( 'CLICKSYNC_CLOUD_URL', 'https://swiftsync.apps.loopstates.com' );
 
 // Require Autoloader with case-insensitive file system fallback check
 $clicksync_autoloader = untrailingslashit( CLICKSYNC_PATH ) . '/src/Core/Autoloader.php';

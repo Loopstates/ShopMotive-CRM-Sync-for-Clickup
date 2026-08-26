@@ -66,8 +66,8 @@ class AdminMenu {
 	public static function register_menu() {
 		// 1. Top-Level Parent Menu (Settings)
 		add_menu_page(
-			__( 'SwiftSync: Connect ClickUp with WooCommerce', 'swiftsync-connect-clickup-with-woocommerce' ),
-			__( 'SwiftSync', 'swiftsync-connect-clickup-with-woocommerce' ),
+			__( 'SwiftSync: CRM Sync for ClickUp and WooCommerce', 'swiftsync-crm-sync-for-clickup-and-woocommerce' ),
+			__( 'SwiftSync', 'swiftsync-crm-sync-for-clickup-and-woocommerce' ),
 			'manage_options',
 			'swiftsync',
 			array( SettingsPage::class, 'render' ),
@@ -78,8 +78,8 @@ class AdminMenu {
 		// Submenu 1: Settings (Default tab)
 		add_submenu_page(
 			'swiftsync',
-			__( 'SwiftSync Settings', 'swiftsync-connect-clickup-with-woocommerce' ),
-			__( 'Settings', 'swiftsync-connect-clickup-with-woocommerce' ),
+			__( 'SwiftSync Settings', 'swiftsync-crm-sync-for-clickup-and-woocommerce' ),
+			__( 'Settings', 'swiftsync-crm-sync-for-clickup-and-woocommerce' ),
 			'manage_options',
 			'swiftsync',
 			array( SettingsPage::class, 'render' )
@@ -88,8 +88,8 @@ class AdminMenu {
 		// Submenu 2: Sync Logs
 		add_submenu_page(
 			'swiftsync',
-			__( 'Sync Logs', 'swiftsync-connect-clickup-with-woocommerce' ),
-			__( 'Sync Logs', 'swiftsync-connect-clickup-with-woocommerce' ),
+			__( 'Sync Logs', 'swiftsync-crm-sync-for-clickup-and-woocommerce' ),
+			__( 'Sync Logs', 'swiftsync-crm-sync-for-clickup-and-woocommerce' ),
 			'manage_options',
 			'swiftsync-logs',
 			array( LogsPage::class, 'render' )
@@ -98,8 +98,8 @@ class AdminMenu {
 		// Submenu 3: Sync Errors
 		add_submenu_page(
 			'swiftsync',
-			__( 'Sync Errors', 'swiftsync-connect-clickup-with-woocommerce' ),
-			__( 'Sync Errors', 'swiftsync-connect-clickup-with-woocommerce' ),
+			__( 'Sync Errors', 'swiftsync-crm-sync-for-clickup-and-woocommerce' ),
+			__( 'Sync Errors', 'swiftsync-crm-sync-for-clickup-and-woocommerce' ),
 			'manage_options',
 			'swiftsync-errors',
 			array( ErrorsPage::class, 'render' )
@@ -108,8 +108,8 @@ class AdminMenu {
 		// Submenu 4: Help Center
 		add_submenu_page(
 			'swiftsync',
-			__( 'Help & Documentation', 'swiftsync-connect-clickup-with-woocommerce' ),
-			__( 'Help Center', 'swiftsync-connect-clickup-with-woocommerce' ),
+			__( 'Help & Documentation', 'swiftsync-crm-sync-for-clickup-and-woocommerce' ),
+			__( 'Help Center', 'swiftsync-crm-sync-for-clickup-and-woocommerce' ),
 			'manage_options',
 			'swiftsync-help',
 			array( HelpPage::class, 'render' )
@@ -176,13 +176,13 @@ class AdminMenu {
 			?>
 			<div class="notice notice-warning is-dismissible">
 				<p>
-					<strong><?php esc_html_e( 'SwiftSync Limit Reached:', 'swiftsync-connect-clickup-with-woocommerce' ); ?></strong>
+					<strong><?php esc_html_e( 'SwiftSync Limit Reached:', 'swiftsync-crm-sync-for-clickup-and-woocommerce' ); ?></strong>
 					<?php
 					// translators: 1: sync count, 2: total quota
-					printf( esc_html__( 'You have used %1$d of your %2$d monthly sync tasks. Upgrade your plan to keep syncing WooCommerce events without interruption.', 'swiftsync-connect-clickup-with-woocommerce' ), esc_html( $sync_count ), esc_html( $quota ) );
+					printf( esc_html__( 'You have used %1$d of your %2$d monthly sync tasks. Upgrade your plan to keep syncing WooCommerce events without interruption.', 'swiftsync-crm-sync-for-clickup-and-woocommerce' ), esc_html( $sync_count ), esc_html( $quota ) );
 					?>
 					<a href="<?php echo esc_url( admin_url( 'admin.php?page=swiftsync#billing-section' ) ); ?>" class="button button-small button-primary" style="margin-left: 10px;">
-						<?php esc_html_e( 'Upgrade Plan ->', 'swiftsync-connect-clickup-with-woocommerce' ); ?>
+						<?php esc_html_e( 'Upgrade Plan ->', 'swiftsync-crm-sync-for-clickup-and-woocommerce' ); ?>
 					</a>
 				</p>
 			</div>
@@ -372,7 +372,7 @@ class AdminMenu {
 		// Legacy orders page
 		add_meta_box(
 			'clicksync_order_details_metabox',
-			__( 'ClickUp Task Sync', 'swiftsync-connect-clickup-with-woocommerce' ),
+			__( 'ClickUp Task Sync', 'swiftsync-crm-sync-for-clickup-and-woocommerce' ),
 			array( \ClickSync\Admin\Widget::class, 'render_order_metabox' ),
 			'shop_order',
 			'side',
@@ -381,7 +381,7 @@ class AdminMenu {
 		// HPOS support
 		add_meta_box(
 			'clicksync_order_details_metabox',
-			__( 'ClickUp Task Sync', 'swiftsync-connect-clickup-with-woocommerce' ),
+			__( 'ClickUp Task Sync', 'swiftsync-crm-sync-for-clickup-and-woocommerce' ),
 			array( \ClickSync\Admin\Widget::class, 'render_order_metabox' ),
 			'woocommerce_page_wc-orders',
 			'side',
@@ -400,10 +400,10 @@ class AdminMenu {
 			return;
 		}
 		?>
-		<h2><?php esc_html_e( 'ClickUp Customer Sync', 'swiftsync-connect-clickup-with-woocommerce' ); ?></h2>
+		<h2><?php esc_html_e( 'ClickUp Customer Sync', 'swiftsync-crm-sync-for-clickup-and-woocommerce' ); ?></h2>
 		<table class="form-table">
 			<tr>
-				<th><label><?php esc_html_e( 'ClickUp Task Link', 'swiftsync-connect-clickup-with-woocommerce' ); ?></label></th>
+				<th><label><?php esc_html_e( 'ClickUp Task Link', 'swiftsync-crm-sync-for-clickup-and-woocommerce' ); ?></label></th>
 				<td>
 					<?php \ClickSync\Admin\Widget::render_customer_metabox( $user ); ?>
 				</td>
@@ -603,7 +603,7 @@ class AdminMenu {
 		
 		if ( empty( $body['task_ids'] ) ) {
 			wp_send_json_success( array(
-				'message' => isset( $body['message'] ) ? $body['message'] : __( 'Manual sync queued successfully. Refreshed cached values will load shortly.', 'swiftsync-connect-clickup-with-woocommerce' ),
+				'message' => isset( $body['message'] ) ? $body['message'] : __( 'Manual sync queued successfully. Refreshed cached values will load shortly.', 'swiftsync-crm-sync-for-clickup-and-woocommerce' ),
 				'queued'  => true
 			) );
 		}

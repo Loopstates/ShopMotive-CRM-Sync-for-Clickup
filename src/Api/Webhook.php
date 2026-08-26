@@ -112,7 +112,7 @@ class Webhook {
 		
 		// Update WooCommerce order status
 		// translators: %s is the new status slug
-		$order->update_status( $status_slug, sprintf( __( 'Status updated to "%s" via ClickUp task status sync.', 'swiftsync-connect-clickup-with-woocommerce' ), $status_slug ) );
+		$order->update_status( $status_slug, sprintf( __( 'Status updated to "%s" via ClickUp task status sync.', 'swiftsync-crm-sync-for-clickup-and-woocommerce' ), $status_slug ) );
 
 		return new \WP_REST_Response( array(
 			'success' => true,

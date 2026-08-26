@@ -1,6 +1,6 @@
-=== SwiftSync: Connect ClickUp with WooCommerce ===
+=== SwiftSync: CRM Sync for ClickUp and WooCommerce ===
 Contributors: loopstates
-Tags: clickup, woocommerce, crm, task management, sync
+Tags: clickup, woocommerce, crm, order sync, customer sync
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
@@ -8,13 +8,15 @@ Stable tag: 1.2.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Connect and synchronize WooCommerce order events, notes, and customers directly with ClickUp tasks.
+Connect and synchronize WooCommerce order events, customer profiles, notes, and refunds directly into ClickUp tasks.
 
 == Description ==
 
-SwiftSync Connect is an enterprise-grade, asynchronous synchronization engine designed to seamlessly bridge WooCommerce storefront activity with your ClickUp workspace. The plugin instantly captures e-commerce events—such as new checkouts, user registrations, refunds, order status transitions, and order notes—and queues them for structured syncing into your ClickUp lists.
+SwiftSync connects your WooCommerce store to your ClickUp workspace. It automatically converts WooCommerce orders, customer profiles, refunds, and order notes into ClickUp tasks so your fulfillment, support, and sales teams can manage store operations directly inside ClickUp.
 
-This plugin serves as the client connector linking your WordPress database with the SwiftSync Cloud Service (https://clicksync-connect.apps.loopstates.com). By offloading heavy data serialization and external API request handshakes, SwiftSync protects your WooCommerce execution threads and guarantees zero customer checkout delays. All merchant access tokens are stored with AES-256 encryption at rest, and webhook dispatches undergo real-time SHA-256 HMAC signature verification.
+When an order is placed or updated in WooCommerce, SwiftSync captures the event and generates or updates a corresponding task in ClickUp. You can map WooCommerce fields (such as billing details, customer lifetime spend, discount codes, and shipping addresses) to ClickUp custom fields, automatically assign tasks to team members based on order thresholds, and keep order statuses synchronized between both platforms.
+
+Event processing is executed in the background to ensure customer checkouts remain fast and responsive. The plugin connects securely with the SwiftSync Cloud Service (https://swiftsync.apps.loopstates.com) to process API handshakes and deliver payloads reliably without impacting your website's performance.
 
 == Subscription Plans & Pricing ==
 
@@ -57,30 +59,27 @@ SwiftSync Connect offers flexible plans to scale with your business requirements
 
 == Key Features ==
 
-* **Asynchronous Task Queue (Under 20ms Capture):** Captures WooCommerce checkouts in under 20ms and enqueues them in a local processing table, ensuring customer loading speeds are completely unaffected by external API latency.
-* **Premium Subscription Visualizer:** Features rich, professional badges detailing your active SwiftSync plan (with custom gold Crown icons for Pro Plan and elegant violet Diamond icons for Growth Plan) and dynamic ClickUp API rate-limit meters.
-* **Interactive Help & FAQ Accordions:** Built-in interactive collapsible FAQ dashboard designed for rapid troubleshooting, manual order sync instructions, and direct billing controls.
-* **Bi-Directional Order Status Syncing:** Automatically maps WooCommerce order status fields (Processing, Completed, On-hold, Cancelled) to your ClickUp task statuses. Moving a task status inside ClickUp triggers the WooCommerce core order transition instantly.
-* **Dynamic Customer Contact Syncing:** Keeps the SwiftSync support team updated with your administrator contact details so we can alert you about API handshake errors or expired OAuth tokens before they affect your business.
-* **Custom Field Mapping Engine:** Map standard WooCommerce order parameters—including billing details, customer lifetime value, shipping address, or custom checkout attributes—directly to custom text, list, number, or checkbox fields in ClickUp.
-* **Line-Item Split Routing:** Choose whether multi-item WooCommerce checkouts generate a single parent task or separate child tasks in ClickUp, enabling you to route different items to separate team members or fulfillment pipelines.
-* **Refund & Cancellation Syncing:** Track refunds, order cancellations, and item adjustments as automated updates. Full or partial refunds update order totals and log details directly as task comments.
-* **WP Admin Order Sidebar Widget:** Adds a live metadata panel to the WooCommerce Edit Order screen displaying the linked ClickUp Task ID, real-time status updates, active assignees, and direct workspace links.
-* **Resilient Fail-Safe Retry System:** Retains webhook payloads during ClickUp outages or API rate limiting (HTTP 429), automatically executing up to 5 scheduled retries to prevent data loss.
-* **Custom Quota Request Desk:** Submit custom transaction quota and webhook requests directly from your settings panel to accommodate high-volume holiday sales or promotional traffic.
-* **WordPress Developer API:** Built with hooks and filters allowing developers to conditionally bypass sync events, modify outgoing payloads, customize retry intervals, or add partner headers.
+* **Automated Order-to-Task Conversion:** Instantly creates structured ClickUp task cards the second a customer places an order on WooCommerce, giving your fulfillment team real-time visibility without refreshing WordPress.
+* **2-Way Order Status Control:** Move a task card to "Processing", "Shipped", or "Completed" inside ClickUp, and SwiftSync automatically updates the order status in WooCommerce and notifies the customer.
+* **360° Customer Lifetime Value & CRM Sync:** Sync buyer profiles, total order history, lifetime spend, billing details, and shipping addresses into custom ClickUp fields for VIP customer management.
+* **Smart Team & Priority Routing:** Automatically assign high-value orders (e.g. over $200) to specific team members and apply "Urgent" or "High" priority tags to expedite fulfillment.
+* **Bi-Directional Order Notes & Refund Tracking:** Keep your support team and warehouse in sync. Internal WooCommerce order notes and customer refund requests automatically sync to task comment threads in ClickUp.
+* **Zero Checkout Speed Impact:** Runs completely in the background without adding a single millisecond of delay to your WooCommerce checkout flow or store loading speeds.
+* **Multi-Item Order Split Subtasks:** Optionally break multi-item orders into linked child subtasks in ClickUp so different warehouse departments can fulfill items simultaneously.
+* **WP Admin Order Sidebar Widget:** Manage linked ClickUp task IDs, check live status updates, and trigger manual syncs directly from the WooCommerce Edit Order screen.
+* **Fail-Safe Automatic Retries:** Retains order dispatches during temporary ClickUp API outages and automatically retries dispatches so no order is ever missed.
 
 == External Services ==
 
-SwiftSync Connect utilizes external cloud APIs to manage authentication tokens, decrypt keys, and queue requests safely:
+SwiftSync CRM Sync for ClickUp and WooCommerce utilizes external cloud APIs to manage authentication tokens, decrypt keys, and queue requests safely:
 
-* **SwiftSync Cloud Sync Proxy:** https://clicksync-connect.apps.loopstates.com
+* **SwiftSync Cloud Sync Proxy:** https://swiftsync.apps.loopstates.com
 * **ClickUp REST API Service:** https://api.clickup.com
 
 By activating this connector, e-commerce data (order line items, notes, billing addresses, and customer profiles) is securely sent to the SwiftSync Cloud Service and ClickUp APIs via HTTPS to generate tasks.
 
-* SwiftSync Privacy Policy: https://docs.loopstates.com/clicksync-woocommerce/privacy-policy.html
-* SwiftSync Terms: https://docs.loopstates.com/clicksync-woocommerce/plans.html
+* SwiftSync Privacy Policy: https://docs.loopstates.com/swiftsync-for-clickup-and-woocommerce/privacy-policy.html
+* SwiftSync Terms: https://docs.loopstates.com/swiftsync-for-clickup-and-woocommerce/plans.html
 * ClickUp Terms of Service: https://clickup.com/terms
 
 == Professional Data Safety & Collection Disclosure ==
@@ -96,7 +95,7 @@ All administrative metadata is stored in our secure, encrypted cloud database. T
 
 == Installation ==
 
-1. Upload the `swiftsync-connect-clickup-with-woocommerce` folder to the `/wp-content/plugins/` directory, or search and install via the WordPress Admin Plugins manager.
+1. Upload the `swiftsync-crm-sync-for-clickup-and-woocommerce` folder to the `/wp-content/plugins/` directory, or search and install via the WordPress Admin Plugins manager.
 2. Activate the plugin.
 3. Go to **SwiftSync -> Settings** in your dashboard.
 4. Click **Connect ClickUp Workspace** and authorize access via OAuth 2.0.
@@ -214,12 +213,12 @@ If the ClickUp API is offline or returns a 429 rate limit error, the event paylo
 == Changelog ==
 
 = 1.2.1 =
-* Updated plugin display name to "SwiftSync: Connect ClickUp with WooCommerce" and text domain to swiftsync-connect-clickup-with-woocommerce.
-* Rebranded developer filter hooks to swiftsync_ (e.g. swiftsync_should_sync_order, swiftsync_order_payload, swiftsync_retry_limit).
-* Added user-initiated deactivation feedback and subscription cancellation flow.
-* Enhanced REST API HMAC security verification across webhook endpoints.
-* Sanitized POST request arrays and enqueued external stylesheet assets.
-* Added WooCommerce plugin dependency header.
+* Official initial release for WooCommerce-to-ClickUp CRM, customer profile, and order task synchronization.
+* Automated real-time order status synchronization between ClickUp task columns and WooCommerce.
+* Custom field mapping engine for lifetime spend, billing details, custom checkout notes, and shipping addresses.
+* Smart team assignee routing and priority tagging based on cart total thresholds.
+* Bi-directional order note comments and refund tracking dispatches.
+* Non-blocking background event dispatch queue ensuring 0ms impact on customer checkout speeds.logging.
 
 = 1.2.0 =
 * Added dynamic administrative metadata synchronization (Site Title, Owner Name, Email) for enhanced support.

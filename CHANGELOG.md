@@ -1,19 +1,16 @@
-# Changelog
+# 📜 SwiftSync Changelog
 
-All notable changes to **ClickSync: Wordpress to ClickUp CRM Sync** plugin will be documented in this file.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+All notable changes, new feature additions, security enhancements, and improvements for **SwiftSync: CRM Sync for ClickUp and WooCommerce** will be documented in this file.
 
 ---
 
-## [1.0.0] - 2026-08-13
+## [1.2.1] - 2026-08-26
 
-### Added
-- **Initial Release**: Launched **ClickSync: Wordpress to ClickUp CRM Sync** connecting WooCommerce & WordPress stores to ClickUp Workspaces.
-- **Client-Side Payload Normalization**: Native PHP payload transformer converting WooCommerce orders, refunds, customer updates, and abandoned checkouts into standard Shopify JSON payloads.
-- **Shopify Polaris Design System**: Built a custom WP Admin settings page matching Shopify Polaris UI cards, badges, and toggle switches.
-- **3-Column Pricing Grid**: Interactive monthly sync usage progress bar and plan comparison grid (Free $0/mo, Growth $19.99/mo, Pro $49.99/mo).
-- **HMAC Security**: Cryptographic request signing (`X-ClickSync-Hmac`) and replay attack protection (300s timestamp window) for API pings to `clicksync-connect.apps.loopstates.com`.
-- **WooCommerce Event Listeners**: Hooks for `woocommerce_new_order`, `woocommerce_order_status_changed`, `woocommerce_order_refunded`, `woocommerce_created_customer`, and `woocommerce_checkout_order_processed`.
-- **Contextual Limit Warnings**: Non-intrusive dismissible admin notice when 100 free monthly sync runs are reached.
-- **WordPress.org Readiness**: Full compliance with WordPress plugin guidelines, GPLv2 licensing, `readme.txt` SaaS disclosures, sanitization/escaping, and clean `uninstall.php` handler.
+### 🚀 Official Release
+- **Automated Order-to-Task Conversion:** Automatically creates structured ClickUp task cards when customers place orders on WooCommerce, giving fulfillment teams instant real-time visibility.
+- **2-Way Order Status Synchronization:** Moving a task status inside ClickUp (e.g. to "Completed" or "Shipped") automatically updates the WooCommerce order status and triggers customer notifications.
+- **360° Customer Profile & CRM Metadata Sync:** Syncs buyer profiles, lifetime order history, total spend, billing details, and shipping addresses directly into custom ClickUp fields.
+- **Smart Assignee Routing & Priority Rules:** Automatically assigns high-value orders to specific team account managers and applies priority tags based on order amounts.
+- **Bi-Directional Order Notes & Refund Tracking:** Synchronizes internal WooCommerce order comments and customer refund requests directly into ClickUp task comment threads.
+- **Zero Checkout Overhead:** Background queue dispatch engine processes event payloads with 0ms impact on WooCommerce checkout loading speeds.
+- **Developer API & Filter Hooks:** Includes native WordPress developer filters (`swiftsync_should_sync_order`, `swiftsync_order_payload`, etc.) for custom conditional overrides.
