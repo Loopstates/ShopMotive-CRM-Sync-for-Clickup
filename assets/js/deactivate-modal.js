@@ -1,6 +1,6 @@
 jQuery(document).ready(function($) {
     // Target the deactivate link specifically for SwiftSync
-    var $deactivateLink = $('tr[data-slug="swiftsync-crm-sync-for-clickup-and-woocommerce"] .deactivate a, tr[data-slug="clicksync-connect-clickup-crm-sync-for-woocommerce"] .deactivate a');
+    var $deactivateLink = $('tr[data-slug="swiftsync-crm-sync-for-clickup"] .deactivate a, tr[data-slug="clicksync-connect-clickup-crm-sync-for-woocommerce"] .deactivate a');
     
     if (!$deactivateLink.length) {
         return;
@@ -30,6 +30,7 @@ jQuery(document).ready(function($) {
                 <div style="margin-bottom:16px; width:100%; box-sizing:border-box;">
                     <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;">Reason for deactivating</label>
                     <select id="swiftsync-exit-reason" style="width:100% !important; max-width:100% !important; min-width:100% !important; box-sizing:border-box !important; margin:0 !important; padding:10px 36px 10px 14px; border:1px solid #cbd5e1; border-radius:6px; font-size:13px; color:#1e293b; background:#ffffff url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E&quot;) no-repeat right 12px center / 16px 16px; appearance:none; -webkit-appearance:none; -moz-appearance:none; cursor:pointer; outline:none; display:block !important;">
+                        <option value="">Select reason...</option>
                         <option value="Temporary troubleshooting">Temporary troubleshooting</option>
                         <option value="Too expensive">Too expensive</option>
                         <option value="Switching tools">Switching tools</option>

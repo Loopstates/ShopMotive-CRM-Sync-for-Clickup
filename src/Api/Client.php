@@ -113,7 +113,7 @@ class Client {
 					'payload'  => $payload,
 					'attempts' => $attempts,
 				),
-				'swiftsync-crm-sync-for-clickup-and-woocommerce'
+				'swiftsync-crm-sync-for-clickup'
 			);
 			// Debug log commented for WordPress.org compliance: error_log( sprintf( 'ClickSync scheduled retry attempt %d for topic "%s" in %d seconds.', $attempts, $topic, $delay ) );
 		}

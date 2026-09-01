@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:       SwiftSync: CRM Sync for ClickUp and WooCommerce
+ * Plugin Name:       SwiftSync: CRM Sync for ClickUp
  * Plugin URI:        https://docs.loopstates.com/swiftsync-for-clickup-and-woocommerce/
  * Description:       Connect and synchronize WooCommerce order events, customer profiles, notes, and refunds directly into ClickUp tasks.
  * Version:           1.2.1
@@ -11,7 +11,7 @@
  * Author URI:        https://loopstates.com
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:       swiftsync-crm-sync-for-clickup-and-woocommerce
+ * Text Domain:       swiftsync-crm-sync-for-clickup
  * Domain Path:       /languages
  */
 

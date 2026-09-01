@@ -1,4 +1,4 @@
-=== SwiftSync: CRM Sync for ClickUp and WooCommerce ===
+=== SwiftSync: CRM Sync for ClickUp ===
 Contributors: loopstates
 Tags: clickup, woocommerce, crm, order sync, customer sync
 Requires at least: 6.0
@@ -95,7 +95,7 @@ All administrative metadata is stored in our secure, encrypted cloud database. T
 
 == Installation ==
 
-1. Upload the `swiftsync-crm-sync-for-clickup-and-woocommerce` folder to the `/wp-content/plugins/` directory, or search and install via the WordPress Admin Plugins manager.
+1. Upload the `swiftsync-crm-sync-for-clickup` folder to the `/wp-content/plugins/` directory, or search and install via the WordPress Admin Plugins manager.
 2. Activate the plugin.
 3. Go to **SwiftSync -> Settings** in your dashboard.
 4. Click **Connect ClickUp Workspace** and authorize access via OAuth 2.0.
