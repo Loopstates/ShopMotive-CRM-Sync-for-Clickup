@@ -17,26 +17,26 @@ class Webhook {
 	 * Register REST API routes.
 	 */
 	public static function register_routes() {
-		foreach ( array( 'shopmotive/v1', 'clicksync/v1' ) as  ) {
-			register_rest_route( , '/status-update', array(
+		foreach ( array( 'shopmotive/v1', 'clicksync/v1' ) as $namespace ) {
+			register_rest_route( $namespace, '/status-update', array(
 				'methods'             => 'POST',
 				'callback'            => array( __CLASS__, 'handle_status_update' ),
 				'permission_callback' => array( __CLASS__, 'check_permission' ),
 			) );
 
-			register_rest_route( , '/add-note', array(
+			register_rest_route( $namespace, '/add-note', array(
 				'methods'             => 'POST',
 				'callback'            => array( __CLASS__, 'handle_add_note' ),
 				'permission_callback' => array( __CLASS__, 'check_permission' ),
 			) );
 
-			register_rest_route( , '/update-mapping', array(
+			register_rest_route( $namespace, '/update-mapping', array(
 				'methods'             => 'POST',
 				'callback'            => array( __CLASS__, 'handle_update_mapping' ),
 				'permission_callback' => array( __CLASS__, 'check_permission' ),
 			) );
 
-			register_rest_route( , '/update-customer-mapping', array(
+			register_rest_route( $namespace, '/update-customer-mapping', array(
 				'methods'             => 'POST',
 				'callback'            => array( __CLASS__, 'handle_update_customer_mapping' ),
 				'permission_callback' => array( __CLASS__, 'check_permission' ),

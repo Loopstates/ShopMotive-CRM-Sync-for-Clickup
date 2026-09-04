@@ -1040,13 +1040,11 @@
                         if (res.account.lastSyncReset) {
                             var resetDate = new Date(res.account.lastSyncReset);
                             if (!isNaN(resetDate.getTime())) {
+                                var nextReset = new Date(resetDate.getTime() + (30 * 24 * 60 * 60 * 1000));
                                 var pad = function (num) { return (num < 10 ? '0' : '') + num; };
-                                var formattedReset = resetDate.getFullYear() + '-' + 
-                                    pad(resetDate.getMonth() + 1) + '-' + 
-                                    pad(resetDate.getDate()) + ' ' + 
-                                    pad(resetDate.getHours()) + ':' + 
-                                    pad(resetDate.getMinutes()) + ':' + 
-                                    pad(resetDate.getSeconds());
+                                var formattedReset = nextReset.getFullYear() + '-' + 
+                                    pad(nextReset.getMonth() + 1) + '-' + 
+                                    pad(nextReset.getDate());
                                 $('#clicksync-usage-reset').text(formattedReset);
                             }
                         }

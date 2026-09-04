@@ -719,3 +719,18 @@
 	to { opacity: 1; transform: scale(1); }
 }
 
+
+/* Custom ShopMotive Sidebar Menu Icon */
+#adminmenu #toplevel_page_shopmotive .wp-menu-image img {
+    padding: 7px 0 0 0 !important;
+    width: 20px !important;
+    height: 20px !important;
+    object-fit: contain !important;
+    opacity: 0.85;
+    transition: opacity 0.2s ease;
+}
+#adminmenu #toplevel_page_shopmotive:hover .wp-menu-image img,
+#adminmenu #toplevel_page_shopmotive.current .wp-menu-image img,
+#adminmenu #toplevel_page_shopmotive.wp-has-current-submenu .wp-menu-image img {
+    opacity: 1 !important;
+}

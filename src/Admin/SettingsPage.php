@@ -54,7 +54,7 @@ class SettingsPage {
 		$plan_name  = $account['plan_name'] ?? 'Free Plan';
 		$sync_count = (int) ( $account['monthly_sync_count'] ?? 0 );
 		$quota      = (int) ( $account['monthly_quota'] ?? 100 );
-		$reset_date = $account['last_sync_reset'] ?? gmdate( 'm/d/Y' );
+		$next_reset_timestamp = ! empty( $account['last_sync_reset'] ) ? strtotime( $account['last_sync_reset'] . ' +30 days' ) : strtotime( '+30 days' );
 		?>
 		<div class="wrap clicksync-wrap" style="max-width: 1050px; margin: 20px auto;">
 			
@@ -85,7 +85,7 @@ class SettingsPage {
 				<div class="clicksync-card" style="background: #ffffff; border: 1px solid #e1e3e5; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
 					<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
 						<h3 style="margin: 0; font-size: 16px; font-weight: 600; color: #202223; display: flex; align-items: center; gap: 8px;">
-							<svg style="width: 18px; height: 18px; fill: #6A2B8F;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+							<svg style="width: 18px; height: 18px; fill: #f97316;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
 							<?php esc_html_e( 'ShopMotive Status', 'shopmotive-crm-sync-for-clickup' ); ?>
 						</h3>
 						<span class="clicksync-badge" style="background: #f4f6f8; color: #6d7175; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;"><?php esc_html_e( 'Checking Status...', 'shopmotive-crm-sync-for-clickup' ); ?></span>
@@ -144,7 +144,7 @@ class SettingsPage {
 							</div>
 							<div style="font-size: 12px; color: #6d7175;">
 								<strong><?php esc_html_e( 'Usage Quota:', 'shopmotive-crm-sync-for-clickup' ); ?></strong> 
-								<span id="clicksync-usage-count"><?php echo esc_html( number_format( $sync_count ) ); ?></span> / <span id="clicksync-usage-quota"><?php echo esc_html( number_format( $quota ) ); ?></span> runs. (Reset: <span id="clicksync-usage-reset"><?php echo esc_html( ! empty( $reset_date ) ? gmdate( 'Y-m-d H:i:s', strtotime( $reset_date ) ) : __( 'Pending Sync', 'shopmotive-crm-sync-for-clickup' ) ); ?></span>)
+								<span id="clicksync-usage-count"><?php echo esc_html( number_format( $sync_count ) ); ?></span> / <span id="clicksync-usage-quota"><?php echo esc_html( number_format( $quota ) ); ?></span> runs. (<?php esc_html_e( 'Next Reset:', 'shopmotive-crm-sync-for-clickup' ); ?> <span id="clicksync-usage-reset"><?php echo esc_html( ! empty( $next_reset_timestamp ) ? gmdate( 'Y-m-d', $next_reset_timestamp ) : __( 'Pending Sync', 'shopmotive-crm-sync-for-clickup' ) ); ?></span>)
 							</div>
 						</div>
 						<div style="display: flex; align-items: center; gap: 10px;">
@@ -666,7 +666,7 @@ class SettingsPage {
 				<div class="clicksync-card" id="clicksync-multistore-card" style="display: none; background: #ffffff; border: 1px solid #e1e3e5; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
 					<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
 						<h3 style="margin: 0; font-size: 16px; font-weight: 600; color: #202223; display: flex; align-items: center; gap: 8px;">
-							<svg style="width: 18px; height: 18px; fill: #6A2B8F;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.53c-.26-.81-1-1.4-1.9-1.4h-1v-3c0-.55-.45-1-1-1h-6v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+							<svg style="width: 18px; height: 18px; fill: #f97316;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.53c-.26-.81-1-1.4-1.9-1.4h-1v-3c0-.55-.45-1-1-1h-6v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
 							<span><?php esc_html_e( 'Multi-Store Network Sync', 'shopmotive-crm-sync-for-clickup' ); ?></span>
 							<span id="clicksync-multistore-lock-tooltip" class="clicksync-unidirectional-tooltip" tabindex="0" style="display: none; align-items: center; color: #ef4444; cursor: help; margin-left: 4px;" data-tooltip="<?php esc_attr_e( 'This feature is locked on Free and Growth plans. Upgrade to the Pro Plan to enable multi-store network sync.', 'shopmotive-crm-sync-for-clickup' ); ?>">
 								<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>

@@ -38,6 +38,7 @@ class AdminMenu {
 		add_action( 'edit_user_profile', array( __CLASS__, 'register_customer_metabox' ) );
 	}
 
+
 	/**
 	 * Save secret key and clean URL parameters.
 	 */
@@ -71,7 +72,7 @@ class AdminMenu {
 			'manage_options',
 			'shopmotive',
 			array( SettingsPage::class, 'render' ),
-			'dashicons-update',
+			SHOPMOTIVE_URL . 'assets/images/menu-icon.png',
 			56
 		);
 
@@ -120,6 +121,14 @@ class AdminMenu {
 	 * Enqueue assets on ClickSync admin pages only.
 	 */
 	public static function enqueue_assets( $hook ) {
+		// Strictly constrain sidebar menu icon to 20x20px globally across all admin screens using official WP enqueue API.
+		wp_register_style( 'shopmotive-menu-icon', false, array(), defined( 'SHOPMOTIVE_VERSION' ) ? SHOPMOTIVE_VERSION : '1.0.0' );
+		wp_enqueue_style( 'shopmotive-menu-icon' );
+		wp_add_inline_style(
+			'shopmotive-menu-icon',
+			'#adminmenu .toplevel_page_shopmotive .wp-menu-image img, #adminmenu a[href*="page=shopmotive"] .wp-menu-image img { width: 20px !important; height: 20px !important; max-width: 20px !important; max-height: 20px !important; padding: 7px 0 0 0 !important; object-fit: contain !important; box-sizing: content-box !important; }'
+		);
+
 		$allowed_pages = array( 'post.php', 'post-new.php', 'user-edit.php', 'profile.php', 'woocommerce_page_wc-orders' );
 		$is_allowed = false;
 		if ( strpos( $hook, 'shopmotive' ) !== false || strpos( $hook, 'clicksync' ) !== false ) {
