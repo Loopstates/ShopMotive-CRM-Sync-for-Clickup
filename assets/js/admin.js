@@ -3,7 +3,7 @@
     'use strict';
 
     $(document).ready(function () {
-        var cloudUrl = typeof clicksyncData !== 'undefined' ? clicksyncData.cloudUrl : 'https://swiftsync.apps.loopstates.com';
+        var cloudUrl = typeof clicksyncData !== 'undefined' ? clicksyncData.cloudUrl : 'https://shopmotive.apps.loopstates.com';
         var host = typeof clicksyncData !== 'undefined' ? clicksyncData.host : window.location.hostname;
         var cachedLogs = [];
         var activePlanName = 'Free Plan';
@@ -361,7 +361,7 @@
                                          url: clicksyncData.ajaxUrl,
                                          type: 'POST',
                                          data: {
-                                             action: 'swiftsync_save_local_settings',
+                                             action: 'shopmotive_save_local_settings',
                                              refunds_enabled: refundsEnabled,
                                              fulfillment_enabled: fulfillmentEnabled,
                                              security: clicksyncData.nonce
@@ -383,7 +383,7 @@
                                                  url: clicksyncData.ajaxUrl,
                                                  type: 'POST',
                                                  data: {
-                                                     action: 'swiftsync_save_user_mappings',
+                                                     action: 'shopmotive_save_user_mappings',
                                                      mappings: userMappings,
                                                      fallback_clickup_user_id: fallbackCuId,
                                                      security: clicksyncData.nonce
@@ -762,7 +762,7 @@
                 url: clicksyncData.ajaxUrl,
                 type: 'POST',
                 data: {
-                    action: 'swiftsync_get_wc_fields',
+                    action: 'shopmotive_get_wc_fields',
                     security: clicksyncData.nonce
                 },
                 success: function (res) {
@@ -850,7 +850,7 @@
                         var statusHtml = '<div class="clicksync-card" style="border-left: 4px solid #7c3aed;">' +
                             '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">' +
                             '<h3 style="margin: 0; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px;">' +
-                            '<svg class="clicksync-title-icon" style="fill: #7c3aed;" viewBox="0 0 24 24"><path d="M2 18.439l3.69-2.828c1.961 2.56 4.044 3.739 6.363 3.739 2.307 0 4.33-1.166 6.203-3.704L22 18.405C19.298 22.065 15.941 24 12.053 24c-3.875 0-7.265-1.922-10.053-5.561zM12.04 6.15L5.472 11.81l-3.036-3.52L12.055 0l9.543 8.296-3.05 3.509z"/></svg> SwiftSync Connection</h3>' +
+                            '<svg class="clicksync-title-icon" style="fill: #7c3aed;" viewBox="0 0 24 24"><path d="M2 18.439l3.69-2.828c1.961 2.56 4.044 3.739 6.363 3.739 2.307 0 4.33-1.166 6.203-3.704L22 18.405C19.298 22.065 15.941 24 12.053 24c-3.875 0-7.265-1.922-10.053-5.561zM12.04 6.15L5.472 11.81l-3.036-3.52L12.055 0l9.543 8.296-3.05 3.509z"/></svg> ShopMotive Connection</h3>' +
                             '<span class="clicksync-badge badge-warning" style="background: #fffbeb; color: #b45309; border: 1px solid #fde68a;">Not Connected</span>' +
                             '</div>' +
                             '<p style="font-size: 13px; color: #64748b; margin-bottom: 16px; line-height: 1.5;">ClickSync is not connected to your ClickUp workspace yet. Authorize ClickSync to connect your store with ClickUp spaces.</p>' +
@@ -871,7 +871,7 @@
                         var statusHtml = '<div class="clicksync-card" style="border-left: 4px solid #7c3aed;">' +
                             '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">' +
                             '<h3 style="margin: 0; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px;">' +
-                            '<svg class="clicksync-title-icon" style="fill: #7c3aed;" viewBox="0 0 24 24"><path d="M2 18.439l3.69-2.828c1.961 2.56 4.044 3.739 6.363 3.739 2.307 0 4.33-1.166 6.203-3.704L22 18.405C19.298 22.065 15.941 24 12.053 24c-3.875 0-7.265-1.922-10.053-5.561zM12.04 6.15L5.472 11.81l-3.036-3.52L12.055 0l9.543 8.296-3.05 3.509z"/></svg> SwiftSync Connection</h3>' +
+                            '<svg class="clicksync-title-icon" style="fill: #7c3aed;" viewBox="0 0 24 24"><path d="M2 18.439l3.69-2.828c1.961 2.56 4.044 3.739 6.363 3.739 2.307 0 4.33-1.166 6.203-3.704L22 18.405C19.298 22.065 15.941 24 12.053 24c-3.875 0-7.265-1.922-10.053-5.561zM12.04 6.15L5.472 11.81l-3.036-3.52L12.055 0l9.543 8.296-3.05 3.509z"/></svg> ShopMotive Connection</h3>' +
                             '<span class="clicksync-badge badge-warning" style="background: #f3e8ff; color: #7c3aed; border-color: #d8b4fe;">Setup Pending</span>' +
                             '</div>' +
                             '<p style="font-size: 13px; color: #64748b; margin-bottom: 16px; line-height: 1.5;">Successfully authenticated with ClickUp. Please complete the workspace connection steps below.</p>' +
@@ -911,7 +911,7 @@
                         var statusHtml = '<div class="clicksync-card" style="border-left: 4px solid #7c3aed;">' +
                             '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">' +
                             '<h3 style="margin: 0; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px;">' +
-                            '<svg class="clicksync-title-icon" style="fill: #7c3aed;" viewBox="0 0 24 24"><path d="M2 18.439l3.69-2.828c1.961 2.56 4.044 3.739 6.363 3.739 2.307 0 4.33-1.166 6.203-3.704L22 18.405C19.298 22.065 15.941 24 12.053 24c-3.875 0-7.265-1.922-10.053-5.561zM12.04 6.15L5.472 11.81l-3.036-3.52L12.055 0l9.543 8.296-3.05 3.509z"/></svg> SwiftSync Connection</h3>' +
+                            '<svg class="clicksync-title-icon" style="fill: #7c3aed;" viewBox="0 0 24 24"><path d="M2 18.439l3.69-2.828c1.961 2.56 4.044 3.739 6.363 3.739 2.307 0 4.33-1.166 6.203-3.704L22 18.405C19.298 22.065 15.941 24 12.053 24c-3.875 0-7.265-1.922-10.053-5.561zM12.04 6.15L5.472 11.81l-3.036-3.52L12.055 0l9.543 8.296-3.05 3.509z"/></svg> ShopMotive Connection</h3>' +
                             '<span class="clicksync-badge badge-warning" style="background: #f3e8ff; color: #7c3aed; border-color: #d8b4fe;">Setup Pending</span>' +
                             '</div>' +
                             '<p style="font-size: 13px; color: #64748b; margin-bottom: 16px; line-height: 1.5;">Successfully authenticated. Please choose your synchronization lists to complete onboarding.</p>' +
@@ -1245,18 +1245,18 @@
                 error: function (err) {
                     if (configRetryCount < 3) {
                         configRetryCount++;
-                        console.warn("SwiftSync Cloud connection failed. Retrying (" + configRetryCount + "/3) in 2 seconds...");
+                        console.warn("ShopMotive Cloud connection failed. Retrying (" + configRetryCount + "/3) in 2 seconds...");
                         setTimeout(fetchCloudConfig, 2000);
                         return;
                     }
-                    console.error("Failed to connect to SwiftSync Connect Cloud Service:", err);
+                    console.error("Failed to connect to ShopMotive Connect Cloud Service:", err);
                     var statusHtml = '<div class="clicksync-card" style="background: #fff5f5; border: 1px solid #fed7d7; border-radius: 8px; padding: 20px; margin-bottom: 20px;">' +
                         '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">' +
                         '<h3 style="margin: 0; font-size: 16px; font-weight: 600; color: #c53030; display: flex; align-items: center; gap: 8px;">' +
                         '<svg class="clicksync-title-icon" style="fill: #c53030;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg> Connection Error</h3>' +
                         '<span class="clicksync-badge" style="background: #fed7d7; color: #c53030; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;">Offline</span>' +
                         '</div>' +
-                        '<p style="font-size: 13px; color: #9b2c2c; margin-bottom: 0; line-height: 1.5;">Could not connect to SwiftSync Cloud Service. Please check if your cloud server is live and running.</p>' +
+                        '<p style="font-size: 13px; color: #9b2c2c; margin-bottom: 0; line-height: 1.5;">Could not connect to ShopMotive Cloud Service. Please check if your cloud server is live and running.</p>' +
                         '</div>';
                     $('#clicksync-connection-status-block').html(statusHtml);
                 }
@@ -1745,7 +1745,7 @@
             $.ajax({
                 url: clicksyncData.ajaxUrl,
                 type: 'POST',
-                data: form.serialize() + '&action=swiftsync_contact_submit&security=' + clicksyncData.nonce,
+                data: form.serialize() + '&action=shopmotive_contact_submit&security=' + clicksyncData.nonce,
                 success: function(res) {
                     if (res.success) {
                         alert(res.data.message);
@@ -1776,7 +1776,7 @@
                 url: clicksyncData.ajaxUrl,
                 type: 'POST',
                 data: {
-                    action: 'swiftsync_widget_force_sync',
+                    action: 'shopmotive_widget_force_sync',
                     order_id: payload.id || payload.order_id || 0,
                     customer_id: payload.customer_id || 0,
                     security: clicksyncData.nonce
@@ -1810,7 +1810,7 @@
                     url: clicksyncData.ajaxUrl,
                     type: 'POST',
                     data: {
-                        action: 'swiftsync_widget_get_task_details',
+                        action: 'shopmotive_widget_get_task_details',
                         task_id: taskId,
                         security: clicksyncData.nonce
                     },
@@ -1868,7 +1868,7 @@
                                     url: clicksyncData.ajaxUrl,
                                     type: 'POST',
                                     data: {
-                                        action: 'swiftsync_widget_update_task',
+                                        action: 'shopmotive_widget_update_task',
                                         task_id: taskId,
                                         order_id: orderId,
                                         customer_id: customerId,
@@ -1907,7 +1907,7 @@
                     url: clicksyncData.ajaxUrl,
                     type: 'POST',
                     data: {
-                        action: 'swiftsync_widget_force_sync',
+                        action: 'shopmotive_widget_force_sync',
                         order_id: orderId,
                         customer_id: customerId,
                         security: clicksyncData.nonce
@@ -2298,7 +2298,7 @@
                 url: ajaxurl,
                 type: 'POST',
                 data: {
-                    action: 'swiftsync_contact_submit',
+                    action: 'shopmotive_contact_submit',
                     contact_name: 'Store Manager (' + host + ')',
                     contact_email: $('#clicksync-connection-status-block').data('site-email') || 'billing@' + host,
                     contact_subject: 'Custom Quota Request',

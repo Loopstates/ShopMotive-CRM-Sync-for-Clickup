@@ -1,9 +1,9 @@
 <?php
 
-namespace ClickSync\Core;
+namespace ShopMotive\Core;
 
-use ClickSync\Admin\AdminMenu;
-use ClickSync\Integrations\WooCommerce;
+use ShopMotive\Admin\AdminMenu;
+use ShopMotive\Integrations\WooCommerce;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -58,7 +58,7 @@ class Plugin {
 		WooCommerce::init();
 
 		// Initialize REST API endpoints
-		add_action( 'rest_api_init', array( \ClickSync\Api\Webhook::class, 'register_routes' ) );
+		add_action( 'rest_api_init', array( \ShopMotive\Api\Webhook::class, 'register_routes' ) );
 	}
 
 	/**

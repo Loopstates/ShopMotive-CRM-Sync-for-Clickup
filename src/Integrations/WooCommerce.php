@@ -1,9 +1,9 @@
 <?php
 
-namespace ClickSync\Integrations;
+namespace ShopMotive\Integrations;
 
-use ClickSync\Core\Options;
-use ClickSync\Api\Client;
+use ShopMotive\Core\Options;
+use ShopMotive\Api\Client;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Class WooCommerce
  * 
  * WooCommerce event listener and payload normalizer converting WP WooCommerce objects
- * into standard Shopify JSON schema expected by SwiftSync Cloud.
+ * into standard Shopify JSON schema expected by ShopMotive Cloud.
  */
 class WooCommerce {
 
@@ -47,7 +47,7 @@ class WooCommerce {
 		add_action( 'profile_update', array( __CLASS__, 'on_update_customer' ), 10, 1 );
 
 		// Action Scheduler background retries
-		add_action( 'swiftsync_retry_event', array( __CLASS__, 'handle_retry_event' ), 10, 3 );
+		add_action( 'shopmotive_retry_event', array( __CLASS__, 'handle_retry_event' ), 10, 3 );
 	}
 
 	/**
@@ -70,7 +70,7 @@ class WooCommerce {
 			return;
 		}
 
-		if ( ! apply_filters( 'swiftsync_should_sync_order', true, $order_id, $order ) ) {
+		if ( ! apply_filters( 'shopmotive_should_sync_order', true, $order_id, $order ) ) {
 			return;
 		}
 
@@ -100,7 +100,7 @@ class WooCommerce {
 			return;
 		}
 
-		if ( ! apply_filters( 'swiftsync_should_sync_order', true, $order_id, $order ) ) {
+		if ( ! apply_filters( 'shopmotive_should_sync_order', true, $order_id, $order ) ) {
 			return;
 		}
 
@@ -175,7 +175,7 @@ class WooCommerce {
 			return;
 		}
 
-		if ( ! apply_filters( 'swiftsync_should_sync_order', true, $order_id, $order ) ) {
+		if ( ! apply_filters( 'shopmotive_should_sync_order', true, $order_id, $order ) ) {
 			return;
 		}
 
@@ -207,7 +207,7 @@ class WooCommerce {
 			'refund_line_items' => $refund_line_items,
 		);
 
-		$payload = apply_filters( 'swiftsync_refund_payload', $payload, $refund_id, $order );
+		$payload = apply_filters( 'shopmotive_refund_payload', $payload, $refund_id, $order );
 
 		Client::dispatch_event( 'refunds/create', $payload );
 	}
@@ -234,7 +234,7 @@ class WooCommerce {
 			return;
 		}
 
-		if ( ! apply_filters( 'swiftsync_should_sync_order', true, $order->get_id(), $order ) ) {
+		if ( ! apply_filters( 'shopmotive_should_sync_order', true, $order->get_id(), $order ) ) {
 			return;
 		}
 
@@ -260,7 +260,7 @@ class WooCommerce {
 			'action_maker_name'       => $action_maker_name,
 		);
 
-		$payload = apply_filters( 'swiftsync_order_note_payload', $payload, $note_id, $order );
+		$payload = apply_filters( 'shopmotive_order_note_payload', $payload, $note_id, $order );
 
 		Client::dispatch_event( 'orders/note_created', $payload );
 	}
@@ -271,7 +271,7 @@ class WooCommerce {
 			return;
 		}
 
-		if ( ! apply_filters( 'swiftsync_should_sync_customer', true, $customer_id, $new_data ) ) {
+		if ( ! apply_filters( 'shopmotive_should_sync_customer', true, $customer_id, $new_data ) ) {
 			return;
 		}
 
@@ -302,7 +302,7 @@ class WooCommerce {
 			'meta'          => $user_meta,
 		);
 
-		$payload = apply_filters( 'swiftsync_customer_payload', $payload, $customer_id );
+		$payload = apply_filters( 'shopmotive_customer_payload', $payload, $customer_id );
 
 		Client::dispatch_event( 'customers/create', $payload );
 	}
@@ -318,7 +318,7 @@ class WooCommerce {
 			return;
 		}
 
-		if ( ! apply_filters( 'swiftsync_should_sync_customer', true, $customer_id, array() ) ) {
+		if ( ! apply_filters( 'shopmotive_should_sync_customer', true, $customer_id, array() ) ) {
 			return;
 		}
 
@@ -356,7 +356,7 @@ class WooCommerce {
 			'meta'          => $user_meta,
 		);
 
-		$payload = apply_filters( 'swiftsync_customer_payload', $payload, $customer_id );
+		$payload = apply_filters( 'shopmotive_customer_payload', $payload, $customer_id );
 
 		Client::dispatch_event( 'customers/update', $payload );
 	}
@@ -492,7 +492,7 @@ class WooCommerce {
 			'action_maker_name'       => $action_maker_name,
 		);
 
-		return apply_filters( 'swiftsync_order_payload', $payload, $order );
+		return apply_filters( 'shopmotive_order_payload', $payload, $order );
 	}
 
 	/**
@@ -505,12 +505,12 @@ class WooCommerce {
 	public static function handle_retry_event( $topic, $payload, $attempts ) {
 		// Debug log commented for WordPress.org compliance: error_log( sprintf( 'ClickSync executing background retry attempt %d for topic "%s".', $attempts, $topic ) );
 		
-		$result = \ClickSync\Api\Client::dispatch_event( $topic, $payload, true );
+		$result = \ShopMotive\Api\Client::dispatch_event( $topic, $payload, true );
 
 		if ( ! $result ) {
-			$retry_limit = apply_filters( 'swiftsync_retry_limit', 3 );
+			$retry_limit = apply_filters( 'shopmotive_retry_limit', 3 );
 			if ( $attempts < $retry_limit ) {
-				\ClickSync\Api\Client::schedule_retry( $topic, $payload, $attempts + 1 );
+				\ShopMotive\Api\Client::schedule_retry( $topic, $payload, $attempts + 1 );
 			} else {
 				// Debug log commented for WordPress.org compliance: error_log( sprintf( 'ClickSync background retry failed after maximum attempts (%d) for topic "%s".', $retry_limit, $topic ) );
 			}

@@ -1,6 +1,6 @@
 <?php
 
-namespace ClickSync\Api;
+namespace ShopMotive\Api;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Webhook
  * 
- * Handles incoming REST API callbacks from SwiftSync Cloud (e.g. status changes).
+ * Handles incoming REST API callbacks from ShopMotive Cloud (e.g. status changes).
  */
 class Webhook {
 
@@ -17,29 +17,31 @@ class Webhook {
 	 * Register REST API routes.
 	 */
 	public static function register_routes() {
-		register_rest_route( 'clicksync/v1', '/status-update', array(
-			'methods'             => 'POST',
-			'callback'            => array( __CLASS__, 'handle_status_update' ),
-			'permission_callback' => array( __CLASS__, 'check_permission' ),
-		) );
+		foreach ( array( 'shopmotive/v1', 'clicksync/v1' ) as  ) {
+			register_rest_route( , '/status-update', array(
+				'methods'             => 'POST',
+				'callback'            => array( __CLASS__, 'handle_status_update' ),
+				'permission_callback' => array( __CLASS__, 'check_permission' ),
+			) );
 
-		register_rest_route( 'clicksync/v1', '/add-note', array(
-			'methods'             => 'POST',
-			'callback'            => array( __CLASS__, 'handle_add_note' ),
-			'permission_callback' => array( __CLASS__, 'check_permission' ),
-		) );
+			register_rest_route( , '/add-note', array(
+				'methods'             => 'POST',
+				'callback'            => array( __CLASS__, 'handle_add_note' ),
+				'permission_callback' => array( __CLASS__, 'check_permission' ),
+			) );
 
-		register_rest_route( 'clicksync/v1', '/update-mapping', array(
-			'methods'             => 'POST',
-			'callback'            => array( __CLASS__, 'handle_update_mapping' ),
-			'permission_callback' => array( __CLASS__, 'check_permission' ),
-		) );
+			register_rest_route( , '/update-mapping', array(
+				'methods'             => 'POST',
+				'callback'            => array( __CLASS__, 'handle_update_mapping' ),
+				'permission_callback' => array( __CLASS__, 'check_permission' ),
+			) );
 
-		register_rest_route( 'clicksync/v1', '/update-customer-mapping', array(
-			'methods'             => 'POST',
-			'callback'            => array( __CLASS__, 'handle_update_customer_mapping' ),
-			'permission_callback' => array( __CLASS__, 'check_permission' ),
-		) );
+			register_rest_route( , '/update-customer-mapping', array(
+				'methods'             => 'POST',
+				'callback'            => array( __CLASS__, 'handle_update_customer_mapping' ),
+				'permission_callback' => array( __CLASS__, 'check_permission' ),
+			) );
+		}
 	}
 
 	/**
@@ -48,7 +50,7 @@ class Webhook {
 	 * @return bool
 	 */
 	public static function check_permission() {
-		$secret_key = \ClickSync\Core\Options::get_secret_key();
+		$secret_key = \ShopMotive\Core\Options::get_secret_key();
 		if ( empty( $secret_key ) ) {
 			return false;
 		}
@@ -75,7 +77,7 @@ class Webhook {
 			return new \WP_REST_Response( array( 'error' => 'Request expired.' ), 401 );
 		}
 
-		$secret_key = \ClickSync\Core\Options::get_secret_key();
+		$secret_key = \ShopMotive\Core\Options::get_secret_key();
 		if ( empty( $secret_key ) ) {
 			return new \WP_REST_Response( array( 'error' => 'Secret key not configured.' ), 401 );
 		}
@@ -85,7 +87,7 @@ class Webhook {
 			return new \WP_REST_Response( array( 'error' => 'Invalid HMAC signature.' ), 401 );
 		}
 
-		$settings = \ClickSync\Core\Options::get_settings();
+		$settings = \ShopMotive\Core\Options::get_settings();
 		if ( empty( $settings['orders_enabled'] ) ) {
 			return new \WP_REST_Response( array( 'error' => 'Order status sync is disabled in settings.' ), 403 );
 		}
@@ -112,7 +114,7 @@ class Webhook {
 		
 		// Update WooCommerce order status
 		// translators: %s is the new status slug
-		$order->update_status( $status_slug, sprintf( __( 'Status updated to "%s" via ClickUp task status sync.', 'swiftsync-crm-sync-for-clickup' ), $status_slug ) );
+		$order->update_status( $status_slug, sprintf( __( 'Status updated to "%s" via ClickUp task status sync.', 'shopmotive-crm-sync-for-clickup' ), $status_slug ) );
 
 		return new \WP_REST_Response( array(
 			'success' => true,
@@ -139,7 +141,7 @@ class Webhook {
 			return new \WP_REST_Response( array( 'error' => 'Request expired.' ), 401 );
 		}
 
-		$secret_key = \ClickSync\Core\Options::get_secret_key();
+		$secret_key = \ShopMotive\Core\Options::get_secret_key();
 		if ( empty( $secret_key ) ) {
 			return new \WP_REST_Response( array( 'error' => 'Secret key not configured.' ), 401 );
 		}
@@ -169,7 +171,7 @@ class Webhook {
 		}
 
 		// Resolve mapping to attribute WordPress user comment
-		$user_mappings_data = \ClickSync\Core\Options::get_user_mappings();
+		$user_mappings_data = \ShopMotive\Core\Options::get_user_mappings();
 		$saved_mappings = $user_mappings_data['mappings'] ?? array();
 		
 		$wp_author_id = 0;
@@ -219,7 +221,7 @@ class Webhook {
 			return new \WP_REST_Response( array( 'error' => 'Request expired.' ), 401 );
 		}
 
-		$secret_key = \ClickSync\Core\Options::get_secret_key();
+		$secret_key = \ShopMotive\Core\Options::get_secret_key();
 		if ( empty( $secret_key ) ) {
 			return new \WP_REST_Response( array( 'error' => 'Secret key not configured.' ), 401 );
 		}
@@ -283,7 +285,7 @@ class Webhook {
 			return new \WP_REST_Response( array( 'error' => 'Request expired.' ), 401 );
 		}
 
-		$secret_key = \ClickSync\Core\Options::get_secret_key();
+		$secret_key = \ShopMotive\Core\Options::get_secret_key();
 		if ( empty( $secret_key ) ) {
 			return new \WP_REST_Response( array( 'error' => 'Secret key not configured.' ), 401 );
 		}

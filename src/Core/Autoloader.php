@@ -1,6 +1,6 @@
 <?php
 
-namespace ClickSync\Core;
+namespace ShopMotive\Core;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -27,10 +27,10 @@ class Autoloader {
 	 */
 	public static function autoload( $class ) {
 		// Project-specific namespace prefix
-		$prefix = 'ClickSync\\';
+		$prefix = 'ShopMotive\\';
 
 		// Base directory for the namespace prefix
-		$base_dir = untrailingslashit( CLICKSYNC_PATH ) . '/src/';
+		$base_dir = untrailingslashit( SHOPMOTIVE_PATH ) . '/src/';
 
 		// Does the class use the namespace prefix?
 		$len = strlen( $prefix );

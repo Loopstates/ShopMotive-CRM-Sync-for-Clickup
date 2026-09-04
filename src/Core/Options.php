@@ -1,6 +1,6 @@
 <?php
 
-namespace ClickSync\Core;
+namespace ShopMotive\Core;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -13,9 +13,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Options {
 
-	const OPTION_SETTINGS = 'clicksync_settings';
-	const OPTION_ACCOUNT  = 'clicksync_account';
-	const OPTION_USER_MAPPINGS = 'clicksync_user_mappings';
+	const OPTION_SETTINGS = 'shopmotive_settings';
+	const OPTION_ACCOUNT  = 'shopmotive_account';
+	const OPTION_USER_MAPPINGS = 'shopmotive_user_mappings';
 
 	/**
 	 * Get default plugin settings.

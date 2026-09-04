@@ -1,6 +1,6 @@
-# 📜 SwiftSync Changelog
+# 📜 ShopMotive Changelog
 
-All notable changes, new feature additions, security enhancements, and improvements for **SwiftSync: CRM Sync for ClickUp and WooCommerce** will be documented in this file.
+All notable changes, new feature additions, security enhancements, and improvements for **ShopMotive: CRM Sync for ClickUp** will be documented in this file.
 
 ---
 
@@ -13,4 +13,4 @@ All notable changes, new feature additions, security enhancements, and improveme
 - **Smart Assignee Routing & Priority Rules:** Automatically assigns high-value orders to specific team account managers and applies priority tags based on order amounts.
 - **Bi-Directional Order Notes & Refund Tracking:** Synchronizes internal WooCommerce order comments and customer refund requests directly into ClickUp task comment threads.
 - **Zero Checkout Overhead:** Background queue dispatch engine processes event payloads with 0ms impact on WooCommerce checkout loading speeds.
-- **Developer API & Filter Hooks:** Includes native WordPress developer filters (`swiftsync_should_sync_order`, `swiftsync_order_payload`, etc.) for custom conditional overrides.
+- **Developer API & Filter Hooks:** Includes native WordPress developer filters (`shopmotive_should_sync_order`, `shopmotive_order_payload`, etc.) for custom conditional overrides.
