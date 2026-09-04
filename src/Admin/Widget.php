@@ -27,13 +27,13 @@ class Widget {
 					<svg style="width: 24px; height: 24px; fill: #64748b; margin-bottom: 6px;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
 					<p style="margin: 0; font-weight: 500;"><?php esc_html_e( 'Order not synchronized to ClickUp.', 'shopmotive-crm-sync-for-clickup' ); ?></p>
 				</div>
-				<button type="button" class="clicksync-manual-sync-btn button button-primary button-large" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px; background: #008060; border-color: #006e52; color: #ffffff; text-shadow: none; box-shadow: 0 1px 2px rgba(0,0,0,0.05); font-weight: 600; height: 36px; line-height: 34px;">
+				<button type="button" class="clicksync-manual-sync-btn button button-primary button-large" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px; background: #f97316; border-color: #ea580c; color: #ffffff; text-shadow: none; box-shadow: 0 1px 2px rgba(0,0,0,0.05); font-weight: 600; height: 36px; line-height: 34px;">
 					<svg style="width: 14px; height: 14px; fill: currentColor;" viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
 					<span><?php esc_html_e( 'Sync to ClickUp Now', 'shopmotive-crm-sync-for-clickup' ); ?></span>
 				</button>
 			<?php else : ?>
 				<div style="margin-bottom: 12px;">
-					<a href="<?php echo esc_url( $task_url ); ?>" target="_blank" style="font-weight: 700; text-decoration: none; color: #008060; display: inline-flex; align-items: center; gap: 4px;">
+					<a href="<?php echo esc_url( $task_url ); ?>" target="_blank" style="font-weight: 700; text-decoration: none; color: #f97316; display: inline-flex; align-items: center; gap: 4px;">
 						<svg style="width: 14px; height: 14px; fill: currentColor;" viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>
 						<span><?php esc_html_e( 'Open ClickUp Task', 'shopmotive-crm-sync-for-clickup' ); ?></span>
 					</a>
@@ -134,7 +134,7 @@ class Widget {
 						<ul style="margin: 0; padding: 0; list-style: none;">
 							<?php foreach ( $recent_orders as $o ) : ?>
 								<li style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px;">
-									<a href="<?php echo esc_url( get_edit_post_link( $o->get_id() ) ); ?>" style="text-decoration: none; color: #008060; font-weight: 500;">
+									<a href="<?php echo esc_url( get_edit_post_link( $o->get_id() ) ); ?>" style="text-decoration: none; color: #f97316; font-weight: 500;">
 										#<?php echo esc_html( $o->get_order_number() ); ?>
 									</a>
 									<span style="color: #64748b;"><?php echo esc_html( date_i18n( get_option( 'date_format' ), $o->get_date_created()->getTimestamp() ) ); ?></span>
@@ -151,13 +151,13 @@ class Widget {
 					<svg style="width: 24px; height: 24px; fill: #64748b; margin-bottom: 6px;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
 					<p style="margin: 0; font-weight: 500;"><?php esc_html_e( 'Customer not synchronized to ClickUp.', 'shopmotive-crm-sync-for-clickup' ); ?></p>
 				</div>
-				<button type="button" class="clicksync-manual-sync-btn button button-primary button-large" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px; background: #008060; border-color: #006e52; color: #ffffff; text-shadow: none; box-shadow: 0 1px 2px rgba(0,0,0,0.05); font-weight: 600; height: 36px; line-height: 34px;">
+				<button type="button" class="clicksync-manual-sync-btn button button-primary button-large" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px; background: #f97316; border-color: #ea580c; color: #ffffff; text-shadow: none; box-shadow: 0 1px 2px rgba(0,0,0,0.05); font-weight: 600; height: 36px; line-height: 34px;">
 					<svg style="width: 14px; height: 14px; fill: currentColor;" viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
 					<span><?php esc_html_e( 'Sync to ClickUp Now', 'shopmotive-crm-sync-for-clickup' ); ?></span>
 				</button>
 			<?php else : ?>
 				<div style="margin-bottom: 12px;">
-					<a href="<?php echo esc_url( $task_url ); ?>" target="_blank" style="font-weight: 700; text-decoration: none; color: #008060; display: inline-flex; align-items: center; gap: 4px;">
+					<a href="<?php echo esc_url( $task_url ); ?>" target="_blank" style="font-weight: 700; text-decoration: none; color: #f97316; display: inline-flex; align-items: center; gap: 4px;">
 						<svg style="width: 14px; height: 14px; fill: currentColor;" viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>
 						<span><?php esc_html_e( 'Open ClickUp Task', 'shopmotive-crm-sync-for-clickup' ); ?></span>
 					</a>

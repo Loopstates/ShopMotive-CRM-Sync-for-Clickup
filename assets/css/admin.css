@@ -85,7 +85,7 @@
 }
 
 .clicksync-wrap .clicksync-step.active {
-    background: #008060 !important; /* Brand Accent Green */
+    background: #f97316 !important; /* ShopMotive Orange */
 }
 
 /* Option Pills */
@@ -214,7 +214,7 @@
 }
 
 .clicksync-wrap .clicksync-switch input:checked + .clicksync-slider {
-    background-color: #10b981 !important; /* Shopify Green */
+    background-color: #f97316 !important; /* ShopMotive Orange */
 }
 
 .clicksync-wrap .clicksync-switch input:checked + .clicksync-slider:before {
@@ -223,7 +223,7 @@
 
 /* Buttons */
 .clicksync-wrap .clicksync-btn-primary {
-    background: #008060 !important; /* Brand Accent Green */
+    background: #f97316 !important; /* ShopMotive Orange */
     color: #ffffff !important;
     border: 1px solid transparent !important;
     padding: 10px 20px !important;
@@ -289,23 +289,23 @@
 
 /* Growth Pill Spec */
 .clicksync-wrap .clicksync-pill-growth {
-    border-color: #a7f3d0 !important;
+    border-color: #fed7aa !important;
 }
 .clicksync-wrap .clicksync-pill-growth .plan-badge {
-    background: #ecfdf5 !important;
-    color: #047857 !important;
+    background: #fbf1e5 !important;
+    color: #ea580c !important;
 }
 .clicksync-wrap .clicksync-pill-growth .plan-action {
-    color: #008060 !important;
+    color: #f97316 !important;
 }
 .clicksync-wrap .clicksync-pill-growth:hover {
-    border-color: #059669 !important;
-    background: #f0fdf4 !important;
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.12) !important;
+    border-color: #f97316 !important;
+    background: #fff7ed !important;
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.15) !important;
     transform: translateY(-1px) !important;
 }
 .clicksync-wrap .clicksync-pill-growth:hover .plan-badge {
-    background: #008060 !important;
+    background: #f97316 !important;
     color: #ffffff !important;
 }
 .clicksync-wrap .clicksync-pill-growth:hover .plan-action {
@@ -358,7 +358,7 @@
 
 
 .clicksync-wrap .clicksync-btn-primary:hover {
-    background: #006e52 !important;
+    background: #ea580c !important;
     transform: translateY(-1px) !important;
 }
 
@@ -404,8 +404,8 @@
 
 .clicksync-wrap .clicksync-select:focus {
     outline: none !important;
-    border-color: #008060 !important;
-    box-shadow: 0 0 0 2px rgba(0, 128, 96, 0.15) !important;
+    border-color: #f97316 !important;
+    box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.2) !important;
 }
 
 .clicksync-wrap .clicksync-textarea {
@@ -425,8 +425,8 @@
 
 .clicksync-wrap .clicksync-textarea:focus {
     outline: none !important;
-    border-color: #008060 !important;
-    box-shadow: 0 0 0 2px rgba(0, 128, 96, 0.15) !important;
+    border-color: #f97316 !important;
+    box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.2) !important;
 }
 
 .clicksync-wrap .clicksync-label {
@@ -694,7 +694,7 @@
 }
 .clicksync-faq-q::before {
 	content: 'Q:';
-	color: #008060;
+	color: #f97316;
 	font-weight: 700;
 }
 .clicksync-faq-a {

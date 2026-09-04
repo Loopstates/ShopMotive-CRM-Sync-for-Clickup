@@ -854,7 +854,7 @@
                             '<span class="clicksync-badge badge-warning" style="background: #fffbeb; color: #b45309; border: 1px solid #fde68a;">Not Connected</span>' +
                             '</div>' +
                             '<p style="font-size: 13px; color: #64748b; margin-bottom: 16px; line-height: 1.5;">ClickSync is not connected to your ClickUp workspace yet. Authorize ClickSync to connect your store with ClickUp spaces.</p>' +
-                            '<a href="' + connectUrl + '" target="_blank" class="clicksync-btn-primary" style="background: #008060; color: white; border: none; text-decoration: none; display: inline-flex; align-items: center;">Connect ClickUp Workspace</a>' +
+                            '<a href="' + connectUrl + '" target="_blank" class="clicksync-btn-primary" style="background: #f97316; color: white; border: none; text-decoration: none; display: inline-flex; align-items: center;">Connect ClickUp Workspace</a>' +
                             '</div>';
                         $('#clicksync-connection-status-block').html(statusHtml);
                         $('#clicksync-onboarding-container').hide();
@@ -1443,7 +1443,7 @@
                     var taskLink = '-';
                     if (log.clickupTaskId) {
                         var taskUrl = log.clickupTaskId.startsWith('http') ? log.clickupTaskId : 'https://app.clickup.com/t/' + log.clickupTaskId;
-                        taskLink = '<a href="' + taskUrl + '" target="_blank" style="color: #008060; font-weight: 600; text-decoration: underline; display: inline-flex; align-items: center; gap: 4px;">View ClickUp Task <svg style="width: 12px; height: 12px; fill: #008060;" viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg></a>';
+                        taskLink = '<a href="' + taskUrl + '" target="_blank" style="color: #f97316; font-weight: 600; text-decoration: underline; display: inline-flex; align-items: center; gap: 4px;">View ClickUp Task <svg style="width: 12px; height: 12px; fill: #f97316;" viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg></a>';
                     }
                     html += '<tr>' +
                         '<td style="padding: 12px 24px; border-bottom: 1px solid #e2e8f0;"><strong>' + (log.event || 'Sync Event') + '</strong></td>' +
@@ -1547,7 +1547,7 @@
                     var taskLink = '-';
                     if (log.clickupTaskId) {
                         var taskUrl = log.clickupTaskId.startsWith('http') ? log.clickupTaskId : 'https://app.clickup.com/t/' + log.clickupTaskId;
-                        taskLink = '<a href="' + taskUrl + '" target="_blank" style="color: #008060; font-weight: 600; text-decoration: underline; display: inline-flex; align-items: center; gap: 4px;">View Task <svg style="width: 12px; height: 12px; fill: #008060;" viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg></a>';
+                        taskLink = '<a href="' + taskUrl + '" target="_blank" style="color: #f97316; font-weight: 600; text-decoration: underline; display: inline-flex; align-items: center; gap: 4px;">View Task <svg style="width: 12px; height: 12px; fill: #f97316;" viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg></a>';
                     }
                     html += '<tr>' +
                         '<td style="padding: 12px; border-bottom: 1px solid #e2e8f0;"><strong>' + (log.event || 'Sync Event') + '</strong></td>' +

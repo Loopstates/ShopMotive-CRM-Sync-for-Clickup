@@ -26,7 +26,7 @@ class SettingsPage {
 			check_admin_referer( 'shopmotive_save_settings_action', 'shopmotive_nonce' );
 
 			$updated = array(
-				'orders_enabled'    => ! empty( $_POST['orders_enabled'] ),
+				'orders_enabled'   => ! empty( $_POST['orders_enabled'] ),
 				'customers_enabled' => ! empty( $_POST['customers_enabled'] ),
 				'refunds_enabled'   => ! empty( $_POST['refunds_enabled'] ),
 			);
@@ -61,7 +61,7 @@ class SettingsPage {
 			<!-- Page Header -->
 			<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #e2e8f0;">
 				<div style="display: flex; align-items: center; gap: 14px;">
-					<img src="<?php echo esc_url( SHOPMOTIVE_URL . 'assets/images/logo.png' ); ?>" alt="ShopMotive" style="width: 42px; height: 42px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.12);" />
+					<img src="<?php echo esc_url( SHOPMOTIVE_URL . 'assets/images/logo.png' ); ?>" alt="ShopMotive" style="width: 42px; height: 42px; border-radius: 10px; box-shadow: none !important;" />
 					<div>
 						<h1 style="font-weight: 700; font-size: 24px; margin: 0; color: #0f172a; line-height: 1.2;">
 							<?php esc_html_e( 'ShopMotive Settings', 'shopmotive-crm-sync-for-clickup' ); ?>
@@ -699,7 +699,7 @@ class SettingsPage {
 						<p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;"><?php esc_html_e( 'Commit all dropdown target list selections and active switch configuration options to the database.', 'shopmotive-crm-sync-for-clickup' ); ?></p>
 					</div>
 					<div>
-						<button type="button" id="clicksync-save-all-settings" class="clicksync-btn-primary" style="height: 40px; padding: 0 24px; font-weight: 700; background: #008060; color: #ffffff; border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background 0.2s;">
+						<button type="button" id="clicksync-save-all-settings" class="clicksync-btn-primary" style="height: 40px; padding: 0 24px; font-weight: 700; background: #f97316; color: #ffffff; border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background 0.2s;">
 							<svg style="width: 16px; height: 16px; fill: currentColor;" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg> <?php esc_html_e( 'Save Settings', 'shopmotive-crm-sync-for-clickup' ); ?>
 						</button>
 					</div>
@@ -780,7 +780,7 @@ class SettingsPage {
 
 							<div style="display: flex; justify-content: flex-end; gap: 8px;">
 								<button type="submit" class="clicksync-btn-secondary" style="height: 36px; padding: 0 16px; font-size: 13px; font-weight: 500; border-radius: 6px; border: 1px solid #cbd5e1; background: #ffffff; color: #334155; cursor: pointer;"><?php esc_html_e( 'Confirm Cancellation', 'shopmotive-crm-sync-for-clickup' ); ?></button>
-								<button type="button" id="clicksync-cancel-keep-btn" class="clicksync-btn-primary" style="height: 36px; padding: 0 16px; font-size: 13px; font-weight: 600; background: #008060; color: #ffffff; border: none; border-radius: 6px; cursor: pointer;"><?php esc_html_e( 'Keep Subscription', 'shopmotive-crm-sync-for-clickup' ); ?></button>
+								<button type="button" id="clicksync-cancel-keep-btn" class="clicksync-btn-primary" style="height: 36px; padding: 0 16px; font-size: 13px; font-weight: 600; background: #f97316; color: #ffffff; border: none; border-radius: 6px; cursor: pointer;"><?php esc_html_e( 'Keep Subscription', 'shopmotive-crm-sync-for-clickup' ); ?></button>
 							</div>
 						</form>
 					</div>

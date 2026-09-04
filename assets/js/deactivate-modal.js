@@ -45,7 +45,7 @@ jQuery(document).ready(function($) {
                 </div>
 
                 <div style="background:#f1f5f9; padding:12px 16px; border-radius:8px; margin-bottom:20px; display:flex; align-items:center; gap:10px; border:1px solid #e2e8f0; box-sizing:border-box;">
-                    <input type="checkbox" id="shopmotive-cancel-sub-check" style="margin:0; width:16px; height:16px; accent-color:#008060; cursor:pointer;" />
+                    <input type="checkbox" id="shopmotive-cancel-sub-check" style="margin:0; width:16px; height:16px; accent-color:#f97316; cursor:pointer;" />
                     <label for="shopmotive-cancel-sub-check" style="font-size:13px; font-weight:600; color:#0f172a; cursor:pointer; margin:0;">
                         Cancel my active subscription
                     </label>
@@ -57,7 +57,7 @@ jQuery(document).ready(function($) {
                     </a>
 
                     <div style="display:flex; gap:8px;">
-                        <button type="button" id="shopmotive-submit-deactivate" style="padding:8px 16px; font-size:13px; font-weight:600; background:#008060; color:#ffffff; border:none; border-radius:6px; cursor:pointer;">
+                        <button type="button" id="shopmotive-submit-deactivate" style="padding:8px 16px; font-size:13px; font-weight:600; background:#f97316; color:#ffffff; border:none; border-radius:6px; cursor:pointer;">
                             Submit & Deactivate
                         </button>
                     </div>
@@ -72,7 +72,7 @@ jQuery(document).ready(function($) {
             to { opacity: 1; transform: scale(1); }
         }
         #shopmotive-exit-reason:focus, #shopmotive-exit-message:focus {
-            border-color: #008060 !important;
+            border-color: #f97316 !important;
             box-shadow: 0 0 0 2px rgba(0, 128, 96, 0.15) !important;
         }
     </style>

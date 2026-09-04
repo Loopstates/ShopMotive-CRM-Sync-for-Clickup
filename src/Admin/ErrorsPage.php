@@ -26,7 +26,7 @@ class ErrorsPage {
 			<!-- Page Header -->
 			<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #e2e8f0;">
 				<div style="display: flex; align-items: center; gap: 14px;">
-					<img src="<?php echo esc_url( $logo_url ); ?>" alt="ShopMotive" style="width: 42px; height: 42px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.12);" />
+					<img src="<?php echo esc_url( $logo_url ); ?>" alt="ShopMotive" style="width: 42px; height: 42px; border-radius: 10px; box-shadow: none !important;" />
 					<div>
 						<h1 style="font-weight: 700; font-size: 24px; margin: 0; color: #0f172a; line-height: 1.2;">
 							<?php esc_html_e( 'Sync Errors', 'shopmotive-crm-sync-for-clickup' ); ?>

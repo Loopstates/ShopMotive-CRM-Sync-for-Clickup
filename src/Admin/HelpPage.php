@@ -28,7 +28,7 @@ class HelpPage {
 			<!-- Page Header -->
 			<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #e1e3e5;">
 				<div style="display: flex; align-items: center; gap: 14px;">
-					<img src="<?php echo esc_url( $logo_url ); ?>" alt="ShopMotive" style="width: 42px; height: 42px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.12);" />
+					<img src="<?php echo esc_url( $logo_url ); ?>" alt="ShopMotive" style="width: 42px; height: 42px; border-radius: 10px; box-shadow: none !important;" />
 					<div>
 						<h1 style="font-weight: 700; font-size: 24px; margin: 0; color: #202223; line-height: 1.2;">
 							<?php esc_html_e( 'Help Center & Documentation', 'shopmotive-crm-sync-for-clickup' ); ?>
@@ -48,7 +48,7 @@ class HelpPage {
 					<!-- 1. Connection & Initial Setup Guide -->
 					<div class="clicksync-card" style="border: 1px solid #e1e3e5; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
 						<h3 style="margin-top: 0; margin-bottom: 20px; font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; color: #202223;">
-							<svg style="width: 18px; height: 18px; fill: #008060;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+							<svg style="width: 18px; height: 18px; fill: #f97316;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
 							<?php esc_html_e( '1. Connection & Setup Walkthrough', 'shopmotive-crm-sync-for-clickup' ); ?>
 						</h3>
 						<ul class="clicksync-step-list">
@@ -79,7 +79,7 @@ class HelpPage {
 					<!-- 2. Status Mapping & Fulfillment Sync -->
 					<div class="clicksync-card" style="border: 1px solid #e1e3e5; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
 						<h3 style="margin-top: 0; margin-bottom: 20px; font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; color: #202223;">
-							<svg style="width: 18px; height: 18px; fill: #008060;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+							<svg style="width: 18px; height: 18px; fill: #f97316;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
 							<?php esc_html_e( '2. WooCommerce Status & Fulfillment Mapping', 'shopmotive-crm-sync-for-clickup' ); ?>
 						</h3>
 						<p style="font-size: 13px; color: #6d7175; line-height: 1.6; margin-bottom: 16px;">
@@ -95,7 +95,7 @@ class HelpPage {
 					<!-- 3. Advanced Custom Field Mapping Recipe -->
 					<div class="clicksync-card" style="border: 1px solid #e1e3e5; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
 						<h3 style="margin-top: 0; margin-bottom: 20px; font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; color: #202223;">
-							<svg style="width: 18px; height: 18px; fill: #008060;" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+							<svg style="width: 18px; height: 18px; fill: #f97316;" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
 							<?php esc_html_e( '3. Advanced Custom Field Routing Recipes', 'shopmotive-crm-sync-for-clickup' ); ?>
 						</h3>
 						<p style="font-size: 13px; color: #6d7175; line-height: 1.6; margin-bottom: 16px;">
@@ -137,7 +137,7 @@ class HelpPage {
 					<!-- 4. Comments & User Mappings -->
 					<div class="clicksync-card" style="border: 1px solid #e1e3e5; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
 						<h3 style="margin-top: 0; margin-bottom: 20px; font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; color: #202223;">
-							<svg style="width: 18px; height: 18px; fill: #008060;" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
+							<svg style="width: 18px; height: 18px; fill: #f97316;" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
 							<?php esc_html_e( '4. Real-time Bi-directional Comments & Users Mapping', 'shopmotive-crm-sync-for-clickup' ); ?>
 						</h3>
 						<p style="font-size: 13px; color: #6d7175; line-height: 1.6; margin-bottom: 12px;">
@@ -153,7 +153,7 @@ class HelpPage {
 					<!-- 5. Frequently Asked Questions -->
 					<div class="clicksync-card" style="border: 1px solid #e1e3e5; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
 						<h3 style="margin-top: 0; margin-bottom: 20px; font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; color: #202223;">
-							<svg style="width: 18px; height: 18px; fill: #008060;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 16h-2v-2h2v2zm1.07-7.75l-.9.92C12.45 11.9 12 12.5 12 14h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/></svg>
+							<svg style="width: 18px; height: 18px; fill: #f97316;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 16h-2v-2h2v2zm1.07-7.75l-.9.92C12.45 11.9 12 12.5 12 14h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/></svg>
 							<?php esc_html_e( 'Frequently Asked Questions', 'shopmotive-crm-sync-for-clickup' ); ?>
 						</h3>
 						<div class="clicksync-faq-item">
@@ -193,9 +193,9 @@ class HelpPage {
 								</summary>
 								<div class="clicksync-faq-a" style="margin-top: 8px;">
 									<?php esc_html_e( 'Your subscription plan can be managed directly. If you wish to cancel or modify your active ShopMotive plan subscription, ', 'shopmotive-crm-sync-for-clickup' ); ?>
-									<a href="<?php echo esc_url( $cancel_url ); ?>" style="color: #008060; font-weight: 600; text-decoration: underline; display: inline-flex; align-items: center; gap: 4px;">
+									<a href="<?php echo esc_url( $cancel_url ); ?>" style="color: #f97316; font-weight: 600; text-decoration: underline; display: inline-flex; align-items: center; gap: 4px;">
 										<?php esc_html_e( 'click here to request cancellation', 'shopmotive-crm-sync-for-clickup' ); ?>
-										<svg style="width: 12px; height: 12px; fill: #008060;" viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>
+										<svg style="width: 12px; height: 12px; fill: #f97316;" viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>
 									</a>.
 									<?php esc_html_e( ' Stored integration metadata and site telemetry on the cloud will be fully deleted within 30 days of cancellation.', 'shopmotive-crm-sync-for-clickup' ); ?>
 								</div>
@@ -209,7 +209,7 @@ class HelpPage {
 				<div class="clicksync-help-sticky-col">
 					<div class="clicksync-card" style="border: 1px solid #e1e3e5; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); background: #ffffff; padding: 24px;">
 						<h3 style="margin-top: 0; margin-bottom: 8px; font-size: 16px; font-weight: 700; color: #202223; display: flex; align-items: center; gap: 8px;">
-							<svg style="width: 18px; height: 18px; fill: #008060;" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 9h-2V5h2v6zm0 4h-2v-2h2v2z"/></svg>
+							<svg style="width: 18px; height: 18px; fill: #f97316;" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 9h-2V5h2v6zm0 4h-2v-2h2v2z"/></svg>
 							<?php esc_html_e( 'Contact Support', 'shopmotive-crm-sync-for-clickup' ); ?>
 						</h3>
 						<p style="font-size: 12px; color: #6d7175; line-height: 1.5; margin-bottom: 20px;">
@@ -242,7 +242,7 @@ class HelpPage {
 								<textarea name="contact_message" style="width: 100%; height: 120px; padding: 10px 12px; border: 1px solid #e1e3e5; border-radius: 6px; font-size: 13px; color: #202223; background: #ffffff; box-shadow: none; box-sizing: border-box; outline: none; line-height: 1.5; resize: vertical;" required placeholder="<?php esc_attr_e( 'Describe your requirements or any error details you encountered...', 'shopmotive-crm-sync-for-clickup' ); ?>"></textarea>
 							</div>
 
-							<button type="submit" class="clicksync-btn-primary" style="width: 100%; height: 38px; font-weight: 600; background: #008060; color: #ffffff; border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; transition: background 0.2s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.05); margin-top: 4px;">
+							<button type="submit" class="clicksync-btn-primary" style="width: 100%; height: 38px; font-weight: 600; background: #f97316; color: #ffffff; border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; transition: background 0.2s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.05); margin-top: 4px;">
 								<svg style="width: 14px; height: 14px; fill: currentColor;" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
 								<span><?php esc_html_e( 'Submit Message', 'shopmotive-crm-sync-for-clickup' ); ?></span>
 							</button>
