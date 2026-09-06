@@ -218,7 +218,7 @@ If the ClickUp API is offline or returns a 429 rate limit error, the event paylo
 * Custom field mapping engine for lifetime spend, billing details, custom checkout notes, and shipping addresses.
 * Smart team assignee routing and priority tagging based on cart total thresholds.
 * Bi-directional order note comments and refund tracking dispatches.
-* Non-blocking background event dispatch queue ensuring 0ms impact on customer checkout speeds.logging.
+* Non-blocking background event dispatch queue ensuring 0ms impact on customer checkout speeds.
 
 = 1.2.0 =
 * Added dynamic administrative metadata synchronization (Site Title, Owner Name, Email) for enhanced support.

@@ -65,7 +65,7 @@ class Plugin {
 	 * Load plugin translation text domain.
 	 */
 	public function load_textdomain() {
-		// Translation files are automatically loaded by WordPress.org Translate system
+		load_plugin_textdomain( 'shopmotive-crm-sync-for-clickup', false, dirname( plugin_basename( SHOPMOTIVE_FILE ) ) . '/languages' );
 	}
 
 	/**
@@ -74,6 +74,7 @@ class Plugin {
 	public static function activate() {
 		Options::get_settings();
 		Options::get_account();
+		Options::get_secret_key();
 	}
 
 	/**

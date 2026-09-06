@@ -1,6 +1,6 @@
 jQuery(document).ready(function($) {
     // Target the deactivate link specifically for ShopMotive
-    var $deactivateLink = $('tr[data-slug="shopmotive-crm-sync-for-clickup"] .deactivate a, tr[data-slug="clicksync-connect-clickup-crm-sync-for-woocommerce"] .deactivate a');
+    var $deactivateLink = $('tr[data-slug="shopmotive-crm-sync-for-clickup"] .deactivate a');
     
     if (!$deactivateLink.length) {
         return;

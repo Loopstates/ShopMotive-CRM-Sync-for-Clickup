@@ -19,7 +19,6 @@ class AdminMenu {
 	 * Register admin menu and hooks.
 	 */
 	public static function init() {
-		add_action( 'admin_init', array( __CLASS__, 'check_secret_key_redirect' ) );
 		add_action( 'admin_menu', array( __CLASS__, 'register_menu' ), 20 );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_assets' ) );
 		add_action( 'admin_notices', array( __CLASS__, 'render_quota_notice' ) );
@@ -38,28 +37,6 @@ class AdminMenu {
 		add_action( 'edit_user_profile', array( __CLASS__, 'register_customer_metabox' ) );
 	}
 
-
-	/**
-	 * Save secret key and clean URL parameters.
-	 */
-	public static function check_secret_key_redirect() {
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		if ( isset( $_GET['page'] ) && $_GET['page'] === 'shopmotive' && isset( $_GET['clicksync_secret_key'] ) ) {
-			// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
-			$secret_key = sanitize_text_field( $_GET['clicksync_secret_key'] );
-			Options::update_secret_key( $secret_key );
-			
-			// Clean redirect URL query parameter but preserve clicksync_action if set
-			$redirect_url = admin_url( 'admin.php?page=shopmotive' );
-			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			if ( isset( $_GET['clicksync_action'] ) ) {
-				// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
-				$redirect_url = add_query_arg( 'clicksync_action', sanitize_text_field( $_GET['clicksync_action'] ), $redirect_url );
-			}
-			wp_safe_redirect( $redirect_url );
-			exit;
-		}
-	}
 
 	/**
 	 * Register top-level ClickSync menu and 4 dedicated sub-pages matching Shopify menus.

@@ -93,7 +93,12 @@ class Options {
 	 */
 	public static function get_secret_key() {
 		$settings = self::get_settings();
-		return $settings['secret_key'] ?? '';
+		if ( empty( $settings['secret_key'] ) ) {
+			$new_key = wp_generate_password( 64, false );
+			self::update_secret_key( $new_key );
+			return $new_key;
+		}
+		return $settings['secret_key'];
 	}
 
 	/**

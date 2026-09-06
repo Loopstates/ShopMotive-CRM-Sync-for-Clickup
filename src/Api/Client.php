@@ -49,7 +49,7 @@ class Client {
 				'X-ClickSync-Shop'     => sanitize_text_field( $host ),
 				'X-ClickSync-Timestamp'=> $timestamp,
 				'X-ClickSync-Hmac'     => $signature,
-				'User-Agent'           => 'ClickSync-Connect-Plugin/' . SHOPMOTIVE_VERSION,
+				'User-Agent'           => 'ShopMotive-CRM-Sync-for-ClickUp/' . SHOPMOTIVE_VERSION,
 			),
 			'body'        => $json_body,
 		);
@@ -148,7 +148,7 @@ class Client {
 				'X-ClickSync-Shop'     => sanitize_text_field( $host ),
 				'X-ClickSync-Timestamp'=> $timestamp,
 				'X-ClickSync-Hmac'     => $signature,
-				'User-Agent'           => 'ClickSync-Connect-Plugin/' . SHOPMOTIVE_VERSION,
+				'User-Agent'           => 'ShopMotive-CRM-Sync-for-ClickUp/' . SHOPMOTIVE_VERSION,
 			),
 			'body'        => $json_body,
 		);

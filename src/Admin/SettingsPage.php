@@ -31,7 +31,7 @@ class SettingsPage {
 				'refunds_enabled'   => ! empty( $_POST['refunds_enabled'] ),
 			);
 			Options::update_settings( $updated );
-			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'ClickSync settings saved successfully.', 'shopmotive-crm-sync-for-clickup' ) . '</p></div>';
+			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'ShopMotive settings saved successfully.', 'shopmotive-crm-sync-for-clickup' ) . '</p></div>';
 		}
 
 		$settings   = Options::get_settings();
@@ -47,9 +47,10 @@ class SettingsPage {
 		) );
 		$wp_users = $user_query->get_results();
 
-		$host       = wp_parse_url( site_url(), PHP_URL_HOST );
+		$host        = wp_parse_url( site_url(), PHP_URL_HOST );
 		$is_ssl      = is_ssl() ? 'https' : 'http';
-		$connect_url= SHOPMOTIVE_CLOUD_URL . '/auth/clickup?shop=' . urlencode( $host ) . '&protocol=' . $is_ssl;
+		$secret_key  = Options::get_secret_key();
+		$connect_url = SHOPMOTIVE_CLOUD_URL . '/auth/clickup?shop=' . urlencode( $host ) . '&protocol=' . $is_ssl . '&secret=' . urlencode( $secret_key );
 
 		$plan_name  = $account['plan_name'] ?? 'Free Plan';
 		$sync_count = (int) ( $account['monthly_sync_count'] ?? 0 );
@@ -744,7 +745,7 @@ class SettingsPage {
 							<div style="background: #fef2f2; border-radius: 8px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; color: #ef4444;">
 								<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
 							</div>
-							<h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #0f172a;"><?php esc_html_e( 'Cancel Your ClickSync Subscription', 'shopmotive-crm-sync-for-clickup' ); ?></h3>
+							<h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #0f172a;"><?php esc_html_e( 'Cancel Your ShopMotive Subscription', 'shopmotive-crm-sync-for-clickup' ); ?></h3>
 						</div>
 
 						<p style="font-size: 13px; color: #475569; margin: 0 0 16px 0; line-height: 1.5;">

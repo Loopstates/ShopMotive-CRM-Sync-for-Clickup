@@ -18,9 +18,7 @@ class HelpPage {
 	 */
 	public static function render() {
 		$logo_url = SHOPMOTIVE_URL . 'assets/images/logo.png';
-		$account = \ShopMotive\Core\Options::get_account();
-		$secret_key = isset( $account['secret_key'] ) ? $account['secret_key'] : '';
-		$cancel_url = admin_url( 'admin.php?page=shopmotive&clicksync_secret_key=' . urlencode( $secret_key ) . '&clicksync_action=cancel_subscription' );
+		$cancel_url = admin_url( 'admin.php?page=shopmotive&clicksync_action=cancel_subscription' );
 		?>
 
 		<div class="wrap clicksync-help-container clicksync-wrap">
