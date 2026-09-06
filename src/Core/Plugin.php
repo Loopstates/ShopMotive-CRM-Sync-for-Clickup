@@ -46,9 +46,6 @@ class Plugin {
 	 * Initialize plugin hooks.
 	 */
 	private function init_hooks() {
-		// Load text domain for translations
-		add_action( 'init', array( $this, 'load_textdomain' ) );
-
 		// Initialize Admin Interface
 		if ( is_admin() ) {
 			AdminMenu::init();
@@ -59,13 +56,6 @@ class Plugin {
 
 		// Initialize REST API endpoints
 		add_action( 'rest_api_init', array( \ShopMotive\Api\Webhook::class, 'register_routes' ) );
-	}
-
-	/**
-	 * Load plugin translation text domain.
-	 */
-	public function load_textdomain() {
-		load_plugin_textdomain( 'shopmotive-crm-sync-for-clickup', false, dirname( plugin_basename( SHOPMOTIVE_FILE ) ) . '/languages' );
 	}
 
 	/**
