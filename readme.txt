@@ -12,15 +12,15 @@ Connect and synchronize WooCommerce order events, customer profiles, notes, and 
 
 == Description ==
 
-ShopMotive connects your WooCommerce store to your ClickUp workspace. It automatically converts WooCommerce orders, customer profiles, refunds, and order notes into ClickUp tasks so your fulfillment, support, and sales teams can manage store operations directly inside ClickUp.
+Built by [Loopstates](https://loopstates.com), ShopMotive connects your WooCommerce store to your ClickUp workspace. It automatically converts WooCommerce orders, customer profiles, refunds, and order notes into ClickUp tasks so your fulfillment, support, and sales teams can manage store operations directly inside ClickUp.
 
 When an order is placed or updated in WooCommerce, ShopMotive captures the event and generates or updates a corresponding task in ClickUp. You can map WooCommerce fields (such as billing details, customer lifetime spend, discount codes, and shipping addresses) to ClickUp custom fields, automatically assign tasks to team members based on order thresholds, and keep order statuses synchronized between both platforms.
 
-Event processing is executed in the background to ensure customer checkouts remain fast and responsive. The plugin connects securely with the ShopMotive Cloud Service (https://shopmotive.apps.loopstates.com) to process API handshakes and deliver payloads reliably without impacting your website's performance.
+Event processing is executed in the background to ensure customer checkouts remain fast and responsive. The plugin connects securely with the [ShopMotive Cloud Service](https://shopmotive.apps.loopstates.com) to process API handshakes and deliver payloads reliably without impacting your website's performance. Full setup guides and tutorials are available on the [ShopMotive Documentation Portal](https://docs.loopstates.com/shopmotive-for-clickup-and-woocommerce/).
 
 == Subscription Plans & Pricing ==
 
-ShopMotive Connect offers flexible plans to scale with your business requirements:
+ShopMotive Connect offers flexible plans to scale with your business requirements. For full plan comparisons, pricing tiers, and quota upgrades, visit the [ShopMotive Pricing & Plans](https://shopmotive.apps.loopstates.com/#pricing) page.
 
 * **Free Plan**
     * **Sync Quota:** 100 tasks/month
@@ -73,14 +73,16 @@ ShopMotive Connect offers flexible plans to scale with your business requirement
 
 ShopMotive: CRM Sync for ClickUp utilizes external cloud APIs to manage authentication tokens, decrypt keys, and queue requests safely:
 
-* **ShopMotive Cloud Sync Proxy:** https://shopmotive.apps.loopstates.com
-* **ClickUp REST API Service:** https://api.clickup.com
+* **ShopMotive Cloud Sync Proxy:** [https://shopmotive.apps.loopstates.com](https://shopmotive.apps.loopstates.com)
+* **ClickUp REST API Service:** [https://api.clickup.com](https://api.clickup.com)
 
 By activating this connector, e-commerce data (order line items, notes, billing addresses, and customer profiles) is securely sent to the ShopMotive Cloud Service and ClickUp APIs via HTTPS to generate tasks.
 
-* ShopMotive Privacy Policy: https://docs.loopstates.com/shopmotive-for-clickup-and-woocommerce/privacy-policy.html
-* ShopMotive Terms: https://docs.loopstates.com/shopmotive-for-clickup-and-woocommerce/plans.html
-* ClickUp Terms of Service: https://clickup.com/terms
+* **Documentation & Help:** [ShopMotive Documentation](https://docs.loopstates.com/shopmotive-for-clickup-and-woocommerce/)
+* **Pricing & Plans:** [ShopMotive Pricing](https://shopmotive.apps.loopstates.com/#pricing)
+* **Privacy Policy:** [ShopMotive Privacy Policy](https://docs.loopstates.com/shopmotive-for-clickup-and-woocommerce/privacy-policy.html)
+* **Terms of Service:** [ShopMotive Terms](https://docs.loopstates.com/shopmotive-for-clickup-and-woocommerce/plans.html)
+* **ClickUp Terms:** [ClickUp Terms of Service](https://clickup.com/terms)
 
 == Professional Data Safety & Collection Disclosure ==
 
@@ -209,6 +211,15 @@ Yes. The plugin includes a "User Identity Mappings" screen where you can map Wor
 
 = How does the fail-safe retry mechanism behave during ClickUp API outages? =
 If the ClickUp API is offline or returns a 429 rate limit error, the event payload is retained in a local database queue. ShopMotive Connect will automatically retry the dispatch up to 5 times (using an exponential backoff filter) before logging it in the Sync Errors.
+
+== Screenshots ==
+
+1. Initial Connection Screen - Simple one-click OAuth 2.0 authorization to link your ClickUp workspace.
+2. ClickUp Authorization Portal - Secure OAuth 2.0 workspace authorization and token exchange.
+3. Integration Settings & Automation Engine - Configure order/customer sync triggers, custom field mappings, assignee routing rules, task priorities, and multi-store settings.
+4. Real-Time Sync Logs - Live telemetry dashboard monitoring all dispatches, execution statuses, direct ClickUp task links, and CSV export.
+5. Sync Errors & Diagnostic Traces - Dedicated error trace log with automatic retries and one-click manual retry controls.
+6. Help Center & In-App Documentation - Setup guides, fulfillment mapping recipes, custom field reference, and integrated technical support.
 
 == Changelog ==
 
