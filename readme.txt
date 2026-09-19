@@ -2,9 +2,9 @@
 Contributors: loopstates
 Tags: clickup, woocommerce, crm, order sync, customer sync
 Requires at least: 6.0
-Tested up to: 7.1
+Tested up to: 7.1.1
 Requires PHP: 7.4
-Stable tag: 1.2.1
+Stable tag: 1.2.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -222,6 +222,9 @@ If the ClickUp API is offline or returns a 429 rate limit error, the event paylo
 6. Help Center & In-App Documentation - Setup guides, fulfillment mapping recipes, custom field reference, and integrated technical support.
 
 == Changelog ==
+
+= 1.2.2 =
+* Confirmed compatibility with WordPress 7.1.1 and WooCommerce 11.1.1.
 
 = 1.2.1 =
 * Official initial release for WooCommerce-to-ClickUp CRM, customer profile, and order task synchronization.

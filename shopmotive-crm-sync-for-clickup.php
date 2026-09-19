@@ -3,7 +3,7 @@
  * Plugin Name:       ShopMotive: CRM Sync for ClickUp
  * Plugin URI:        https://docs.loopstates.com/shopmotive-for-clickup-and-woocommerce/
  * Description:       Connect and synchronize WooCommerce order events, customer profiles, notes, and refunds directly into ClickUp tasks.
- * Version:           1.2.1
+ * Version:           1.2.2
  * Requires PHP:      7.4
  * Requires Plugins:  woocommerce
  * Author:            Loopstates
@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Define Plugin Constants
-define( 'SHOPMOTIVE_VERSION', '1.2.1' );
+define( 'SHOPMOTIVE_VERSION', '1.2.2' );
 define( 'SHOPMOTIVE_FILE', __FILE__ );
 define( 'SHOPMOTIVE_PATH', plugin_dir_path( __FILE__ ) );
 define( 'SHOPMOTIVE_URL', plugin_dir_url( __FILE__ ) );

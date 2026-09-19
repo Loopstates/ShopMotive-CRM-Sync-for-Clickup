@@ -4,6 +4,11 @@ All notable changes, new feature additions, security enhancements, and improveme
 
 ---
 
+## [1.2.2] - 2026-09-19
+
+### 🔧 Compatibility & Improvements
+- Confirmed compatibility with WordPress 7.1.1 and WooCommerce 11.1.1.
+
 ## [1.2.1] - 2026-08-26
 
 ### 🚀 Official Release
